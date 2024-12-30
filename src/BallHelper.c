@@ -21,7 +21,8 @@ void add_ball(float x, float y, float width, float height, int speed_x, int spee
     b = 0;
     COLOR_STATE c_state = GREEN;
     Force init_force = {0, 0};  // Add the new ball
-    balls[current_count] = (struct ball){x, y, width, height, speed_x, speed_y, r, g, b, c_state, init_force};
+    balls[current_count] =
+        (struct ball){x, y, width, height, speed_x, speed_y, r, g, b, c_state, init_force};
 }
 
 void add_ball_default()

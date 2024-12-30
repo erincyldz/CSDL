@@ -1,11 +1,11 @@
 #ifndef RENDER_H
 #define RENDER_H
-#include <SDL2/SDL.h>
-#include <stdbool.h>
 #include <Ball.h>
 #include <BallHelper.h>
-#include <main.h>
 #include <Engine.h>
+#include <SDL2/SDL.h>
+#include <main.h>
+#include <stdbool.h>
 
 extern int WINDOW_WIDTH;
 extern int WINDOW_HEIGHT;
@@ -24,4 +24,4 @@ void update();
 void render();
 void destroy_window();
 
-#endif // RENDER_H
+#endif  // RENDER_H

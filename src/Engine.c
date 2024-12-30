@@ -75,4 +75,3 @@ void check_gravitational_force(struct ball* a, struct ball* b, size_t index)
     a->applied_force.x += x_axis_force * g_force;
     a->applied_force.y += y_axis_force * g_force;
 }
-

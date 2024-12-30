@@ -5,7 +5,7 @@ SDL_Renderer* p_renderer = NULL;
 bool game_is_running = false;
 int last_frame_time = 0;
 float delta_time = 0;
-int WINDOW_WIDTH  = 800;
+int WINDOW_WIDTH = 800;
 int WINDOW_HEIGHT = 800;
 
 bool initialize_window(void)
@@ -33,7 +33,6 @@ bool initialize_window(void)
 
     return SDL_TRUE;
 }
-
 
 void show_end_game_message_box_and_exit()
 {
@@ -73,7 +72,7 @@ void show_end_game_message_box_and_exit()
 void process_input()
 {
     SDL_Event event;
-    while (SDL_PollEvent(&event)) // Process all pending events
+    while (SDL_PollEvent(&event))  // Process all pending events
     {
         switch (event.type)
         {
@@ -83,7 +82,7 @@ void process_input()
             case SDL_WINDOWEVENT:
                 if (event.window.event == SDL_WINDOWEVENT_RESIZED)
                 {
-                    WINDOW_WIDTH  = event.window.data1;
+                    WINDOW_WIDTH = event.window.data1;
                     WINDOW_HEIGHT = event.window.data2;
                     printf("Window resized: %d x %d\n", WINDOW_WIDTH, WINDOW_HEIGHT);
                 }
@@ -103,7 +102,6 @@ void process_input()
     }
 }
 
-
 SDL_Rect convert_to_sdl_rect(struct ball* b)
 {
     SDL_Rect rect;
@@ -113,7 +111,6 @@ SDL_Rect convert_to_sdl_rect(struct ball* b)
     rect.h = (int)b->height;
     return rect;
 }
-
 
 void update()
 {
