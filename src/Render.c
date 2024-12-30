@@ -5,6 +5,8 @@ SDL_Renderer* p_renderer = NULL;
 bool game_is_running = false;
 int last_frame_time = 0;
 float delta_time = 0;
+int WINDOW_WIDTH  = 800;
+int WINDOW_HEIGHT = 800;
 
 bool initialize_window(void)
 {
@@ -14,7 +16,7 @@ bool initialize_window(void)
         return SDL_FALSE;
     }
     p_window = SDL_CreateWindow("Rami", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-                                WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_BORDERLESS);
+                                WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_RESIZABLE);
     if (!p_window)
     {
         fprintf(stderr, "Error creating a SDL window\n");
@@ -78,6 +80,15 @@ void process_input()
             case SDL_QUIT:
                 game_is_running = false;
                 break;
+            case SDL_WINDOWEVENT:
+                if (event.window.event == SDL_WINDOWEVENT_RESIZED)
+                {
+                    WINDOW_WIDTH  = event.window.data1;
+                    WINDOW_HEIGHT = event.window.data2;
+                    printf("Window resized: %d x %d\n", WINDOW_WIDTH, WINDOW_HEIGHT);
+                }
+                break;
+
             case SDL_KEYDOWN:
                 if (event.key.keysym.sym == SDLK_ESCAPE)
                 {
@@ -106,24 +117,18 @@ SDL_Rect convert_to_sdl_rect(struct ball* b)
 
 void update()
 {
-
     int time_to_wait = FRAME_TARGET_TIME - (SDL_GetTicks() - last_frame_time);
-
     if (time_to_wait > 0 && time_to_wait <= FRAME_TARGET_TIME)
     {
         SDL_Delay(time_to_wait);
     }
-
     delta_time = (SDL_GetTicks() - last_frame_time) / DELTA_TIME_COFACTOR;
-
     last_frame_time = SDL_GetTicks();
     for (size_t i = 0; i < atomic_load(&ball_count); i++)
     {
-
         collision_detection(&balls[i]);
         for (size_t j = 0; j < atomic_load(&ball_count); j++)
         {
-
             if (i == j)
                 continue;
             check_gravitational_force(&balls[i], &balls[j], i);
@@ -258,9 +263,7 @@ void update()
 
 void render()
 {
-
     SDL_SetRenderDrawColor(p_renderer, 0, 0, 0, 255);
-
     SDL_RenderClear(p_renderer);
 
     for (size_t i = 0; i < atomic_load(&ball_count); i++)
