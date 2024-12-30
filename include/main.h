@@ -1,5 +1,11 @@
 #ifndef MAIN_H
 #define MAIN_H
+
+#include <Ball.h>
+#include <MathHelper.h>
+#include <BallHelper.h>
+#include <Render.h>
+
 #define WINDOW_WIDTH  800
 #define WINDOW_HEIGHT 800
 #define CENTER_X      WINDOW_WIDTH / 2
@@ -18,4 +24,6 @@
 
 #define FPS               30
 #define FRAME_TARGET_TIME (1000 / FPS)
+
+
 #endif
