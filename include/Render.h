@@ -7,6 +7,9 @@
 #include <main.h>
 #include <Engine.h>
 
+extern int WINDOW_WIDTH;
+extern int WINDOW_HEIGHT;
+
 extern SDL_Window* p_window;
 extern SDL_Renderer* p_renderer;
 extern bool game_is_running;
