@@ -18,7 +18,7 @@ After completing the previous steps, now you can build and run the project by ru
 ### **Running the Project**.
 After ```make``` command, a folder named __build__ will be created under your root directory with the __main__ executable file in it. Just run ```./build/main``` to run the project.
 
-###Setting up the formatter
+### **Setting up the formatter**
 You have to install LLVM for formatting your code. Refer to [this](https://llvm.org/docs/GettingStarted.html).
 
 ### **Known Issues and Fixes**
