@@ -16,7 +16,7 @@ typedef struct
     float x, y;
 } Force;
 
-struct ball
+typedef struct
 {
     float x, y;
     float width, height;
@@ -24,6 +24,6 @@ struct ball
     int r, g, b;
     COLOR_STATE c_state;
     Force applied_force;
-};
+} Ball;
 
 #endif  // BALL_H

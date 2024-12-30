@@ -18,7 +18,7 @@ extern float delta_time;
 
 bool initialize_window(void);
 void show_end_game_message_box_and_exit();
-SDL_Rect convert_to_sdl_rect(struct ball* b);
+SDL_Rect convert_to_sdl_rect(Ball* ball);
 void process_input();
 void update();
 void render();
