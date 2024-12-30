@@ -102,13 +102,13 @@ void process_input()
     }
 }
 
-SDL_Rect convert_to_sdl_rect(struct ball* b)
+SDL_Rect convert_to_sdl_rect(Ball* ball)
 {
     SDL_Rect rect;
-    rect.x = (int)b->x;  // Cast float to int
-    rect.y = (int)b->y;
-    rect.w = (int)b->width;
-    rect.h = (int)b->height;
+    rect.x = (int)ball->x;  // Cast float to int
+    rect.y = (int)ball->y;
+    rect.w = (int)ball->width;
+    rect.h = (int)ball->height;
     return rect;
 }
 
@@ -146,7 +146,7 @@ void update()
                     balls[k] = balls[k + 1];
                 }
                 --ball_count;
-                balls = realloc(balls, atomic_load(&ball_count) * sizeof(struct ball));
+                balls = realloc(balls, atomic_load(&ball_count) * sizeof(Ball));
             }
         }
         apply_gravitational_force(&balls[i], i);

@@ -8,7 +8,7 @@
 
 // Declare the variables as extern
 extern _Atomic size_t ball_count;
-extern struct ball* balls;
+extern Ball* balls;
 
 void add_ball(float x, float y, float width, float height, int speed_x, int speed_y);
 void add_ball_default();
