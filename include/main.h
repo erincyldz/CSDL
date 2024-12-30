@@ -6,8 +6,7 @@
 #include <BallHelper.h>
 #include <Render.h>
 
-#define WINDOW_WIDTH  800
-#define WINDOW_HEIGHT 800
+
 #define CENTER_X      WINDOW_WIDTH / 2
 #define CENTER_Y      WINDOW_HEIGHT / 2
 
