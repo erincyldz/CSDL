@@ -26,4 +26,4 @@ struct ball
     Force applied_force;
 };
 
-#endif // BALL_H
+#endif  // BALL_H
