@@ -171,23 +171,24 @@ SDL_Rect convert_to_sdl_rect(struct ball* b)
 void process_input()
 {
     SDL_Event event;
-    SDL_PollEvent(&event);
-
-    switch (event.type)
+    while (SDL_PollEvent(&event)) // Process all pending events
     {
-        case SDL_QUIT:
-            game_is_running = false;
-            break;
-        case SDL_KEYDOWN:
-            if (event.key.keysym.sym == SDLK_ESCAPE)
-            {
+        switch (event.type)
+        {
+            case SDL_QUIT:
                 game_is_running = false;
-            }
-            else if (event.key.keysym.sym == SDLK_q)
-            {
-                add_ball_default();
-            }
-            break;
+                break;
+            case SDL_KEYDOWN:
+                if (event.key.keysym.sym == SDLK_ESCAPE)
+                {
+                    game_is_running = false;
+                }
+                else if (event.key.keysym.sym == SDLK_q)
+                {
+                    add_ball_default();
+                }
+                break;
+        }
     }
 }
 
