@@ -18,6 +18,8 @@ After completing the previous steps, now you can build and run the project by ru
 ### **Running the Project**.
 After ```make``` command, a folder named __build__ will be created under your root directory with the __main__ executable file in it. Just run ```./build/main``` to run the project.
 
+###Setting up the formatter
+You have to install LLVM for formatting your code. Refer to [this](https://llvm.org/docs/GettingStarted.html).
 
 ### **Known Issues and Fixes**
 (PROBABLY ONLY FOR WSL USERS)When SDL library tries to popup a textbox or etc. via using xServer over windows, it fails and gets a core dump fail. To fix this, you need to install the correct GUI package for your wsl. It is most probably gets fixed with  ```sudo apt install zenity ``` but it may depend on the linux version and distribution you are currently using. For further questions, go and search it on Google, Stackoverflow or ask ChatGPT. Don't bother me. 
