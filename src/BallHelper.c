@@ -2,13 +2,13 @@
 
 // Define the variables here
 _Atomic size_t ball_count = 0;
-struct ball* balls = NULL;
+Ball* balls = NULL;
 
 void add_ball(float x, float y, float width, float height, int speed_x, int speed_y)
 {
     // Reallocate memory to add a new ball
     size_t current_count = atomic_fetch_add(&ball_count, 1);
-    struct ball* new_balls = realloc(balls, (current_count + 1) * sizeof(struct ball));
+    Ball* new_balls = realloc(balls, (current_count + 1) * sizeof(Ball));
     if (!new_balls)
     {
         perror("Failed to allocate memory for new ball");
@@ -22,7 +22,7 @@ void add_ball(float x, float y, float width, float height, int speed_x, int spee
     COLOR_STATE c_state = GREEN;
     Force init_force = {0, 0};  // Add the new ball
     balls[current_count] =
-        (struct ball){x, y, width, height, speed_x, speed_y, r, g, b, c_state, init_force};
+        (Ball){x, y, width, height, speed_x, speed_y, r, g, b, c_state, init_force};
 }
 
 void add_ball_default()
@@ -60,7 +60,7 @@ void add_ball_default()
     size_t current_count = atomic_fetch_add(&ball_count, 1);
     COLOR_STATE color = RED;
     // Reallocate memory to add a new ball
-    struct ball* new_balls = realloc(balls, (current_count + 1) * sizeof(struct ball));
+    Ball* new_balls = realloc(balls, (current_count + 1) * sizeof(Ball));
     if (!new_balls)
     {
         printf("Failed to allocate memory for new ball");
@@ -70,5 +70,5 @@ void add_ball_default()
 
     // Add the new ball
     balls[current_count] =
-        (struct ball){x, y, width, height, speed_x, speed_y, r, g, b, color, applied_force};
+        (Ball){x, y, width, height, speed_x, speed_y, r, g, b, color, applied_force};
 }
