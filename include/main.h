@@ -2,13 +2,12 @@
 #define MAIN_H
 
 #include <Ball.h>
-#include <MathHelper.h>
 #include <BallHelper.h>
+#include <MathHelper.h>
 #include <Render.h>
 
-
-#define CENTER_X      WINDOW_WIDTH / 2
-#define CENTER_Y      WINDOW_HEIGHT / 2
+#define CENTER_X WINDOW_WIDTH / 2
+#define CENTER_Y WINDOW_HEIGHT / 2
 
 #define BALL_HEIGHT 40
 #define BALL_WIDTH  40
@@ -23,6 +22,5 @@
 
 #define FPS               30
 #define FRAME_TARGET_TIME (1000 / FPS)
-
 
 #endif
