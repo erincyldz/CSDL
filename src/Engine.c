@@ -1,9 +1,9 @@
 #include <Engine.h>
 
-void apply_gravitational_force(Ball* ball, size_t index)
+void apply_gravitational_force(Ball* ball, size_t index, float delta_time)
 {
-    ball->x += ball->applied_force.x / ball->width;
-    ball->y += ball->applied_force.y / ball->height;
+    ball->x += (ball->applied_force.x / ball->width) * delta_time;
+    ball->y += (ball->applied_force.y / ball->height) * delta_time;
     if (ball->x >= WINDOW_WIDTH)
     {
         ball->x = WINDOW_WIDTH - ball->width;
