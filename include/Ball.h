@@ -1,20 +1,6 @@
 #ifndef BALL_H
 #define BALL_H
-
-typedef enum
-{
-    RED,
-    PINK,
-    BLUE,
-    CYAN,
-    GREEN,
-    YELLOW,
-} COLOR_STATE;
-
-typedef struct
-{
-    float x, y;
-} Force;
+#include <GameObjectHelper.h>
 
 typedef struct
 {
@@ -22,7 +8,7 @@ typedef struct
     float width, height;
     int speed_x, speed_y;
     int r, g, b;
-    COLOR_STATE c_state;
+    OBJECT_COLOR_STATE c_state;
     Force applied_force;
 } Ball;
 

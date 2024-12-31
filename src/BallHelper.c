@@ -19,7 +19,7 @@ void add_ball(float x, float y, float width, float height, int speed_x, int spee
     r = 0;
     g = 255;
     b = 0;
-    COLOR_STATE c_state = GREEN;
+    OBJECT_COLOR_STATE c_state = GREEN;
     Force init_force = {0, 0};  // Add the new ball
     balls[current_count] =
         (Ball){x, y, width, height, speed_x, speed_y, r, g, b, c_state, init_force};
@@ -58,7 +58,7 @@ void add_ball_default()
     int g = 0;
     int b = 0;
     size_t current_count = atomic_fetch_add(&ball_count, 1);
-    COLOR_STATE color = RED;
+    OBJECT_COLOR_STATE color = RED;
     // Reallocate memory to add a new ball
     Ball* new_balls = realloc(balls, (current_count + 1) * sizeof(Ball));
     if (!new_balls)
