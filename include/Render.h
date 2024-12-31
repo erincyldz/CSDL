@@ -2,7 +2,9 @@
 #define RENDER_H
 #include <Ball.h>
 #include <BallHelper.h>
+#include <CircleObject.h>
 #include <Engine.h>
+#include <GameObject.h>
 #include <SDL2/SDL.h>
 #include <main.h>
 #include <stdbool.h>

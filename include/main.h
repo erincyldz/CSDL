@@ -3,6 +3,7 @@
 
 #include <Ball.h>
 #include <BallHelper.h>
+#include <CircleObject.h>
 #include <MathHelper.h>
 #include <Render.h>
 
