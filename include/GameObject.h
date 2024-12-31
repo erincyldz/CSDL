@@ -28,7 +28,7 @@ typedef struct GameObject
     GameObjectType type;                               // Type of the object
     void (*draw)(void* self, SDL_Renderer* renderer);  // Function pointer for drawing
     void (*update)(void* self, float delta_time);      // Function pointer for updating
-    // int (*collides_with)(void* self, struct GameObject* other);
+    int (*collides_with)(struct GameObject* self, struct GameObject* other);
     void (*destroy)(void* self);
 } GameObject;
 
