@@ -13,10 +13,10 @@ Before you get started, make sure you run ```sudo apt-get update && sudo apt-get
 
 
 ### **Building the project**.
-After completing the previous steps, now you can build and run the project by running the code ```make``` in the root folder of the project. The make configurations are __basically__ configured in the Makefile, but it might require further steps for optimization and generalization of the build steps. I don't know how to write a Makefile bro.
+After completing the previous steps, now you can build and run the project by running the code ```mkdir build && cd build && cmake .. && make``` in the root folder of the project. The make configurations are __basically__ configured in the CMake file, but it might require further steps for optimization and generalization of the build steps. I don't know how to write a CMake bro.
 
 ### **Running the Project**.
-After ```make``` command, a folder named __build__ will be created under your root directory with the __main__ executable file in it. Just run ```./build/main``` to run the project.
+After ```make``` command, an executable with the name of the project will be created under ```build``` folder. Just run ```./build/project_name``` on your terminal.
 
 ### **Setting up the formatter**
 You have to install LLVM for formatting your code. Refer to [this](https://llvm.org/docs/GettingStarted.html).
