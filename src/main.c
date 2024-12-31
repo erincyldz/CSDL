@@ -8,11 +8,11 @@ int main(int argc, char** argv)
 
     // Create and Initialize a Circle
     CircleObject circle1;
-    init_circle(&circle1, "MyCircle", 400, 300, 100);
+    init_circle(&circle1, "MyCircle", 25, 25, 25);
 
     CircleObject circle2;
-    init_circle(&circle2, "MyCircle", 200, 200, 50);
-
+    init_circle(&circle2, "MyCircle", 25, 275, 25);
+    circle2.base.velocity.y = -50.0f;
     // Add the Circle to the game_objects array
     add_game_object((GameObject*)&circle1);
     add_game_object((GameObject*)&circle2);
