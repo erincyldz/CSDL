@@ -149,7 +149,7 @@ void update()
                 balls = realloc(balls, atomic_load(&ball_count) * sizeof(Ball));
             }
         }
-        apply_gravitational_force(&balls[i], i);
+        apply_gravitational_force(&balls[i], i, delta_time);
     }
 
     for (size_t i = 0; i < atomic_load(&ball_count); i++)
@@ -260,8 +260,10 @@ void update()
 
 void render()
 {
-    SDL_SetRenderDrawColor(p_renderer, 0, 0, 0, 255);
-    SDL_RenderClear(p_renderer);
+    SDL_SetRenderDrawBlendMode(p_renderer, SDL_BLENDMODE_BLEND);
+    SDL_SetRenderDrawColor(p_renderer, 0, 0, 0, 50);
+    SDL_Rect fade_rect = {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
+    SDL_RenderFillRect(p_renderer, &fade_rect);
 
     for (size_t i = 0; i < atomic_load(&ball_count); i++)
     {
