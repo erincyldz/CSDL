@@ -273,6 +273,13 @@ void render()
 
         SDL_RenderFillRect(p_renderer, &ball_rect);
     }
+
+    // call the draw function for each game_objects
+    for (size_t i = 0; i < game_object_count; i++)
+    {
+        game_objects[i]->draw(game_objects[i], p_renderer);
+    }
+
     SDL_RenderPresent(p_renderer);
 };
 
