@@ -2,6 +2,11 @@
 #define OBJECT_HELPER_H
 #include <math.h>
 
+// forward declaration
+typedef struct GameObject GameObject;
+// Forward declaration of CircleObject
+typedef struct CircleObject CircleObject;
+
 typedef enum
 {
     RED,
@@ -17,5 +22,11 @@ typedef struct
     float x, y;
 } Force;
 
+void border_collision_detection(void* self, float delta_time);
+// // Collision detection functions
+int circle_circle_collision(CircleObject* c1, CircleObject* c2);
+// // int circle_rect_collision(CircleObject* circle, RectObject* rect);
+// // int rect_rect_collision(RectObject* r1, RectObject* r2);
+int check_collision(GameObject* obj1, GameObject* obj2);
 
 #endif  // OBJECT_HELPER_H
