@@ -2,14 +2,15 @@
 #define CIRCLE_OBJECT_H
 
 #include <GameObject.h>
+#include <GameObjectHelper.h>
 
 #define MAX_RADIUS 100
 #define MIN_RADIUS 10
 
-typedef struct
+typedef struct CircleObject
 {
-    GameObject base;  // Embed GameObject
-    float radius;     // Unique property for Circle
+    GameObject base;  // Inherits from GameObject
+    float radius;     // Circle-specific property
 } CircleObject;
 
 void init_circle(CircleObject* circle, const char* name, float x, float y, float radius);
