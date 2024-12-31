@@ -121,6 +121,13 @@ void update()
     }
     delta_time = (SDL_GetTicks() - last_frame_time) / DELTA_TIME_COFACTOR;
     last_frame_time = SDL_GetTicks();
+
+    // call the draw function for each game_objects
+    for (size_t i = 0; i < game_object_count; i++)
+    {
+        game_objects[i]->update(game_objects[i], delta_time);
+    }
+
     for (size_t i = 0; i < atomic_load(&ball_count); i++)
     {
         collision_detection(&balls[i]);
