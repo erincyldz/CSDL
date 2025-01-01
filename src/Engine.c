@@ -24,8 +24,8 @@ void apply_gravitational_force(Ball* ball, size_t index, float delta_time)
         ball->y = 0;
         ball->applied_force.y = 0;
     }
-    printf("[APPLY] Ball index: %ld, X force: %f Y Force: %f\n", index, ball->applied_force.x,
-           ball->applied_force.y);
+    // printf("[APPLY] Ball index: %ld, X force: %f Y Force: %f\n", index, ball->applied_force.x,
+    //    ball->applied_force.y);
 }
 
 bool check_balls_collide(Ball ball_1, Ball ball_2)
@@ -69,8 +69,9 @@ void check_gravitational_force(Ball* ball_1, Ball* ball_2, size_t index)
         y_axis_force = (ball_2->y - ball_1->y) / distance;
     }
     g_force *= 100;
-    printf("[CALC]Ball index: %ld X-Axis force is : %f Y-Axis force is: %f\n", index, x_axis_force,
-           y_axis_force);
+    // printf("[CALC]Ball index: %ld X-Axis force is : %f Y-Axis force is: %f\n", index,
+    // x_axis_force,
+    //        y_axis_force);
 
     ball_1->applied_force.x += x_axis_force * g_force;
     ball_1->applied_force.y += y_axis_force * g_force;
