@@ -21,7 +21,13 @@ int main(int argc, char** argv)
     circle1->base.velocity.x = 100;
     circle2->base.velocity.x = 100;
     circle3->base.velocity.x = 100;
-
+    circle1->base.color_state = RED;
+    circle2->base.color_state = RED;
+    circle3->base.color_state = RED;
+    Color color = {255, 0, 0};
+    circle1->base.color = color;
+    circle2->base.color = color;
+    circle3->base.color = color;
     // Add the Circles to the game_objects array
     add_game_object((GameObject*)circle1);
     add_game_object((GameObject*)circle2);

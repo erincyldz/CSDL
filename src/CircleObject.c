@@ -129,7 +129,8 @@ void update_circle(void* self, float delta_time)
             // Exit the loop as the current object (`self`) has been removed
             break;
         }
-        update_color(self, delta_time);
     }
+
+    update_color(self, delta_time);
     // TODO: apply the gravitational force to the object
 }
