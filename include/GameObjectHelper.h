@@ -2,9 +2,10 @@
 #define OBJECT_HELPER_H
 #include <math.h>
 
+#define COLOR_CHANGE_SCALAR 500
+
 // forward declaration
 typedef struct GameObject GameObject;
-// Forward declaration of CircleObject
 typedef struct CircleObject CircleObject;
 
 typedef enum
@@ -16,6 +17,11 @@ typedef enum
     GREEN,
     YELLOW,
 } OBJECT_COLOR_STATE;
+
+typedef struct
+{
+    int r, g, b;
+} Color;
 
 typedef struct
 {
