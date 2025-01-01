@@ -14,14 +14,12 @@ void border_collision_detection(void* self, float delta_time)
         if (circle->base.position.x - circle->radius < 0 ||
             circle->base.position.x + circle->radius > WINDOW_WIDTH)
         {
-            circle->base.position.x = fmaxf(
-                circle->radius, fminf(circle->base.position.x, WINDOW_WIDTH - circle->radius));
+            circle->base.velocity.x *= -1;
         }
         if (circle->base.position.y - circle->radius < 0 ||
             circle->base.position.y + circle->radius > WINDOW_HEIGHT)
         {
-            circle->base.position.y = fmaxf(
-                circle->radius, fminf(circle->base.position.y, WINDOW_HEIGHT - circle->radius));
+            circle->base.velocity.y *= -1;
         }
     }
     else if (obj->type == RECTANGLE)
