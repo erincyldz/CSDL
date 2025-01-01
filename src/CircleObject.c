@@ -11,6 +11,7 @@ void init_circle(CircleObject* circle, const char* name, float x, float y, float
     circle->base.update = update_circle;
     circle->base.collides_with = check_collision;
     circle->base.destroy = destroy_circle;
+    circle->base.update_color = update_color;
     circle->radius = fmaxf(
         MIN_RADIUS, fminf(radius, MAX_RADIUS));  // Clamp radius between MIN_RADIUS and MAX_RADIUS
 }
@@ -41,6 +42,8 @@ void draw_circle(void* self, SDL_Renderer* renderer)
     int dx = 1;
     int dy = 1;
     int err = dx - (radius << 1);
+    SDL_SetRenderDrawColor(renderer, circle->base.color.r, circle->base.color.g,
+                           circle->base.color.b, 255);
 
     while (x >= y)
     {
@@ -90,6 +93,7 @@ void update_circle(void* self, float delta_time)
     //  check the object_collisions with other objects by using check_collision
     for (size_t i = 0; i < game_object_count; i++)
     {
+        // TODO: implement gravitational force calculations
         if (game_objects[i] == self)
             continue;
         if (circle->base.collides_with(self, game_objects[i]))
@@ -125,5 +129,7 @@ void update_circle(void* self, float delta_time)
             // Exit the loop as the current object (`self`) has been removed
             break;
         }
+        update_color(self, delta_time);
     }
+    // TODO: apply the gravitational force to the object
 }
