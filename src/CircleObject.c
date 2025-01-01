@@ -18,7 +18,13 @@ void init_circle(CircleObject* circle, const char* name, float x, float y, float
 // Circle Destruction Function
 void destroy_circle(void* self)
 {
-    free(self);  // Free the memory
+    if (!self)
+    {
+        fprintf(stderr, "Attempt to destroy a NULL pointer\n");
+        return;
+    }
+    // printf("Freeing CircleObject at %p named %s\n", self, ((CircleObject*)self)->base.name);
+    free(self);  // Free dynamically allocated memory
 }
 
 // Circle Drawing Function
@@ -76,8 +82,7 @@ void draw_circle(void* self, SDL_Renderer* renderer)
 // Circle Update Function
 void update_circle(void* self, float delta_time)
 {
-    printf("Circle Update\n");
-
+    // printf("Circle Update\n");
     CircleObject* circle = (CircleObject*)self;  // Cast to Circle
     circle->base.position.x += circle->base.velocity.x * delta_time;
     circle->base.position.y += circle->base.velocity.y * delta_time;
@@ -89,10 +94,36 @@ void update_circle(void* self, float delta_time)
             continue;
         if (circle->base.collides_with(self, game_objects[i]))
         {
-            // TODO: destroy the objects
+            printf("Collision detected between %s and %s\n", circle->base.name,
+                   game_objects[i]->name);
 
-            // circle->base.destroy(self);
-            // game_objects[i]->destroy(game_objects[i]);
+            // Destroy both objects
+            circle->base.destroy(self);
+            game_objects[i]->destroy(game_objects[i]);
+
+            // Remove game    // Remove both objects from the game_objects array
+            for (size_t j = i; j < game_object_count - 1; j++)
+            {
+                game_objects[j] = game_objects[j + 1];
+            }
+            game_object_count--;
+
+            // Remove `self` from the array
+            for (size_t j = 0; j < game_object_count; j++)
+            {
+                if (game_objects[j] == self)
+                {
+                    for (size_t k = j; k < game_object_count - 1; k++)
+                    {
+                        game_objects[k] = game_objects[k + 1];
+                    }
+                    game_object_count--;
+                    break;
+                }
+            }
+
+            // Exit the loop as the current object (`self`) has been removed
+            break;
         }
     }
 }
