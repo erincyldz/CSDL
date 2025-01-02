@@ -5,7 +5,7 @@ namespace game::object
 RectObject::RectObject(int width, int height, std::string& logger_name)
     : GameObject(logger_name), m_width(width), m_height(height)
 {
-    m_type = ObjectType::RECTANGLE;
+    m_type = helper::ObjectType::RECTANGLE;
 };
 
 std::pair<int, int> RectObject::getDimensions() const
