@@ -5,6 +5,7 @@
 #include <BallHelper.h>
 #include <CircleObject.h>
 #include <MathHelper.h>
+#include <RectObject.h>
 #include <Render.h>
 
 #define CENTER_X WINDOW_WIDTH / 2

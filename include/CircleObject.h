@@ -13,8 +13,7 @@ typedef struct CircleObject
     float radius;     // Circle-specific property
 } CircleObject;
 
-void init_circle(CircleObject* circle, const char* name, float x, float y, float radius);
-void draw_circle(void* self, SDL_Renderer* renderer);
+void init_circle(CircleObject* circle, float x, float y, float radius);
 void update_circle(void* self, float delta_time);
 void destroy_circle(void* self);
 

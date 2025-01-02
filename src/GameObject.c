@@ -41,7 +41,7 @@ void update_color(void* self, float delta_time)
                 game_object->color_state = BLUE;
                 break;
             }
-            if (game_object->color.r >= 0)
+            if (game_object->color.r <= 0)
             {
                 game_object->color.r = 0;
                 game_object->color_state = BLUE;

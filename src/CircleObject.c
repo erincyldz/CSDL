@@ -1,13 +1,11 @@
 #include <CircleObject.h>
 
 // Circle Initialization Function
-void init_circle(CircleObject* circle, const char* name, float x, float y, float radius)
+void init_circle(CircleObject* circle, float x, float y, float radius)
 {
-    strcpy(circle->base.name, name);  // Initialize GameObject name
     circle->base.position.x = x;
     circle->base.position.y = y;
-    circle->base.type = CIRCLE;       // Set type to CIRCLE
-    circle->base.draw = draw_circle;  // Assign draw function
+    circle->base.type = CIRCLE;  // Set type to CIRCLE
     circle->base.update = update_circle;
     circle->base.collides_with = check_collision;
     circle->base.destroy = destroy_circle;
@@ -28,60 +26,6 @@ void destroy_circle(void* self)
     free(self);  // Free dynamically allocated memory
 }
 
-// Circle Drawing Function
-void draw_circle(void* self, SDL_Renderer* renderer)
-{
-    CircleObject* circle = (CircleObject*)self;  // Cast to Circle
-    int centerX = (int)circle->base.position.x;
-    int centerY = (int)circle->base.position.y;
-    int radius = (int)circle->radius;
-
-    // Bresenham's Circle Algorithm
-    int x = radius - 1;
-    int y = 0;
-    int dx = 1;
-    int dy = 1;
-    int err = dx - (radius << 1);
-    SDL_SetRenderDrawColor(renderer, circle->base.color.r, circle->base.color.g,
-                           circle->base.color.b, 255);
-
-    while (x >= y)
-    {
-        SDL_RenderDrawPoint(renderer, centerX + x, centerY + y);
-        SDL_RenderDrawPoint(renderer, centerX + y, centerY + x);
-        SDL_RenderDrawPoint(renderer, centerX - y, centerY + x);
-        SDL_RenderDrawPoint(renderer, centerX - x, centerY + y);
-        SDL_RenderDrawPoint(renderer, centerX - x, centerY - y);
-        SDL_RenderDrawPoint(renderer, centerX - y, centerY - x);
-        SDL_RenderDrawPoint(renderer, centerX + y, centerY - x);
-        SDL_RenderDrawPoint(renderer, centerX + x, centerY - y);
-
-        if (err <= 0)
-        {
-            y++;
-            err += dy;
-            dy += 2;
-        }
-        if (err > 0)
-        {
-            x--;
-            dx += 2;
-            err += dx - (radius << 1);
-        }
-    }
-    // fill the circle
-    for (int i = -radius; i <= radius; i++)
-    {
-        for (int j = -radius; j <= radius; j++)
-        {
-            if (i * i + j * j <= radius * radius)
-            {
-                SDL_RenderDrawPoint(renderer, centerX + i, centerY + j);
-            }
-        }
-    }
-}
-
 // Circle Update Function
 void update_circle(void* self, float delta_time)
 {
@@ -98,9 +42,6 @@ void update_circle(void* self, float delta_time)
             continue;
         if (circle->base.collides_with(self, game_objects[i]))
         {
-            printf("Collision detected between %s and %s\n", circle->base.name,
-                   game_objects[i]->name);
-
             // Destroy both objects
             circle->base.destroy(self);
             game_objects[i]->destroy(game_objects[i]);

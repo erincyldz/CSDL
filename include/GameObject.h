@@ -4,7 +4,7 @@
 #include <GameObjectHelper.h>
 #include <SDL2/SDL.h>
 
-#define MAX_GAME_OBJECTS 5
+#define MAX_GAME_OBJECTS 10
 
 typedef enum
 {
@@ -20,20 +20,16 @@ typedef struct
 // Base Object Struct
 typedef struct GameObject
 {
-    char name[50];
     Vector2 position;
     Vector2 velocity;
-    // Force applied_force;
     float mass;
-    GameObjectType type;             // Type of the object
-    OBJECT_COLOR_STATE color_state;  // Color state of the object
+    GameObjectType type;
+    OBJECT_COLOR_STATE color_state;
     Color color;
-    void (*draw)(void* self, SDL_Renderer* renderer);  // Function pointer for drawing
-    void (*update)(void* self, float delta_time);      // Function pointer for updating
+    void (*update)(void* self, float delta_time);
     int (*collides_with)(struct GameObject* self, struct GameObject* other);
     void (*destroy)(void* self);
     void (*update_color)(void* self, float delta_time);
-
 } GameObject;
 
 // Declare an array to store pointers to GameObjects

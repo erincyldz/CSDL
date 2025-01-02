@@ -1,10 +1,8 @@
 #ifndef RENDER_H
 #define RENDER_H
-#include <Ball.h>
-#include <BallHelper.h>
-#include <CircleObject.h>
+// #include <Ball.h>
+// #include <BallHelper.h>
 #include <Engine.h>
-#include <GameObject.h>
 #include <SDL2/SDL.h>
 #include <main.h>
 #include <stdbool.h>
@@ -25,5 +23,8 @@ void process_input();
 void update();
 void render();
 void destroy_window();
-
+void draw_game_objects();
+void draw_circle_object(int center_x, int center_y, int radius, float r, float g, float b);
+void draw_rect_object(int top_left_x, int top_left_y, int width, int height, float r, float g,
+                      float b);
 #endif  // RENDER_H

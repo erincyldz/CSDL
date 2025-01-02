@@ -1,6 +1,7 @@
-#include <CircleObject.h>
-#include <GameObject.h>  // Include here to access GameObject definition, fuck you C
+#include <CircleObject.h>  // Include here to access CircleObject
+#include <GameObject.h>    // Include here to access GameObject definition, fuck you C
 #include <GameObjectHelper.h>
+#include <RectObject.h>  // Include here to access RectObject
 
 extern int WINDOW_WIDTH;
 extern int WINDOW_HEIGHT;
@@ -8,6 +9,10 @@ extern int WINDOW_HEIGHT;
 void border_collision_detection(void* self, float delta_time)
 {
     GameObject* obj = (GameObject*)self;
+    // print the game object address
+    printf("GameObject address: %p,\tpos_x: %f,\tpos_y: %f\n", (void*)obj, obj->position.x,
+           obj->position.y);
+
     if (obj->type == CIRCLE)
     {
         CircleObject* circle = (CircleObject*)obj;
@@ -24,15 +29,15 @@ void border_collision_detection(void* self, float delta_time)
     }
     else if (obj->type == RECTANGLE)
     {
-        // Rect* rect = (Rect*)obj;
-        // if (rect->base.position.x < 0 || rect->base.position.x > WINDOW_WIDTH)
-        // {
-        //     rect->base.position.x = fmaxf(0, fminf(rect->base.position.x, WINDOW_WIDTH));
-        // }
-        // if (rect->base.position.y < 0 || rect->base.position.y > WINDOW_HEIGHT)
-        // {
-        //     rect->base.position.y = fmaxf(0, fminf(rect->base.position.y, WINDOW_HEIGHT));
-        // }
+        RectObject* rect = (RectObject*)obj;
+        if (rect->base.position.x < 0 || rect->base.position.x + rect->width > WINDOW_WIDTH)
+        {
+            rect->base.velocity.x *= -1;
+        }
+        if (rect->base.position.y < 0 || rect->base.position.y + rect->height > WINDOW_HEIGHT)
+        {
+            rect->base.velocity.y *= -1;
+        }
     }
 }
 
