@@ -5,7 +5,7 @@
 #include <SDL2/SDL.h>
 #include <stdexcept>
 #include <string>
-namespace sdl
+namespace game::sdl
 {
 class SDLHelper
 {
@@ -45,5 +45,5 @@ class SDLHelper
     // Timing
     Uint32 m_lastFrameTime;
 };
-}  // namespace sdl
+}  // namespace game::sdl
 #endif  // SDL_HELPER_HPP
