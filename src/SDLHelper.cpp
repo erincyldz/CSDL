@@ -71,15 +71,50 @@ void SDLHelper::handleEvents()
     SDL_Event event;
     while (SDL_PollEvent(&event))
     {
-        if (event.type == SDL_QUIT)
-            m_isRunning = false;
+        switch (event.type)
+        {
+            case SDL_QUIT:
+                m_isRunning = false;
+                std::cout << "[SDL_QUIT] quitted" << std::endl;
+                break;
+
+            case SDL_KEYDOWN:
+                switch (event.key.keysym.sym)
+                {
+                    case SDLK_ESCAPE:
+                        m_isRunning = false;
+                        std::cout << "[Q] quitted" << std::endl;
+                        break;
+
+                    case SDLK_q:
+                        // TODO: add random game object
+                        break;
+
+                    default:
+                        break;
+                }
+
+            default:
+                break;
+        }
     }
 }
 
 // Update game state
 void SDLHelper::update(float deltaTime)
 {
-    // Add update logic if needed
+    int time_to_wait = FRAME_TARGET_TIME - (SDL_GetTicks() - m_lastFrameTime);
+    if (time_to_wait > 0 && time_to_wait <= FRAME_TARGET_TIME)
+    {
+        SDL_Delay(time_to_wait);
+    }
+    m_deltaTime = (SDL_GetTicks() - m_lastFrameTime) / DELTA_TIME_COFACTOR;
+
+    // TODO: call the update function for each game_objects
+    //  for(size_t i = 0; i < game_objects.size(); i++)
+    //  {
+    //      game_objects[i]->update(m_deltaTime);
+    //  }
 }
 
 // Render the scene
@@ -88,9 +123,7 @@ void SDLHelper::render()
     SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);  // Black background
     SDL_RenderClear(m_renderer);
 
-    // Draw shapes
-    drawCircle(m_windowWidth / 2, m_windowHeight / 2, 50, {255, 0, 0, 255});  // Red circle
-    drawRectangle(100, 100, 200, 150, {0, 255, 0, 255});                      // Green rectangle
+    // Draw game objects
 
     SDL_RenderPresent(m_renderer);
 }
@@ -98,6 +131,7 @@ void SDLHelper::render()
 // Draw a circle
 void SDLHelper::drawCircle(int x, int y, int radius, SDL_Color color)
 {
+    // Midpoint circle algorithm
     SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
 
     for (int w = 0; w < radius * 2; w++)
@@ -121,4 +155,29 @@ void SDLHelper::drawRectangle(int x, int y, int width, int height, SDL_Color col
     SDL_Rect rect = {x, y, width, height};
     SDL_RenderFillRect(m_renderer, &rect);
 }
-}  // namespace game::sdl
+
+
+void SDLHelper::drawGameObjects()
+{
+    // for (size_t i = 0; i < game_objects.size(); i++)
+    // {
+    //     switch (game_objects[i]->get_type())
+    //     {
+    //         case GameObjectType::CIRCLE:
+    //             drawCircle(game_objects[i]->get_x(), game_objects[i]->get_y(),
+    //                        game_objects[i]->get_radius(), game_objects[i]->get_color());
+    //             break;
+
+    //         case GameObjectType::RECTANGLE:
+    //             drawRectangle(game_objects[i]->get_x(), game_objects[i]->get_y(),
+    //                           game_objects[i]->get_width(), game_objects[i]->get_height(),
+    //                           game_objects[i]->get_color());
+    //             break;
+
+    //         default:
+    //             break;
+    //     }
+    // }
+}
+
+}  // namespace sdl
