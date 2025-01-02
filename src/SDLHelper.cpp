@@ -2,7 +2,7 @@
 
 #include <cmath>
 #include <iostream>
-namespace sdl
+namespace game::sdl
 {
 // Constructor
 SDLHelper::SDLHelper(const std::string& title, int width, int height, std::string& logger_name)
@@ -155,6 +155,7 @@ void SDLHelper::drawRectangle(int x, int y, int width, int height, SDL_Color col
     SDL_Rect rect = {x, y, width, height};
     SDL_RenderFillRect(m_renderer, &rect);
 }
+
 
 void SDLHelper::drawGameObjects()
 {

@@ -19,5 +19,8 @@ int main(int argc, char* argv[])
     }
     std::string sdl_logger = "SDLLOGGER";
     sdl::SDLHelper sdl("Test", WINDOW_WIDTH, WINDOW_HEIGHT, sdl_logger);
+    game::object::CircleObject c(3, sdl_logger);
+    game::object::RectObject r(3, 5, sdl_logger);
+    std::cout << r.get_object_count() << std::endl;
     sdl.run();
 }
