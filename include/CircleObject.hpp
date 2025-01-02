@@ -9,6 +9,7 @@ class CircleObject : public GameObject
     CircleObject(float rad, std::string& logger_name);
     float getRadius();
     void tellRadius();
+    void update(float delta_time) override;  // Use `override` for safety
 
   private:
     void setRadius(float rad);
