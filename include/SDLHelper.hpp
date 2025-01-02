@@ -7,6 +7,10 @@
 #include <string>
 namespace sdl
 {
+#define DELTA_TIME_COFACTOR 1000.0f
+#define FPS                 30
+#define FRAME_TARGET_TIME   (1000 / FPS)
+
 class SDLHelper
 {
   public:
@@ -29,6 +33,7 @@ class SDLHelper
     // Utility
     void drawCircle(int x, int y, int radius, SDL_Color color);
     void drawRectangle(int x, int y, int width, int height, SDL_Color color);
+    void drawGameObjects();
 
     ClassLogger m_logger;
 
@@ -41,6 +46,7 @@ class SDLHelper
     bool m_isRunning;
     int m_windowWidth;
     int m_windowHeight;
+    float m_deltaTime;
 
     // Timing
     Uint32 m_lastFrameTime;
