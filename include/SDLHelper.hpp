@@ -5,7 +5,7 @@
 #include <SDL2/SDL.h>
 #include <stdexcept>
 #include <string>
-namespace sdl
+namespace game::sdl
 {
 #define DELTA_TIME_COFACTOR 1000.0f
 #define FPS                 30
@@ -51,5 +51,5 @@ class SDLHelper
     // Timing
     Uint32 m_lastFrameTime;
 };
-}  // namespace sdl
+}  // namespace game::sdl
 #endif  // SDL_HELPER_HPP

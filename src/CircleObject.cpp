@@ -6,7 +6,7 @@ namespace game::object
 CircleObject::CircleObject(float rad, std::string& logger_name)
     : GameObject(logger_name), m_radius(rad)
 {
-    m_type = ObjectType::CIRCLE;
+    m_type = helper::ObjectType::CIRCLE;
 };
 
 float CircleObject::getRadius()
