@@ -33,18 +33,38 @@ SDLHelper::~SDLHelper()
 }
 
 // Run the main loop
-void SDLHelper::run()
+void SDLHelper::run(const std::vector<std::unique_ptr<game::object::GameObject>>& gameObjects)
 {
-    while (m_isRunning)
-    {
-        Uint32 currentFrameTime = SDL_GetTicks();
-        float deltaTime = (currentFrameTime - m_lastFrameTime) / 1000.0f;
-        m_lastFrameTime = currentFrameTime;
+    update();
+    handleEvents();
 
-        handleEvents();
-        update(deltaTime);
-        render();
+    SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
+    SDL_RenderClear(m_renderer);
+
+    for (const auto& obj : gameObjects)
+    {
+        switch (obj->get_type())
+        {
+            case game::object::helper::ObjectType::CIRCLE:
+                // drawCircle(obj->get_x(), obj->get_y(), obj->get_radius(), obj->get_color());
+                drawCircle(100, 100, 50,
+                           {
+                               static_cast<Uint8>(obj->get_color().r),
+                               static_cast<Uint8>(obj->get_color().g),
+                               static_cast<Uint8>(obj->get_color().b),
+                               255  // Fully opaque
+                           });
+                break;
+
+            case game::object::helper::ObjectType::RECTANGLE:
+                break;
+
+            default:
+                break;
+        }
     }
+
+    SDL_RenderPresent(m_renderer);
 }
 
 // Initialize SDL
@@ -52,6 +72,11 @@ void SDLHelper::initSDL()
 {
     if (SDL_Init(SDL_INIT_VIDEO) != 0)
         throw std::runtime_error("Failed to initialize SDL: " + std::string(SDL_GetError()));
+}
+
+bool SDLHelper::isRunning() const
+{
+    return m_isRunning;
 }
 
 // Cleanup SDL
@@ -75,7 +100,6 @@ void SDLHelper::handleEvents()
         {
             case SDL_QUIT:
                 m_isRunning = false;
-                std::cout << "[SDL_QUIT] quitted" << std::endl;
                 break;
 
             case SDL_KEYDOWN:
@@ -83,7 +107,6 @@ void SDLHelper::handleEvents()
                 {
                     case SDLK_ESCAPE:
                         m_isRunning = false;
-                        std::cout << "[Q] quitted" << std::endl;
                         break;
 
                     case SDLK_q:
@@ -101,7 +124,7 @@ void SDLHelper::handleEvents()
 }
 
 // Update game state
-void SDLHelper::update(float deltaTime)
+void SDLHelper::update()
 {
     int time_to_wait = FRAME_TARGET_TIME - (SDL_GetTicks() - m_lastFrameTime);
     if (time_to_wait > 0 && time_to_wait <= FRAME_TARGET_TIME)
@@ -109,12 +132,6 @@ void SDLHelper::update(float deltaTime)
         SDL_Delay(time_to_wait);
     }
     m_deltaTime = (SDL_GetTicks() - m_lastFrameTime) / DELTA_TIME_COFACTOR;
-
-    // TODO: call the update function for each game_objects
-    //  for(size_t i = 0; i < game_objects.size(); i++)
-    //  {
-    //      game_objects[i]->update(m_deltaTime);
-    //  }
 }
 
 // Render the scene
@@ -156,7 +173,6 @@ void SDLHelper::drawRectangle(int x, int y, int width, int height, SDL_Color col
     SDL_RenderFillRect(m_renderer, &rect);
 }
 
-
 void SDLHelper::drawGameObjects()
 {
     // for (size_t i = 0; i < game_objects.size(); i++)
@@ -180,4 +196,9 @@ void SDLHelper::drawGameObjects()
     // }
 }
 
-}  // namespace sdl
+float SDLHelper::getDeltaTime()
+{
+    return m_deltaTime;
+}
+
+}  // namespace game::sdl

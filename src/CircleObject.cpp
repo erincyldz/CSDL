@@ -23,4 +23,12 @@ void CircleObject::tellRadius()
 {
     m_logger.info("Radius is : {}", this->m_radius);
 }
+
+void CircleObject::update(float delta_time)
+{
+    update_color(delta_time);
+    m_pos.x += m_velocity.x * delta_time;
+    m_pos.y += m_velocity.y * delta_time;
+}
+
 }  // namespace game::object

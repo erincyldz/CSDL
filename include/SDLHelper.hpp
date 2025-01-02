@@ -2,9 +2,12 @@
 #define SDL_HELPER_HPP
 
 #include <ClassLogger.hpp>
+#include <GameObject.hpp>
 #include <SDL2/SDL.h>
+#include <memory>
 #include <stdexcept>
 #include <string>
+#include <vector>
 namespace game::sdl
 {
 #define DELTA_TIME_COFACTOR 1000.0f
@@ -18,7 +21,9 @@ class SDLHelper
     ~SDLHelper();
 
     // Main loop
-    void run();
+    void run(const std::vector<std::unique_ptr<game::object::GameObject>>& gameObjects);
+    float getDeltaTime();
+    bool isRunning() const;
 
   protected:
     // Initialization and cleanup
@@ -27,7 +32,7 @@ class SDLHelper
 
     // Event handling
     void handleEvents();
-    void update(float deltaTime);
+    void update();
     void render();
 
     // Utility

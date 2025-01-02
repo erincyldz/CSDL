@@ -2,7 +2,6 @@
 int game_object_count = 0;
 namespace game::object
 {
-int GameObject::s_instanceCounter = 0;
 void GameObject::update_color(float delta_time)
 {
     switch (this->m_color_state)
@@ -96,8 +95,10 @@ void GameObject::update_color(float delta_time)
             break;
     }
 }
-int GameObject::get_object_count()
+
+helper::ObjectType GameObject::get_type() const
 {
-    return s_instanceCounter;
+    return m_type;
 }
+
 }  // namespace game::object
