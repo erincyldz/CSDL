@@ -31,7 +31,7 @@ void RectObject::update(float delta_time, int screen_width, int screen_height,
     m_pos.x += m_velocity.x * delta_time;
     m_pos.y += m_velocity.y * delta_time;
     border_collision(screen_width, screen_height);
-    collision_detection(std::move(other_objects));
+    collides_with(std::move(other_objects));
 }
 
 bool RectObject::border_collision(int screen_width, int screen_height)
@@ -63,6 +63,10 @@ bool RectObject::border_collision(int screen_width, int screen_height)
     }
     return false;
 }
+
+bool RectObject::collides_with(const std::vector<game::object::GameObject*>& other_objects)
+{
+    bool is_collision = false;
     for (auto& obj : other_objects)
     {
         if (obj->m_type == game::object::ObjectType::RECTANGLE)
@@ -73,9 +77,10 @@ bool RectObject::border_collision(int screen_width, int screen_height)
                   this->m_pos.y + this->m_height < rect->m_pos.y ||
                   rect->m_pos.y + rect->m_height < this->m_pos.y))
             {
+                m_logger.info("COLLISION WITH A RECTANGLE\n");
                 this->m_width /= 2;
                 this->m_height /= 2;
-                m_logger.info("COLLISION WITH A RECTANGLE\n");
+                is_collision = true;
             }
         }
         else
@@ -93,8 +98,10 @@ bool RectObject::border_collision(int screen_width, int screen_height)
 
                 this->m_velocity.x *= -1;
                 this->m_velocity.y *= -1;
+                is_collision = true;
             }
         }
     }
+    return is_collision;
 }
 }  // namespace game::object
