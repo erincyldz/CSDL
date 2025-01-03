@@ -1,5 +1,6 @@
 #include <CircleObject.hpp>
 #include <Game.hpp>
+#include <RectObject.hpp>
 namespace game
 {
 Game::Game() : m_sdl(nullptr) {}
@@ -8,7 +9,18 @@ void Game::run()
 {
     init();
     std::string loggerName = "CircleLogger";
-    addGameObject(std::make_unique<game::object::CircleObject>(50.0f, loggerName));
+    auto circle1 = std::make_unique<game::object::CircleObject>(50.0f, loggerName);
+    game::object::Position pos = {100.0f, 100.0f};
+    circle1->setVelocity({20.0f, 10.0f});
+    circle1->setPosition(pos);
+    addGameObject(std::move(circle1));
+
+    auto rect1 = std::make_unique<game::object::RectObject>(100.0f, 100.0f, loggerName);
+    pos = {200.0f, 200.0f};
+    rect1->setVelocity({10.0f, 20.0f});
+    rect1->setPosition(pos);
+    addGameObject(std::move(rect1));
+
     while (m_sdl->isRunning())
     {
         update();
