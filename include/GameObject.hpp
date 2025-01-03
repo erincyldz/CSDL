@@ -10,6 +10,9 @@ using Force = helper::Vector2_t;
 using Position = helper::Vector2_t;
 using Velocity = helper::Vector2_t;
 using Color = helper::Color_t;
+using ColorState = helper::ObjectColor;
+using ObjectType = helper::ObjectType;
+
 class GameObject
 {
   public:
@@ -27,11 +30,12 @@ class GameObject
     bool collision_detection(GameObject& obj);
     void destroy();
     void update_color(float delta_time);  // DONE
-    helper::ObjectType get_type() const;
-    Color get_color() const
-    {
-        return m_color;
-    }
+
+    void setVelocity(Velocity velocity);
+    void setPosition(Position pos);
+    ObjectType get_type() const;
+    Color get_color() const;
+    Position getPosition() const;
 
   protected:
     helper::ObjectType m_type;
@@ -40,7 +44,7 @@ class GameObject
     Position m_pos;
     float m_mass;
     Velocity m_velocity;
-    helper::ObjectColor m_color_state;
+    ColorState m_color_state;
     Color m_color;
 };
 }  // namespace game::object
