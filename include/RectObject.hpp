@@ -9,7 +9,8 @@ class RectObject : public GameObject
     RectObject(int width, int height, std::string& logger_name);
     std::pair<int, int> getDimensions() const;
     void tellRadius();
-    void update(float delta_time) override;
+    void update(float delta_time, int screen_width, int screen_height) override;
+    virtual bool collision_detection(int screen_width, int screen_height) override;
 
   private:
     void setDimensions(int width, int height);

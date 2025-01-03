@@ -55,7 +55,7 @@ void GameObject::update_color(float delta_time)
                 this->m_color_state = ColorState::GREEN;
                 break;
             }
-            if (this->m_color.b >= 0)
+            if (this->m_color.b <= 0)
             {
                 this->m_color.b = 0;
                 this->m_color_state = ColorState::GREEN;
