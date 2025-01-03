@@ -30,31 +30,39 @@ void RectObject::update(float delta_time, int screen_width, int screen_height,
     update_color(delta_time);
     m_pos.x += m_velocity.x * delta_time;
     m_pos.y += m_velocity.y * delta_time;
-    collision_detection(screen_width, screen_height, std::move(other_objects));
+    border_collision(screen_width, screen_height);
+    collision_detection(std::move(other_objects));
 }
-bool RectObject::collision_detection(int screen_width, int screen_height,
-                                     const std::vector<game::object::GameObject*>& other_objects)
+
+bool RectObject::border_collision(int screen_width, int screen_height)
 {
+
     if (this->m_pos.x < 0)
     {
         this->m_pos.x = 0;
         this->m_velocity.x *= -1;
+        return true;
     }
     if (this->m_pos.x + this->m_width > screen_width)
     {
         this->m_pos.x = screen_width - this->m_width;
         this->m_velocity.x *= -1;
+        return true;
     }
     if (this->m_pos.y < 0)
     {
         this->m_pos.y = 0;
         this->m_velocity.y *= -1;
+        return true;
     }
     if (this->m_pos.y + this->m_height > screen_height)
     {
         this->m_pos.y = screen_height - this->m_height;
         this->m_velocity.y *= -1;
+        return true;
     }
+    return false;
+}
     for (auto& obj : other_objects)
     {
         if (obj->m_type == game::object::ObjectType::RECTANGLE)

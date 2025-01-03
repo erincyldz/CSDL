@@ -35,9 +35,9 @@ class GameObject
         float delta_time, int screen_width, int screen_height,
         const std::vector<game::object::GameObject*>& other_objects) = 0;  // Pure virtual function
 
+    virtual bool border_collision(int screen_width, int screen_height) = 0;
     virtual bool
-        collision_detection(int screen_width, int screen_height,
-                            const std::vector<game::object::GameObject*>& other_objects) = 0;
+        collision_detection(const std::vector<game::object::GameObject*>& other_objects) = 0;
 
     void destroy();
     void update_color(float delta_time);  // DONE
