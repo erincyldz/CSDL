@@ -18,6 +18,7 @@ class RectObject : public GameObject
   private:
     void setDimensions(int width, int height);
     int m_width, m_height;
+    float m_rotation_rad;  // the angle of rotation in rad
 };
 }  // namespace game::object
 #endif
