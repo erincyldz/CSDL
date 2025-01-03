@@ -1,6 +1,8 @@
 #ifndef CIRCLE_OBJECT_H
 #define CIRCLE_OBJECT_H
 #include <GameObject.hpp>
+#include <RectObject.hpp>
+
 namespace game::object
 {
 class CircleObject : public GameObject
@@ -9,13 +11,16 @@ class CircleObject : public GameObject
     CircleObject(float rad, std::string& logger_name);
     float getRadius();
     void tellRadius();
-    void update(float delta_time, int screen_width,
-                int screen_height) override;  // Use `override` for safety
-    virtual bool collision_detection(int screen_width, int screen_height) override;
+    void update(float delta_time, int screen_width, int screen_height,
+                const std::vector<game::object::GameObject*>& other_objects)
+        override;  // Use `override` for safety
+    virtual bool
+        collision_detection(int screen_width, int screen_height,
+                            const std::vector<game::object::GameObject*>& other_objects) override;
+    float m_radius;
 
   private:
     void setRadius(float rad);
-    float m_radius;
 };
 }  // namespace game::object
 #endif

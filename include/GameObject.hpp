@@ -4,6 +4,9 @@
 #include "ClassLogger.hpp"
 #include "ObjectHelper.hpp"
 
+#include <algorithm>
+#include <memory>
+#include <vector>
 namespace game::object
 {
 using Force = helper::Vector2_t;
@@ -15,6 +18,7 @@ using ObjectType = helper::ObjectType;
 
 class GameObject
 {
+
   public:
     explicit GameObject(std::string& logger_name) : m_logger(logger_name)
     {
@@ -26,23 +30,28 @@ class GameObject
         m_pos = {0.0f, 0.0f};
     };
     virtual ~GameObject() {}
-    virtual void update(float delta_time, int screen_width,
-                        int screen_height) = 0;  // Pure virtual function
-    virtual bool collision_detection(int screen_width, int screen_height) = 0;
+
+    virtual void update(
+        float delta_time, int screen_width, int screen_height,
+        const std::vector<game::object::GameObject*>& other_objects) = 0;  // Pure virtual function
+
+    virtual bool
+        collision_detection(int screen_width, int screen_height,
+                            const std::vector<game::object::GameObject*>& other_objects) = 0;
+
     void destroy();
     void update_color(float delta_time);  // DONE
-
     void setVelocity(Velocity velocity);
     void setPosition(Position pos);
     ObjectType get_type() const;
     Color get_color() const;
     Position getPosition() const;
+    helper::ObjectType m_type;
+    Position m_pos;
 
   protected:
-    helper::ObjectType m_type;
     ClassLogger m_logger;
     Force m_force;
-    Position m_pos;
     float m_mass;
     Velocity m_velocity;
     ColorState m_color_state;

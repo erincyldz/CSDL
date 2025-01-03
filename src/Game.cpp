@@ -58,7 +58,16 @@ void Game::update()
     auto screenDim = m_sdl->getScreenDim();
     for (auto& object : gameObjects)
     {
-        object->update(m_sdl->getDeltaTime(), screenDim.first, screenDim.second);
+        std::vector<game::object::GameObject*> filtered_objects;
+        for (const auto& other : gameObjects)
+        {
+            if (other.get() != object.get())
+            {
+                filtered_objects.push_back(other.get());
+            }
+        }
+        object->update(m_sdl->getDeltaTime(), screenDim.first, screenDim.second,
+                       std::move(filtered_objects));
     }
 }
 
