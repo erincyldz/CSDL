@@ -23,4 +23,12 @@ void RectObject::tellRadius()
 {
     m_logger.error("Width is : {} \t Height is : {}", this->m_width, this->m_height);
 }
+
+void RectObject::update(float delta_time)
+{
+    update_color(delta_time);
+    m_pos.x += m_velocity.x * delta_time;
+    m_pos.y += m_velocity.y * delta_time;
+}
+
 }  // namespace game::object
