@@ -1,4 +1,6 @@
+#include <CircleObject.hpp>
 #include <GameObject.hpp>
+#include <RectObject.hpp>
 int game_object_count = 0;
 namespace game::object
 {
@@ -115,4 +117,59 @@ Position GameObject::getPosition() const
 {
     return m_pos;
 }
+
+bool GameObject::is_colliding_with(const GameObject& other) const
+{
+    if (this->m_type == ObjectType::CIRCLE && other.m_type == ObjectType::CIRCLE)
+    {
+        // Circle-Circle collision
+        float dx = this->m_pos.x - other.m_pos.x;
+        float dy = this->m_pos.y - other.m_pos.y;
+        float distance = std::sqrt(dx * dx + dy * dy);
+        float combinedRadii = static_cast<const CircleObject*>(this)->m_radius +
+                              static_cast<const CircleObject*>(&other)->m_radius;
+        return distance < combinedRadii;
+        return distance < combinedRadii;
+    }
+    else if (this->m_type == ObjectType::RECTANGLE && other.m_type == ObjectType::RECTANGLE)
+    {
+        // Rectangle-Rectangle collision (AABB)
+        const RectObject* rect1 = static_cast<const RectObject*>(this);
+        const RectObject* rect2 = static_cast<const RectObject*>(&other);
+        int rect_1_width = rect1->getDimensions().first;
+        int rect_1_height = rect1->getDimensions().second;
+        int rect_2_width = rect2->getDimensions().first;
+        int rect_2_height = rect2->getDimensions().second;
+
+        return !(rect1->m_pos.x + rect_1_width < rect2->m_pos.x ||
+                 rect1->m_pos.x > rect2->m_pos.x + rect_2_width ||
+                 rect1->m_pos.y + rect_1_height < rect2->m_pos.y ||
+                 rect1->m_pos.y > rect2->m_pos.y + rect_2_height);
+    }
+    else if (this->m_type == ObjectType::CIRCLE && other.m_type == ObjectType::RECTANGLE)
+    {
+        // Circle-Rectangle collision
+        const CircleObject* circle = static_cast<const CircleObject*>(this);
+        const RectObject* rect = static_cast<const RectObject*>(&other);
+        int rect_width = rect->getDimensions().first;
+        int rect_height = rect->getDimensions().second;
+        float nearestX =
+            std::max(rect->m_pos.x, std::min(circle->m_pos.x, rect->m_pos.x + rect_width));
+        float nearestY =
+            std::max(rect->m_pos.y, std::min(circle->m_pos.y, rect->m_pos.y + rect_height));
+
+        float dx = circle->m_pos.x - nearestX;
+        float dy = circle->m_pos.y - nearestY;
+
+        return (dx * dx + dy * dy) < (circle->m_radius * circle->m_radius);
+    }
+    else if (this->m_type == ObjectType::RECTANGLE && other.m_type == ObjectType::CIRCLE)
+    {
+        // Rectangle-Circle collision (reusing the logic by swapping)
+        return other.is_colliding_with(*this);
+    }
+
+    return false;  // Default: no collision
+}
+
 }  // namespace game::object

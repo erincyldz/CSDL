@@ -5,6 +5,7 @@
 #include "ObjectHelper.hpp"
 
 #include <algorithm>
+#include <cmath>
 #include <memory>
 #include <vector>
 namespace game::object
@@ -15,6 +16,10 @@ using Velocity = helper::Vector2_t;
 using Color = helper::Color_t;
 using ColorState = helper::ObjectColor;
 using ObjectType = helper::ObjectType;
+
+// forward declaration
+class CircleObject;
+class RectObject;
 
 class GameObject
 {
@@ -38,6 +43,7 @@ class GameObject
 
     virtual bool border_collision(int screen_width, int screen_height) = 0;
     virtual bool collides_with(const std::vector<game::object::GameObject*>& other_objects) = 0;
+    bool is_colliding_with(const GameObject& other) const;
 
     void destroy();
     void update_color(float delta_time);  // DONE
