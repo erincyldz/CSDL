@@ -36,28 +36,17 @@ void CircleObject::update(float delta_time, int screen_width, int screen_height,
 
 bool CircleObject::border_collision(int screen_width, int screen_height)
 {
-    if (this->m_pos.x - m_radius < 0)
+    if (m_pos.x - m_radius < 0 || m_pos.x + m_radius > screen_width)
     {
-        this->m_pos.x = m_radius;
-        this->m_velocity.x *= -1;
+        m_velocity.x = -m_velocity.x;                                      // Reverse x velocity
+        m_pos.x = std::clamp(m_pos.x, m_radius, screen_width - m_radius);  // Keep within bounds
         return true;
     }
-    if (this->m_pos.x + this->m_radius > screen_width)
+
+    if (m_pos.y - m_radius < 0 || m_pos.y + m_radius > screen_height)
     {
-        this->m_pos.x = screen_width - this->m_radius;
-        this->m_velocity.x *= -1;
-        return true;
-    }
-    if (this->m_pos.y - m_radius < 0)
-    {
-        this->m_pos.y = m_radius;
-        this->m_velocity.y *= -1;
-        return true;
-    }
-    if (this->m_pos.y + this->m_radius > screen_height)
-    {
-        this->m_pos.y = screen_height - this->m_radius;
-        this->m_velocity.y *= -1;
+        m_velocity.y = -m_velocity.y;                                       // Reverse y velocity
+        m_pos.y = std::clamp(m_pos.y, m_radius, screen_height - m_radius);  // Keep within bounds
         return true;
     }
     return false;
