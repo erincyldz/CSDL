@@ -171,12 +171,12 @@ void SDLHelper::drawGameObjects(
 {
     for (const auto& obj : gameObjects)
     {
-        game::object::Position pos;
+        game::object::Position pos = obj->getPosition();
 
         switch (obj->get_type())
         {
             case game::object::helper::ObjectType::CIRCLE:
-                obj->getPosition(pos);
+                // TODO: need to be implemented
                 drawCircle(pos.x, pos.y, 50,
                            {
                                static_cast<Uint8>(obj->get_color().r),
@@ -187,7 +187,7 @@ void SDLHelper::drawGameObjects(
                 break;
 
             case game::object::helper::ObjectType::RECTANGLE:
-                obj->getPosition(pos);
+                // TODO: need to be implemented
                 drawRectangle(pos.x, pos.y, 100, 100,
                               {
                                   static_cast<Uint8>(obj->get_color().r),
