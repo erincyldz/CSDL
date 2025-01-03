@@ -12,9 +12,8 @@ class RectObject : public GameObject
     void tellRadius();
     void update(float delta_time, int screen_width, int screen_height,
                 const std::vector<game::object::GameObject*>& other_objects) override;
-    virtual bool
-        collision_detection(int screen_width, int screen_height,
-                            const std::vector<game::object::GameObject*>& other_objects) override;
+    bool border_collision(int screen_width, int screen_height) override;
+    bool collision_detection(const std::vector<game::object::GameObject*>& other_objects) override;
 
   private:
     void setDimensions(int width, int height);
