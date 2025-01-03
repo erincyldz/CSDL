@@ -129,7 +129,6 @@ bool GameObject::is_colliding_with(const GameObject& other) const
         float combinedRadii = static_cast<const CircleObject*>(this)->m_radius +
                               static_cast<const CircleObject*>(&other)->m_radius;
         return distance < combinedRadii;
-        return distance < combinedRadii;
     }
     else if (this->m_type == ObjectType::RECTANGLE && other.m_type == ObjectType::RECTANGLE)
     {
