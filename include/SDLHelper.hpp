@@ -24,6 +24,7 @@ class SDLHelper
     void run(const std::vector<std::unique_ptr<game::object::GameObject>>& gameObjects);
     float getDeltaTime();
     bool isRunning() const;
+    std::pair<int, int> getScreenDim();
 
   protected:
     // Initialization and cleanup

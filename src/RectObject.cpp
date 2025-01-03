@@ -24,11 +24,34 @@ void RectObject::tellRadius()
     m_logger.error("Width is : {} \t Height is : {}", this->m_width, this->m_height);
 }
 
-void RectObject::update(float delta_time)
+void RectObject::update(float delta_time, int screen_width, int screen_height)
 {
     update_color(delta_time);
     m_pos.x += m_velocity.x * delta_time;
     m_pos.y += m_velocity.y * delta_time;
+    collision_detection(screen_width, screen_height);
 }
-
+bool RectObject::collision_detection(int screen_width, int screen_height)
+{
+    if (this->m_pos.x < 0)
+    {
+        this->m_pos.x = 0;
+        this->m_velocity.x *= -1;
+    }
+    if (this->m_pos.x + this->m_width > screen_width)
+    {
+        this->m_pos.x = screen_width - this->m_width;
+        this->m_velocity.x *= -1;
+    }
+    if (this->m_pos.y < 0)
+    {
+        this->m_pos.y = 0;
+        this->m_velocity.y *= -1;
+    }
+    if (this->m_pos.y + this->m_height > screen_height)
+    {
+        this->m_pos.y = screen_height - this->m_height;
+        this->m_velocity.y *= -1;
+    }
+}
 }  // namespace game::object

@@ -26,8 +26,9 @@ class GameObject
         m_pos = {0.0f, 0.0f};
     };
     virtual ~GameObject() {}
-    virtual void update(float delta_time) = 0;  // Pure virtual function
-    bool collision_detection(GameObject& obj);
+    virtual void update(float delta_time, int screen_width,
+                        int screen_height) = 0;  // Pure virtual function
+    virtual bool collision_detection(int screen_width, int screen_height) = 0;
     void destroy();
     void update_color(float delta_time);  // DONE
 

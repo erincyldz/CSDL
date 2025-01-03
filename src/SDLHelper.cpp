@@ -207,5 +207,8 @@ float SDLHelper::getDeltaTime()
 {
     return m_deltaTime;
 }
-
+std::pair<int, int> SDLHelper::getScreenDim()
+{
+    return std::pair<int, int>(m_windowWidth, m_windowHeight);
+}
 }  // namespace game::sdl
