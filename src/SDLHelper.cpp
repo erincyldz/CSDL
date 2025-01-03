@@ -13,7 +13,7 @@ SDLHelper::SDLHelper(const std::string& title, int width, int height, std::strin
     initSDL();
 
     m_window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-                                width, height, SDL_WINDOW_SHOWN);
+                                width, height, SDL_WINDOW_RESIZABLE);
     if (!m_window)
         throw std::runtime_error("Failed to create window: " + std::string(SDL_GetError()));
 
@@ -41,28 +41,7 @@ void SDLHelper::run(const std::vector<std::unique_ptr<game::object::GameObject>>
     SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
     SDL_RenderClear(m_renderer);
 
-    for (const auto& obj : gameObjects)
-    {
-        switch (obj->get_type())
-        {
-            case game::object::helper::ObjectType::CIRCLE:
-                // drawCircle(obj->get_x(), obj->get_y(), obj->get_radius(), obj->get_color());
-                drawCircle(100, 100, 50,
-                           {
-                               static_cast<Uint8>(obj->get_color().r),
-                               static_cast<Uint8>(obj->get_color().g),
-                               static_cast<Uint8>(obj->get_color().b),
-                               255  // Fully opaque
-                           });
-                break;
-
-            case game::object::helper::ObjectType::RECTANGLE:
-                break;
-
-            default:
-                break;
-        }
-    }
+    render(gameObjects);
 
     SDL_RenderPresent(m_renderer);
 }
@@ -102,6 +81,19 @@ void SDLHelper::handleEvents()
                 m_isRunning = false;
                 break;
 
+            case SDL_WINDOWEVENT:
+                switch (event.window.event)
+                {
+                    case SDL_WINDOWEVENT_RESIZED:
+                        m_windowWidth = event.window.data1;
+                        m_windowHeight = event.window.data2;
+                        break;
+
+                    default:
+                        break;
+                }
+                break;
+
             case SDL_KEYDOWN:
                 switch (event.key.keysym.sym)
                 {
@@ -132,15 +124,16 @@ void SDLHelper::update()
         SDL_Delay(time_to_wait);
     }
     m_deltaTime = (SDL_GetTicks() - m_lastFrameTime) / DELTA_TIME_COFACTOR;
+    m_lastFrameTime = SDL_GetTicks();
 }
 
 // Render the scene
-void SDLHelper::render()
+void SDLHelper::render(const std::vector<std::unique_ptr<game::object::GameObject>>& gameObjects)
 {
     SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);  // Black background
     SDL_RenderClear(m_renderer);
 
-    // Draw game objects
+    drawGameObjects(gameObjects);
 
     SDL_RenderPresent(m_renderer);
 }
@@ -173,27 +166,41 @@ void SDLHelper::drawRectangle(int x, int y, int width, int height, SDL_Color col
     SDL_RenderFillRect(m_renderer, &rect);
 }
 
-void SDLHelper::drawGameObjects()
+void SDLHelper::drawGameObjects(
+    const std::vector<std::unique_ptr<game::object::GameObject>>& gameObjects)
 {
-    // for (size_t i = 0; i < game_objects.size(); i++)
-    // {
-    //     switch (game_objects[i]->get_type())
-    //     {
-    //         case GameObjectType::CIRCLE:
-    //             drawCircle(game_objects[i]->get_x(), game_objects[i]->get_y(),
-    //                        game_objects[i]->get_radius(), game_objects[i]->get_color());
-    //             break;
+    for (const auto& obj : gameObjects)
+    {
+        game::object::Position pos;
 
-    //         case GameObjectType::RECTANGLE:
-    //             drawRectangle(game_objects[i]->get_x(), game_objects[i]->get_y(),
-    //                           game_objects[i]->get_width(), game_objects[i]->get_height(),
-    //                           game_objects[i]->get_color());
-    //             break;
+        switch (obj->get_type())
+        {
+            case game::object::helper::ObjectType::CIRCLE:
+                obj->getPosition(pos);
+                drawCircle(pos.x, pos.y, 50,
+                           {
+                               static_cast<Uint8>(obj->get_color().r),
+                               static_cast<Uint8>(obj->get_color().g),
+                               static_cast<Uint8>(obj->get_color().b),
+                               255  // Fully opaque
+                           });
+                break;
 
-    //         default:
-    //             break;
-    //     }
-    // }
+            case game::object::helper::ObjectType::RECTANGLE:
+                obj->getPosition(pos);
+                drawRectangle(pos.x, pos.y, 100, 100,
+                              {
+                                  static_cast<Uint8>(obj->get_color().r),
+                                  static_cast<Uint8>(obj->get_color().g),
+                                  static_cast<Uint8>(obj->get_color().b),
+                                  255  // Fully opaque
+                              });
+                break;
+
+            default:
+                break;
+        }
+    }
 }
 
 float SDLHelper::getDeltaTime()

@@ -33,12 +33,12 @@ class SDLHelper
     // Event handling
     void handleEvents();
     void update();
-    void render();
+    void render(const std::vector<std::unique_ptr<game::object::GameObject>>& gameObjects);
 
     // Utility
     void drawCircle(int x, int y, int radius, SDL_Color color);
     void drawRectangle(int x, int y, int width, int height, SDL_Color color);
-    void drawGameObjects();
+    void drawGameObjects(const std::vector<std::unique_ptr<game::object::GameObject>>& gameObjects);
 
     ClassLogger m_logger;
 
