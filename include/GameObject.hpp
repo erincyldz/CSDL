@@ -42,7 +42,6 @@ class GameObject
         const std::vector<game::object::GameObject*>& other_objects) = 0;  // Pure virtual function
 
     virtual bool border_collision(int screen_width, int screen_height) = 0;
-    virtual bool collides_with(const std::vector<game::object::GameObject*>& other_objects) = 0;
     bool is_colliding_with(const GameObject& other) const;
 
     void destroy();

@@ -15,7 +15,6 @@ class CircleObject : public GameObject
                 const std::vector<game::object::GameObject*>& other_objects)
         override;  // Use `override` for safety
     bool border_collision(int screen_width, int screen_height) override;
-    bool collides_with(const std::vector<game::object::GameObject*>& other_objects) override;
     float m_radius;
 
   private:
