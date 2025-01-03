@@ -13,7 +13,6 @@ class RectObject : public GameObject
     void update(float delta_time, int screen_width, int screen_height,
                 const std::vector<game::object::GameObject*>& other_objects) override;
     bool border_collision(int screen_width, int screen_height) override;
-    bool collides_with(const std::vector<game::object::GameObject*>& other_objects) override;
 
   private:
     void setDimensions(int width, int height);
