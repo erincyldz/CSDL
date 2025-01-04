@@ -9,6 +9,7 @@ class CircleObject : public GameObject
 {
   public:
     CircleObject(float rad, std::string& logger_name);
+    CircleObject(std::string& logger_name);
     float getRadius();
     void tellRadius();
     void update(float delta_time, int screen_width,
