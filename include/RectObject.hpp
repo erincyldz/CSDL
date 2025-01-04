@@ -15,9 +15,9 @@ class RectObject : public GameObject
     bool border_collision(int screen_width, int screen_height) override;
     int get_width() const;
     int get_height() const;
+    void setDimensions(int width, int height);
 
   private:
-    void setDimensions(int width, int height);
     int m_width, m_height;
     float m_rotation_rad;  // the angle of rotation in rad
 };
