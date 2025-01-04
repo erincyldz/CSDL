@@ -194,27 +194,40 @@ bool GameObject::is_colliding_with(const GameObject& other) const
 
 void GameObject::on_collision(GameObject& other)
 {
-    // Placeholder for collision handling
-    m_logger.info("Collision detected between objects");
-    // Simplified elastic collision response
+    // Calculate normal vector between objects
     float normalX = other.m_pos.x - this->m_pos.x;
     float normalY = other.m_pos.y - this->m_pos.y;
     float magnitude = std::sqrt(normalX * normalX + normalY * normalY);
+
+    // Prevent division by zero or exact overlap
+    if (magnitude == 0.0f)
+    {
+        magnitude = 0.01f;
+        normalX = 1.0f;
+        normalY = 0.0f;
+    }
+
     normalX /= magnitude;
     normalY /= magnitude;
 
+    // Relative velocity
     float relativeVelocityX = other.m_velocity.x - this->m_velocity.x;
     float relativeVelocityY = other.m_velocity.y - this->m_velocity.y;
 
+    // Project the relative velocity onto the collision normal
     float velocityAlongNormal = relativeVelocityX * normalX + relativeVelocityY * normalY;
 
+    // Skip resolving if objects are separating
     if (velocityAlongNormal > 0)
-        return;  // Objects are separating
+        return;
 
+    // Coefficient of restitution (bounciness)
     float e = std::min(this->m_restitution, other.m_restitution);
 
+    // Calculate impulse scalar
     float impulse = (-(1 + e) * velocityAlongNormal) / (1 / this->m_mass + 1 / other.m_mass);
 
+    // Apply impulse along the normal
     float impulseX = impulse * normalX;
     float impulseY = impulse * normalY;
 
