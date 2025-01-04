@@ -1,6 +1,10 @@
 #include <CircleObject.hpp>
 #include <Game.hpp>
 #include <RectObject.hpp>
+#include <random>  // For modern random number generation
+
+#define PI 3.14159265358979323846
+
 #define WINDOW_WIDTH  800
 #define WINDOW_HEIGHT 600
 namespace game
@@ -37,13 +41,76 @@ void Game::addGameObject(std::unique_ptr<game::object::GameObject> obj)
 
 void Game::addRandomGameObject()
 {
-    // TODO: Implement this function
-    std::string loggerName = "RandomCircleObjectLogger";
-    auto circle = std::make_unique<game::object::CircleObject>(loggerName);
-    loggerName = "RandomRectObjectLogger";
-    auto rect = std::make_unique<game::object::RectObject>(loggerName);
-    addGameObject(std::move(circle));
-    addGameObject(std::move(rect));
+    // get a random number between 0 and 1
+    // Create a random number generator
+    static std::random_device rd;                                     // Seed
+    static std::mt19937 gen(rd());                                    // Mersenne Twister engine
+                                                                      // Define distributions
+    std::uniform_int_distribution<> randomX(10, WINDOW_WIDTH - 20);   // X position
+    std::uniform_int_distribution<> randomY(10, WINDOW_HEIGHT - 20);  // Y position
+
+    std::string loggerName;
+    // Create a random number between 0 and 1
+    float random = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+
+    if (random > 0.5f)
+    {
+        loggerName = "RandomCircleObjectLogger";
+        std::uniform_int_distribution<> randomRadius(10, 50);  // Radius between 10 and 50
+
+        auto circle = std::make_unique<game::object::CircleObject>(loggerName);
+        // Set properties
+        circle->setRadius(randomRadius(gen));
+        game::object::Position pos;
+        pos.x = randomX(gen);
+        pos.y = randomY(gen);
+        circle->setPosition(pos);
+        circle->setMass(PI * circle->getRadius() * circle->getRadius());
+
+        // Optionally, set velocity, color, or other properties
+        circle->setVelocity({
+            static_cast<float>(randomX(gen) % 100 - 200),  // Random velocity x: -50 to 50
+            static_cast<float>(randomY(gen) % 100 - 200)   // Random velocity y: -50 to 50
+        });
+        addGameObject(std::move(circle));
+    }
+    else
+    {
+        loggerName = "RandomRectObjectLogger";
+        std::uniform_int_distribution<> randomDimension(10, 50);  // Width/Height between 10 and 50
+
+        auto rect = std::make_unique<game::object::RectObject>(loggerName);
+        // Set properties
+        rect->setDimensions(randomDimension(gen), randomDimension(gen));
+        game::object::Position pos;
+        pos.x = randomX(gen);
+        pos.y = randomY(gen);
+        rect->setPosition(pos);
+        rect->setMass(rect->getDimensions().first * rect->getDimensions().second);
+        // Optionally, set velocity, color, or other properties
+        rect->setVelocity({
+            static_cast<float>(randomX(gen) % 100 - 200),  // Random velocity x: -50 to 50
+            static_cast<float>(randomY(gen) % 100 - 200)   // Random velocity y: -50 to 50
+        });
+
+        addGameObject(std::move(rect));
+    }
+}
+
+void Game::addRandomGameObject(int num_objects)
+{
+    if (num_objects <= 0)
+    {
+        return;
+    }
+    if (num_objects > MAX_GAME_OBJECTS)
+    {
+        num_objects = MAX_GAME_OBJECTS;
+    }
+    for (int i = 0; i < num_objects; ++i)
+    {
+        addRandomGameObject();
+    }
 }
 
 int Game::getObjectCount() const

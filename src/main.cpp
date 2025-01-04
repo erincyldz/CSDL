@@ -18,6 +18,6 @@ int main(int argc, char* argv[])
     }
 
     game::Game game;
-    game.addRandomGameObject();
+    game.addRandomGameObject(5);
     game.run();
 }
