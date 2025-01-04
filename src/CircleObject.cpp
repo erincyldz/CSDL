@@ -39,7 +39,7 @@ void CircleObject::tellRadius()
 
 void CircleObject::update(float delta_time, int screen_width, int screen_height)
 {
-    update_color(delta_time);
+    // update_color(delta_time);
     m_pos.x += m_velocity.x * delta_time;
     m_pos.y += m_velocity.y * delta_time;
     border_collision(screen_width, screen_height);
