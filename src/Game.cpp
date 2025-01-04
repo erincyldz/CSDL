@@ -27,6 +27,7 @@ void Game::run()
     {
         update();
         m_sdl->run(gameObjects);  // Pass game objects to SDLHelper for rendering
+        m_sdl->renderCollisionHighlights(m_collisionManager.get_active_collisions());
     }
     cleanup();
 }
