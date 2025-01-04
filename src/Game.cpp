@@ -14,6 +14,7 @@ Game::Game() : m_sdl(nullptr)
 
 void Game::run()
 {
+    m_sdl->m_sound->playMusic();
     while (m_sdl->isRunning())
     {
 

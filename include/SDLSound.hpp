@@ -9,41 +9,26 @@ class SDLHelper;
 
 namespace game::sdl::sound
 {
-// Interface Class for Sound class
-class ISound
+
+class Sound
 {
     friend class SDLHelper;
 
   public:
-    virtual ~ISound() {};
-
-    virtual void PlaySound() = 0;
-    virtual void StopSound() = 0;
-};
-
-class Sound : public ISound
-{
-    friend class SDLHelper;
-
-  public:
-    Sound(std::string filepath);
+    Sound();
     ~Sound();
-    void PlaySound();
-    void StopSound();
-    void SetupDevice();
-    void ClearSoundQueue();
     // Mixer Spesific methods.
     void initMixer();
     void quitMixer();
     int loadMusic(std::string musicPath);
     int loadSound(std::string soundPath);
     void setVolume(int v);
-    int playMusic(int m);
+    int playMusic();
     int playSound();
 
   private:
     int volume;
-    int sound_collision;
+    int sound_collision, game_music;
     SDL_AudioDeviceID m_device;
     std::vector<Mix_Chunk*> sounds;
     std::vector<Mix_Music*> music;
