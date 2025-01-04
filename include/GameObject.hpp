@@ -56,6 +56,7 @@ class GameObject
     ObjectType get_type() const;
     Color get_color() const;
     Position getPosition() const;
+    Velocity getVelocity() const;
     ObjectType m_type;
 
   protected:
