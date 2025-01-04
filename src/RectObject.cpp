@@ -27,6 +27,15 @@ std::pair<int, int> RectObject::getDimensions() const
     return std::pair<int, int>(m_width, m_height);
 }
 
+int RectObject::get_width() const
+{
+    return m_width;
+}
+int RectObject::get_height() const
+{
+    return m_height;
+}
+
 void RectObject::setDimensions(int width, int height)
 {
     m_width = width;

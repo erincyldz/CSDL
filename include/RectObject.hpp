@@ -13,6 +13,8 @@ class RectObject : public GameObject
     void tellRadius();
     void update(float delta_time, int screen_width, int screen_height) override;
     bool border_collision(int screen_width, int screen_height) override;
+    int get_width() const;
+    int get_height() const;
 
   private:
     void setDimensions(int width, int height);
