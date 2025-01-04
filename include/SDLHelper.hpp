@@ -43,8 +43,10 @@ class SDLHelper : public game::IRenderer
     void render(const std::vector<std::unique_ptr<game::object::GameObject>>& gameObjects);
 
     // Utility
-    void drawCircle(int x, int y, int radius, SDL_Color color);
-    void drawRectangle(int x, int y, int width, int height, SDL_Color color);
+    void drawCircleFill(int x, int y, int radius, SDL_Color color);
+    void drawCircleOutline(int x, int y, int radius, SDL_Color color, int thickness);
+    void drawRectangleFill(int x, int y, int width, int height, SDL_Color color);
+    void drawRectangleOutline(int x, int y, int width, int height, SDL_Color color, int thickness);
     void drawGameObjects(const std::vector<std::unique_ptr<game::object::GameObject>>& gameObjects);
 
     ClassLogger m_logger;
