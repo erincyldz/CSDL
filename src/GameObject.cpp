@@ -138,6 +138,10 @@ Position GameObject::getPosition() const
 {
     return m_pos;
 }
+Velocity GameObject::getVelocity() const
+{
+    return m_velocity;
+}
 
 bool GameObject::is_colliding_with(const GameObject& other) const
 {
