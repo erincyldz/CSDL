@@ -5,33 +5,13 @@
 #define WINDOW_HEIGHT 600
 namespace game
 {
-Game::Game() : m_sdl(nullptr) {}
+Game::Game() : m_sdl(nullptr)
+{
+    init();
+}
 
 void Game::run()
 {
-    init();
-    std::string logger1Name = "Circle1Logger";
-    auto circle1 = std::make_unique<game::object::CircleObject>(50.0f, logger1Name);
-    game::object::Position pos = {300.0f, 400.0f};
-    circle1->setVelocity({75.0f, -450.0f});
-    circle1->setPosition(pos);
-    circle1->setRestitution(1.0f);
-    circle1->setMass(10.f);
-    addGameObject(std::move(circle1));
-
-    std::string logger2Name = "Circle2Logger";
-
-    auto circle2 = std::make_unique<game::object::CircleObject>(50.0f, logger2Name);
-    pos = {600.0f, 400.0f};
-    circle2->setVelocity({-120.0f, 0.0f});
-    circle2->setPosition(pos);
-    circle2->setRestitution(1.0f);
-    circle2->setMass(1.0f);
-
-    addGameObject(std::move(circle2));
-
-    addRandomGameObject();
-
     while (m_sdl->isRunning())
     {
         update();
