@@ -36,7 +36,7 @@ void CircleObject::update(float delta_time, int screen_width, int screen_height,
     {
         if (is_colliding_with(*obj))
         {
-            std::cout << "Collision detected\n";
+            on_collision(*obj);
         }
     }
 }
