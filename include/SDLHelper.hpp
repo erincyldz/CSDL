@@ -9,11 +9,13 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
-namespace game::sdl
-{
+
 #define DELTA_TIME_COFACTOR 1000.0f
 #define FPS                 60
 #define FRAME_TARGET_TIME   (1000 / FPS)
+
+namespace game::sdl
+{
 
 class SDLHelper : public game::IRenderer
 {
