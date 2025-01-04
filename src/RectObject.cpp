@@ -24,8 +24,7 @@ void RectObject::tellRadius()
     m_logger.error("Width is : {} \t Height is : {}", this->m_width, this->m_height);
 }
 
-void RectObject::update(float delta_time, int screen_width, int screen_height,
-                        const std::vector<game::object::GameObject*>& other_objects)
+void RectObject::update(float delta_time, int screen_width, int screen_height)
 {
     update_color(delta_time);
     m_pos.x += m_velocity.x * delta_time;

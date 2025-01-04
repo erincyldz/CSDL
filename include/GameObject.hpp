@@ -37,9 +37,8 @@ class GameObject
     };
     virtual ~GameObject() {}
 
-    virtual void update(
-        float delta_time, int screen_width, int screen_height,
-        const std::vector<game::object::GameObject*>& other_objects) = 0;  // Pure virtual function
+    virtual void update(float delta_time, int screen_width,
+                        int screen_height) = 0;  // Pure virtual function
 
     virtual bool border_collision(int screen_width, int screen_height) = 0;
     bool is_colliding_with(const GameObject& other) const;

@@ -10,8 +10,7 @@ class RectObject : public GameObject
     RectObject(int width, int height, std::string& logger_name);
     std::pair<int, int> getDimensions() const;
     void tellRadius();
-    void update(float delta_time, int screen_width, int screen_height,
-                const std::vector<game::object::GameObject*>& other_objects) override;
+    void update(float delta_time, int screen_width, int screen_height) override;
     bool border_collision(int screen_width, int screen_height) override;
 
   private:
