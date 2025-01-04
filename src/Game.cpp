@@ -39,7 +39,7 @@ void Game::addRandomGameObject()
 {
     // TODO: Implement this function
     std::string loggerName = "RandomCircleObjectLogger";
-    auto circle = std::make_unique<game::object::CircleObject>(15.0f, loggerName);
+    auto circle = std::make_unique<game::object::CircleObject>(loggerName);
     loggerName = "RandomRectObjectLogger";
     auto rect = std::make_unique<game::object::RectObject>(loggerName);
     addGameObject(std::move(circle));
