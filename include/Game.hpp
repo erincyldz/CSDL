@@ -7,6 +7,7 @@
 #include <memory>
 #include <vector>
 
+#define MAX_GAME_OBJECTS 10
 namespace game
 {
 class Game
@@ -17,6 +18,7 @@ class Game
     void run();
     void addGameObject(std::unique_ptr<game::object::GameObject> obj);
     void addRandomGameObject();
+    void addRandomGameObject(int num_objects);
     int getObjectCount() const;  // Retrieve the count of game objects
 
   private:
