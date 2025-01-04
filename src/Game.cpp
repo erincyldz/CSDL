@@ -42,11 +42,11 @@ void Game::addRandomGameObject()
 {
     // get a random number between 0 and 1
     // Create a random number generator
-    static std::random_device rd;                                     // Seed
-    static std::mt19937 gen(rd());                                    // Mersenne Twister engine
-                                                                      // Define distributions
-    std::uniform_int_distribution<> randomX(10, WINDOW_WIDTH - 20);   // X position
-    std::uniform_int_distribution<> randomY(10, WINDOW_HEIGHT - 20);  // Y position
+    static std::random_device rd;                                       // Seed
+    static std::mt19937 gen(rd());                                      // Mersenne Twister engine
+                                                                        // Define distributions
+    std::uniform_int_distribution<> randomX(10, m_window_width - 20);   // X position
+    std::uniform_int_distribution<> randomY(10, m_window_height - 20);  // Y position
 
     std::string loggerName;
     // Create a random number between 0 and 1
