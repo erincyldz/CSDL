@@ -199,10 +199,9 @@ bool GameObject::is_colliding_with(const GameObject& other) const
 void GameObject::on_collision(GameObject& other)
 {
     // Calculate normal vector between objects
-    float normalX = other.m_pos.x - this->m_pos.x;
-    float normalY = other.m_pos.y - this->m_pos.y;
-    float magnitude = std::sqrt(normalX * normalX + normalY * normalY);
-
+    double normalX = other.m_pos.x - this->m_pos.x;
+    double normalY = other.m_pos.y - this->m_pos.y;
+    double magnitude = std::sqrt(normalX * normalX + normalY * normalY);
     // Prevent division by zero or exact overlap
     if (magnitude == 0.0f)
     {
@@ -215,25 +214,23 @@ void GameObject::on_collision(GameObject& other)
     normalY /= magnitude;
 
     // Relative velocity
-    float relativeVelocityX = other.m_velocity.x - this->m_velocity.x;
-    float relativeVelocityY = other.m_velocity.y - this->m_velocity.y;
+    double relativeVelocityX = other.m_velocity.x - this->m_velocity.x;
+    double relativeVelocityY = other.m_velocity.y - this->m_velocity.y;
 
     // Project the relative velocity onto the collision normal
-    float velocityAlongNormal = relativeVelocityX * normalX + relativeVelocityY * normalY;
+    double velocityAlongNormal = relativeVelocityX * normalX + relativeVelocityY * normalY;
 
     // Skip resolving if objects are separating
     if (velocityAlongNormal > 0)
         return;
 
-    // Coefficient of restitution (bounciness)
-    float e = std::min(this->m_restitution, other.m_restitution);
-
+    double e = std::min(this->m_restitution, other.m_restitution);
     // Calculate impulse scalar
-    float impulse = (-(1 + e) * velocityAlongNormal) / (1 / this->m_mass + 1 / other.m_mass);
+    double impulse = (-(1 + e) * velocityAlongNormal) / (1 / this->m_mass + 1 / other.m_mass);
 
     // Apply impulse along the normal
-    float impulseX = impulse * normalX;
-    float impulseY = impulse * normalY;
+    double impulseX = impulse * normalX;
+    double impulseY = impulse * normalY;
 
     this->m_velocity.x -= impulseX / this->m_mass;
     this->m_velocity.y -= impulseY / this->m_mass;
