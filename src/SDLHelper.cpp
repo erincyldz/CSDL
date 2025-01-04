@@ -1,5 +1,7 @@
 #include "SDLHelper.hpp"
 
+#include <CircleObject.hpp>
+#include <RectObject.hpp>
 #include <cmath>
 #include <iostream>
 namespace game::sdl
@@ -211,26 +213,32 @@ void SDLHelper::drawGameObjects(
         switch (obj->get_type())
         {
             case game::object::helper::ObjectType::CIRCLE:
-                // TODO: need to be implemented
-                drawCircle(pos.x, pos.y, 50,
-                           {
-                               static_cast<Uint8>(obj->get_color().r),
-                               static_cast<Uint8>(obj->get_color().g),
-                               static_cast<Uint8>(obj->get_color().b),
-                               255  // Fully opaque
-                           });
+                // Safely cast to CircleObject
+                if (auto* circle = dynamic_cast<game::object::CircleObject*>(obj.get()))
+                {
+                    int radius = static_cast<int>(circle->getRadius());
+                    drawCircleFill(pos.x, pos.y, radius,
+                                   {
+                                       static_cast<Uint8>(obj->get_color().r),
+                                       static_cast<Uint8>(obj->get_color().g),
+                                       static_cast<Uint8>(obj->get_color().b),
+                                       255  // Fully opaque
+                                   });
+                }
                 break;
 
             case game::object::helper::ObjectType::RECTANGLE:
-                // TODO: need to be implemented
-                drawRectangle(pos.x, pos.y, 100, 100,
-                              {
-                                  static_cast<Uint8>(obj->get_color().r),
-                                  static_cast<Uint8>(obj->get_color().g),
-                                  static_cast<Uint8>(obj->get_color().b),
-                                  255  // Fully opaque
-                              });
-                break;
+                // Safely cast to CircleObject
+                if (auto* rect = dynamic_cast<game::object::RectObject*>(obj.get()))
+                {
+                    drawRectangleFill(pos.x, pos.y, rect->get_width(), rect->get_height(),
+                                      {
+                                          static_cast<Uint8>(obj->get_color().r),
+                                          static_cast<Uint8>(obj->get_color().g),
+                                          static_cast<Uint8>(obj->get_color().b),
+                                          255  // Fully opaque
+                                      });
+                }
 
             default:
                 break;
