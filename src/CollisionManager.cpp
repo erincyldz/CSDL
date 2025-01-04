@@ -28,6 +28,20 @@ void CollisionManager::resolve_collisions(
                 // Track the colliding pair
                 currentCollisions.emplace_back(objects[i].get(), objects[j].get());
             }
+            else
+            {
+                activeCollisions.erase(
+                    std::remove_if(activeCollisions.begin(), activeCollisions.end(),
+                                   [&](const std::pair<game::object::GameObject*,
+                                                       game::object::GameObject*>& pair)
+                                   {
+                                       return (pair.first == objects[i].get() &&
+                                               pair.second == objects[j].get()) ||
+                                              (pair.first == objects[j].get() &&
+                                               pair.second == objects[i].get());
+                                   }),
+                    activeCollisions.end());
+            }
         }
     }
 

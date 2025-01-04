@@ -5,11 +5,11 @@
 #include <GameObject.hpp>
 #include <IRenderer.hpp>
 #include <SDL2/SDL.h>
+#include <SDLSound.hpp>
 #include <memory>
 #include <stdexcept>
 #include <string>
 #include <vector>
-
 #define DELTA_TIME_COFACTOR 1000.0f
 #define FPS                 60
 #define FRAME_TARGET_TIME   (1000 / FPS)
@@ -46,9 +46,9 @@ class SDLHelper : public game::IRenderer
 
     // Utility
     void drawCircleFill(int x, int y, int radius, SDL_Color color);
-    void drawCircleOutline(int x, int y, int radius, SDL_Color color, int thickness);
     void drawRectangleFill(int x, int y, int width, int height, SDL_Color color);
-    void drawRectangleOutline(int x, int y, int width, int height, SDL_Color color, int thickness);
+    void drawOutline(const game::object::RectObject& rect);
+    void drawOutline(const game::object::CircleObject& circle);
     void drawGameObjects(const std::vector<std::unique_ptr<game::object::GameObject>>& gameObjects);
 
     ClassLogger m_logger;
@@ -57,7 +57,7 @@ class SDLHelper : public game::IRenderer
     // SDL-related members
     SDL_Window* m_window;
     SDL_Renderer* m_renderer;
-
+    sound::Sound* m_sound;
     // Application state
     bool m_isRunning;
     int m_windowWidth;

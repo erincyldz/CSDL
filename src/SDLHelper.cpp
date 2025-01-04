@@ -42,6 +42,7 @@ void SDLHelper::present()
 // Run the main loop
 void SDLHelper::run(const std::vector<std::unique_ptr<game::object::GameObject>>& gameObjects)
 {
+
     update();
     handleEvents();
     SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
@@ -52,8 +53,11 @@ void SDLHelper::run(const std::vector<std::unique_ptr<game::object::GameObject>>
 // Initialize SDL
 void SDLHelper::initSDL()
 {
-    if (SDL_Init(SDL_INIT_VIDEO) != 0)
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0)
         throw std::runtime_error("Failed to initialize SDL: " + std::string(SDL_GetError()));
+    m_sound = new sound::Sound("./soundfiles/8bitCollision.wav");
+    // m_sound->SetupDevice();
+    m_sound->initMixer();
 }
 
 bool SDLHelper::isRunning() const
@@ -160,11 +164,32 @@ void SDLHelper::drawCircleFill(int x, int y, int radius, SDL_Color color)
         }
     }
 }
-
-void SDLHelper::drawCircleOutline(int x, int y, int radius, SDL_Color color, int thickness = 5)
+void SDLHelper::drawOutline(const game::object::RectObject& rect)
 {
-    SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
+    auto rect_color = rect.get_color();
+    auto rect_pos = rect.getPosition();
+    auto rect_width = rect.get_width();
+    auto rect_height = rect.get_height();
+    auto rect_dim = rect.getDimensions();
+    int thickness = 5;
+    SDL_SetRenderDrawColor(m_renderer, 255, 255, 0, 255);
 
+    for (int t = 0; t < thickness; ++t)
+    {
+        // Draw the rectangle with increasing thickness
+        SDL_Rect rect = {static_cast<int>(rect_pos.x - t), static_cast<int>(rect_pos.y - t),
+                         rect_width + 2 * t, rect_height + 2 * t};
+        SDL_RenderDrawRect(m_renderer, &rect);
+    }
+}
+
+void SDLHelper::drawOutline(const game::object::CircleObject& circle)
+{
+    auto circle_color = circle.get_color();
+    SDL_SetRenderDrawColor(m_renderer, 255, 255, 0, 255);
+    auto radius = circle.getRadius();
+    int thickness = 5;
+    auto circle_pos = circle.getPosition();
     for (int w = 0; w < radius * 2; w++)
     {
         for (int h = 0; h < radius * 2; h++)
@@ -177,7 +202,7 @@ void SDLHelper::drawCircleOutline(int x, int y, int radius, SDL_Color color, int
             if (distanceSquared <= (radius * radius) &&
                 distanceSquared >= ((radius - thickness) * (radius - thickness)))
             {
-                SDL_RenderDrawPoint(m_renderer, x + dx, y + dy);
+                SDL_RenderDrawPoint(m_renderer, circle_pos.x + dx, circle_pos.y + dy);
             }
         }
     }
@@ -189,19 +214,6 @@ void SDLHelper::drawRectangleFill(int x, int y, int width, int height, SDL_Color
     SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
     SDL_Rect rect = {x, y, width, height};
     SDL_RenderFillRect(m_renderer, &rect);
-}
-
-void SDLHelper::drawRectangleOutline(int x, int y, int width, int height, SDL_Color color,
-                                     int thickness = 5)
-{
-    SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
-
-    for (int t = 0; t < thickness; ++t)
-    {
-        // Draw the rectangle with increasing thickness
-        SDL_Rect rect = {x - t, y - t, width + 2 * t, height + 2 * t};
-        SDL_RenderDrawRect(m_renderer, &rect);
-    }
 }
 
 void SDLHelper::drawGameObjects(
@@ -263,24 +275,20 @@ void SDLHelper::renderCollisionHighlights(
     SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);  // Yellow
     for (const auto& collision : collisions)
     {
-        for (const auto* obj : {collision.first, collision.second})
+        for (auto* obj : {collision.first, collision.second})
         {
-            if (auto circle = dynamic_cast<const game::object::CircleObject*>(obj))
+
+            if (obj->m_type == game::object::ObjectType::CIRCLE)
             {
-                drawCircleOutline(static_cast<int>(circle->getPosition().x),
-                                  static_cast<int>(circle->getPosition().y),
-                                  static_cast<int>(circle->m_radius),
-                                  {color.r, color.g, color.b, color.a});
+                drawOutline(*(dynamic_cast<game::object::CircleObject*>(obj)));
             }
-            else if (auto rect = dynamic_cast<const game::object::RectObject*>(obj))
+            else if (obj->m_type == game::object::ObjectType::RECTANGLE)
             {
-                drawRectangleOutline(
-                    static_cast<int>(rect->getPosition().x),
-                    static_cast<int>(rect->getPosition().y), static_cast<int>(rect->get_width()),
-                    static_cast<int>(rect->get_height()), {color.r, color.g, color.b, color.a});
+                drawOutline(*(dynamic_cast<game::object::RectObject*>(obj)));
             }
         }
+        m_sound->playSound();
+        SDL_RenderPresent(m_renderer);  // Ensure changes are updated on the screen
     }
 }
-
 }  // namespace game::sdl
