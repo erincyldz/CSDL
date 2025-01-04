@@ -105,6 +105,27 @@ void GameObject::setPosition(Position pos)
 {
     m_pos = pos;
 }
+void GameObject::setRestitution(float restitution)
+{
+    m_restitution = restitution;
+}
+void GameObject::setMass(float mass)
+{
+    m_mass = mass;
+}
+void GameObject::setForce(Force force)
+{
+    m_force = force;
+}
+void GameObject::setColor(Color color)
+{
+    m_color = color;
+}
+void GameObject::setColorState(ColorState colorState)
+{
+    m_color_state = colorState;
+}
+
 ObjectType GameObject::get_type() const
 {
     return m_type;

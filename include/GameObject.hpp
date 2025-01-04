@@ -47,21 +47,26 @@ class GameObject
 
     void destroy();
     void update_color(float delta_time);  // DONE
-    void setVelocity(Velocity velocity);
     void setPosition(Position pos);
+    void setVelocity(Velocity velocity);
+    void setForce(Force force);
+    void setMass(float mass);
+    void setRestitution(float restitution);
+    void setColor(Color color);
+    void setColorState(ColorState colorState);
     ObjectType get_type() const;
     Color get_color() const;
     Position getPosition() const;
-    helper::ObjectType m_type;
-    Position m_pos;
+    ObjectType m_type;
 
   protected:
     ClassLogger m_logger;
-    Force m_force;
+    Position m_pos;
+    Velocity m_velocity;
     float m_mass;
     float m_restitution;  //  Coefficient of restitution (bounciness) for elastic/inelastic
                           //  collisions. 1.0 for perfectly elastic, 0.0 for perfectly inelastic.
-    Velocity m_velocity;
+    Force m_force;
     ColorState m_color_state;
     Color m_color;
 };
