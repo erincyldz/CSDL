@@ -22,7 +22,7 @@ CircleObject::CircleObject(std::string& logger_name) : GameObject(logger_name), 
     m_color_state = helper::ObjectColor::RED;
 };
 
-float CircleObject::getRadius()
+float CircleObject::getRadius() const
 {
     return m_radius;
 }

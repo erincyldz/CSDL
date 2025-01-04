@@ -10,7 +10,9 @@ class CircleObject : public GameObject
   public:
     CircleObject(float rad, std::string& logger_name);
     CircleObject(std::string& logger_name);
-    float getRadius();
+    float getRadius() const;
+    void setRadius(float rad);
+
     void tellRadius();
     void update(float delta_time, int screen_width,
                 int screen_height) override;  // Use `override` for safety
@@ -18,7 +20,6 @@ class CircleObject : public GameObject
     float m_radius;
 
   private:
-    void setRadius(float rad);
 };
 }  // namespace game::object
 #endif
