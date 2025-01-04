@@ -34,18 +34,19 @@ SDLHelper::~SDLHelper()
     cleanupSDL();
 }
 
+void SDLHelper::present()
+{
+    SDL_RenderPresent(m_renderer);
+}
+
 // Run the main loop
 void SDLHelper::run(const std::vector<std::unique_ptr<game::object::GameObject>>& gameObjects)
 {
     update();
     handleEvents();
-
     SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
     SDL_RenderClear(m_renderer);
-
     render(gameObjects);
-
-    SDL_RenderPresent(m_renderer);
 }
 
 // Initialize SDL
