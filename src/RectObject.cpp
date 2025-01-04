@@ -8,6 +8,20 @@ RectObject::RectObject(int width, int height, std::string& logger_name)
     m_type = helper::ObjectType::RECTANGLE;
 };
 
+RectObject::RectObject(std::string& logger_name) : GameObject(logger_name)
+{
+    m_width = 50;
+    m_height = 150;
+    m_type = helper::ObjectType::RECTANGLE;
+    m_color = {255, 0, 0};
+    m_mass = 1.0f;
+    m_force = {0.0f, 0.0f};
+    m_velocity = {0.0f, 0.0f};
+    m_pos = {350.0f, 250.0f};
+    m_restitution = 1.0f;
+    m_color_state = helper::ObjectColor::RED;
+}
+
 std::pair<int, int> RectObject::getDimensions() const
 {
     return std::pair<int, int>(m_width, m_height);
