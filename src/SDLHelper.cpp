@@ -211,4 +211,31 @@ std::pair<int, int> SDLHelper::getScreenDim()
 {
     return std::pair<int, int>(m_windowWidth, m_windowHeight);
 }
+
+void SDLHelper::renderCollisionHighlights(
+    const std::vector<std::pair<game::object::GameObject*, game::object::GameObject*>>& collisions)
+{
+    SDL_SetRenderDrawColor(m_renderer, 255, 255, 0, 255);  // Yellow
+    for (const auto& collision : collisions)
+    {
+        for (const auto* obj : {collision.first, collision.second})
+        {
+            if (auto circle = dynamic_cast<const game::object::CircleObject*>(obj))
+            {
+                drawCircleOutline(static_cast<int>(circle->getPosition().x),
+                                  static_cast<int>(circle->getPosition().y),
+                                  static_cast<int>(circle->m_radius), {255, 255, 0, 255});
+            }
+            else if (auto rect = dynamic_cast<const game::object::RectObject*>(obj))
+            {
+                drawRectangleOutline(static_cast<int>(rect->getPosition().x),
+                                     static_cast<int>(rect->getPosition().y),
+                                     static_cast<int>(rect->get_width()),
+                                     static_cast<int>(rect->get_height()), {255, 255, 0, 255});
+            }
+        }
+    }
+    SDL_RenderPresent(m_renderer);  // Ensure changes are updated on the screen
+}
+
 }  // namespace game::sdl

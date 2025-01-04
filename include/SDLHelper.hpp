@@ -3,6 +3,7 @@
 
 #include <ClassLogger.hpp>
 #include <GameObject.hpp>
+#include <IRenderer.hpp>
 #include <SDL2/SDL.h>
 #include <memory>
 #include <stdexcept>
@@ -14,7 +15,7 @@ namespace game::sdl
 #define FPS                 60
 #define FRAME_TARGET_TIME   (1000 / FPS)
 
-class SDLHelper
+class SDLHelper : public game::IRenderer
 {
   public:
     SDLHelper(const std::string& title, int width, int height, std::string& logger_name);
@@ -25,6 +26,9 @@ class SDLHelper
     float getDeltaTime();
     bool isRunning() const;
     std::pair<int, int> getScreenDim();
+    void renderCollisionHighlights(
+        const std::vector<std::pair<game::object::GameObject*, game::object::GameObject*>>&
+            collisions) override;
 
   protected:
     // Initialization and cleanup
