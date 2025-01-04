@@ -139,7 +139,7 @@ void SDLHelper::render(const std::vector<std::unique_ptr<game::object::GameObjec
 }
 
 // Draw a circle
-void SDLHelper::drawCircle(int x, int y, int radius, SDL_Color color)
+void SDLHelper::drawCircleFill(int x, int y, int radius, SDL_Color color)
 {
     // Midpoint circle algorithm
     SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
@@ -158,12 +158,47 @@ void SDLHelper::drawCircle(int x, int y, int radius, SDL_Color color)
     }
 }
 
+void SDLHelper::drawCircleOutline(int x, int y, int radius, SDL_Color color, int thickness = 5)
+{
+    SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
+
+    for (int w = 0; w < radius * 2; w++)
+    {
+        for (int h = 0; h < radius * 2; h++)
+        {
+            int dx = radius - w;
+            int dy = radius - h;
+            int distanceSquared = dx * dx + dy * dy;
+
+            // Check if the point lies within the outline range
+            if (distanceSquared <= (radius * radius) &&
+                distanceSquared >= ((radius - thickness) * (radius - thickness)))
+            {
+                SDL_RenderDrawPoint(m_renderer, x + dx, y + dy);
+            }
+        }
+    }
+}
+
 // Draw a rectangle
-void SDLHelper::drawRectangle(int x, int y, int width, int height, SDL_Color color)
+void SDLHelper::drawRectangleFill(int x, int y, int width, int height, SDL_Color color)
 {
     SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
     SDL_Rect rect = {x, y, width, height};
     SDL_RenderFillRect(m_renderer, &rect);
+}
+
+void SDLHelper::drawRectangleOutline(int x, int y, int width, int height, SDL_Color color,
+                                     int thickness = 5)
+{
+    SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
+
+    for (int t = 0; t < thickness; ++t)
+    {
+        // Draw the rectangle with increasing thickness
+        SDL_Rect rect = {x - t, y - t, width + 2 * t, height + 2 * t};
+        SDL_RenderDrawRect(m_renderer, &rect);
+    }
 }
 
 void SDLHelper::drawGameObjects(
