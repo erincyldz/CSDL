@@ -10,18 +10,27 @@ Game::Game() : m_sdl(nullptr) {}
 void Game::run()
 {
     init();
-    std::string loggerName = "CircleLogger";
-    auto circle1 = std::make_unique<game::object::CircleObject>(50.0f, loggerName);
-    game::object::Position pos = {100.0f, 100.0f};
-    circle1->setVelocity({200.0f, 100.0f});
+    std::string logger1Name = "Circle1Logger";
+    auto circle1 = std::make_unique<game::object::CircleObject>(50.0f, logger1Name);
+    game::object::Position pos = {300.0f, 400.0f};
+    circle1->setVelocity({75.0f, -450.0f});
     circle1->setPosition(pos);
+    circle1->setRestitution(1.0f);
+    circle1->setMass(10.f);
     addGameObject(std::move(circle1));
 
-    auto rect1 = std::make_unique<game::object::RectObject>(100.0f, 100.0f, loggerName);
-    pos = {200.0f, 200.0f};
-    rect1->setVelocity({100.0f, 200.0f});
-    rect1->setPosition(pos);
-    addGameObject(std::move(rect1));
+    std::string logger2Name = "Circle2Logger";
+
+    auto circle2 = std::make_unique<game::object::CircleObject>(50.0f, logger2Name);
+    pos = {600.0f, 400.0f};
+    circle2->setVelocity({-120.0f, 0.0f});
+    circle2->setPosition(pos);
+    circle2->setRestitution(1.0f);
+    circle2->setMass(1.0f);
+
+    addGameObject(std::move(circle2));
+
+    addRandomGameObject();
 
     while (m_sdl->isRunning())
     {
@@ -44,6 +53,17 @@ void Game::init()
 void Game::addGameObject(std::unique_ptr<game::object::GameObject> obj)
 {
     gameObjects.push_back(std::move(obj));
+}
+
+void Game::addRandomGameObject()
+{
+    // TODO: Implement this function
+    std::string loggerName = "RandomCircleObjectLogger";
+    auto circle = std::make_unique<game::object::CircleObject>(15.0f, loggerName);
+    loggerName = "RandomRectObjectLogger";
+    auto rect = std::make_unique<game::object::RectObject>(loggerName);
+    addGameObject(std::move(circle));
+    addGameObject(std::move(rect));
 }
 
 int Game::getObjectCount() const

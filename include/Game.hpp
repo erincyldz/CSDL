@@ -16,6 +16,7 @@ class Game
     ~Game() = default;  // Use default destructor since smart pointers handle cleanup
     void run();
     void addGameObject(std::unique_ptr<game::object::GameObject> obj);
+    void addRandomGameObject();
     int getObjectCount() const;  // Retrieve the count of game objects
 
   private:
