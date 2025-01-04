@@ -12,6 +12,7 @@ CircleObject::CircleObject(float rad, std::string& logger_name)
 CircleObject::CircleObject(std::string& logger_name) : GameObject(logger_name), m_radius(0.0f)
 {
     m_type = helper::ObjectType::CIRCLE;
+    m_radius = 50;
     m_color = {255, 0, 0};
     m_mass = 1.0f;
     m_force = {0.0f, 0.0f};
