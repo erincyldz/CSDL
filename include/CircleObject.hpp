@@ -11,9 +11,8 @@ class CircleObject : public GameObject
     CircleObject(float rad, std::string& logger_name);
     float getRadius();
     void tellRadius();
-    void update(float delta_time, int screen_width, int screen_height,
-                const std::vector<game::object::GameObject*>& other_objects)
-        override;  // Use `override` for safety
+    void update(float delta_time, int screen_width,
+                int screen_height) override;  // Use `override` for safety
     bool border_collision(int screen_width, int screen_height) override;
     float m_radius;
 

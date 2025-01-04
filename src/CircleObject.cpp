@@ -24,21 +24,12 @@ void CircleObject::tellRadius()
     m_logger.info("Radius is : {}", this->m_radius);
 }
 
-void CircleObject::update(float delta_time, int screen_width, int screen_height,
-                          const std::vector<game::object::GameObject*>& other_objects)
+void CircleObject::update(float delta_time, int screen_width, int screen_height)
 {
     update_color(delta_time);
     m_pos.x += m_velocity.x * delta_time;
     m_pos.y += m_velocity.y * delta_time;
     border_collision(screen_width, screen_height);
-
-    for (auto& obj : other_objects)
-    {
-        if (is_colliding_with(*obj))
-        {
-            on_collision(*obj);
-        }
-    }
 }
 
 bool CircleObject::border_collision(int screen_width, int screen_height)

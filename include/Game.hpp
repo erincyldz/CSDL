@@ -23,6 +23,7 @@ class Game
 
     std::unique_ptr<game::sdl::SDLHelper> m_sdl;
     std::vector<std::unique_ptr<game::object::GameObject>> gameObjects;  // Vector of game objects
+    game::engine::CollisionManager m_collisionManager;
 };
 }  // namespace game
 
