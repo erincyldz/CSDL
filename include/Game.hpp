@@ -1,6 +1,7 @@
 #ifndef GAME_H
 #define GAME_H
 #include <GameObject.hpp>
+#include <IRenderer.hpp>
 #include <SDLHelper.hpp>
 #include <memory>
 #include <vector>
