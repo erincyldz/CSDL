@@ -43,6 +43,7 @@ class GameObject
 
     virtual bool border_collision(int screen_width, int screen_height) = 0;
     bool is_colliding_with(const GameObject& other) const;
+    void on_collision(GameObject& other);
 
     void destroy();
     void update_color(float delta_time);  // DONE

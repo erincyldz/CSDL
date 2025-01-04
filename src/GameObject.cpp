@@ -171,4 +171,37 @@ bool GameObject::is_colliding_with(const GameObject& other) const
     return false;  // Default: no collision
 }
 
+void GameObject::on_collision(GameObject& other)
+{
+    // Placeholder for collision handling
+    m_logger.info("Collision detected between objects");
+    // Simplified elastic collision response
+    float normalX = other.m_pos.x - this->m_pos.x;
+    float normalY = other.m_pos.y - this->m_pos.y;
+    float magnitude = std::sqrt(normalX * normalX + normalY * normalY);
+    normalX /= magnitude;
+    normalY /= magnitude;
+
+    float relativeVelocityX = other.m_velocity.x - this->m_velocity.x;
+    float relativeVelocityY = other.m_velocity.y - this->m_velocity.y;
+
+    float velocityAlongNormal = relativeVelocityX * normalX + relativeVelocityY * normalY;
+
+    if (velocityAlongNormal > 0)
+        return;  // Objects are separating
+
+    float e = std::min(this->m_restitution, other.m_restitution);
+
+    float impulse = (-(1 + e) * velocityAlongNormal) / (1 / this->m_mass + 1 / other.m_mass);
+
+    float impulseX = impulse * normalX;
+    float impulseY = impulse * normalY;
+
+    this->m_velocity.x -= impulseX / this->m_mass;
+    this->m_velocity.y -= impulseY / this->m_mass;
+
+    other.m_velocity.x += impulseX / other.m_mass;
+    other.m_velocity.y += impulseY / other.m_mass;
+}
+
 }  // namespace game::object
