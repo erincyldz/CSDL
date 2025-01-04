@@ -23,6 +23,8 @@ class SDLHelper : public game::IRenderer
     SDLHelper(const std::string& title, int width, int height, std::string& logger_name);
     ~SDLHelper();
 
+    // rendering
+    void present();  // Call SDL_RenderPresent once here
     // Main loop
     void run(const std::vector<std::unique_ptr<game::object::GameObject>>& gameObjects);
     float getDeltaTime();
