@@ -23,6 +23,7 @@ enum class ObjectType
 typedef struct Color
 {
     int r, g, b;
+    int a;
 
 } Color_t;
 
