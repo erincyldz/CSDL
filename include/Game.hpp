@@ -1,5 +1,6 @@
 #ifndef GAME_H
 #define GAME_H
+#include <CollisionManager.hpp>
 #include <GameObject.hpp>
 #include <IRenderer.hpp>
 #include <SDLHelper.hpp>
