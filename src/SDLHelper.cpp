@@ -259,7 +259,8 @@ std::pair<int, int> SDLHelper::getScreenDim()
 void SDLHelper::renderCollisionHighlights(
     const std::vector<std::pair<game::object::GameObject*, game::object::GameObject*>>& collisions)
 {
-    SDL_SetRenderDrawColor(m_renderer, 255, 255, 0, 255);  // Yellow
+    SDL_Color color = {255, 255, 0, 255};                                    // Yellow
+    SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);  // Yellow
     for (const auto& collision : collisions)
     {
         for (const auto* obj : {collision.first, collision.second})
@@ -268,18 +269,18 @@ void SDLHelper::renderCollisionHighlights(
             {
                 drawCircleOutline(static_cast<int>(circle->getPosition().x),
                                   static_cast<int>(circle->getPosition().y),
-                                  static_cast<int>(circle->m_radius), {255, 255, 0, 255});
+                                  static_cast<int>(circle->m_radius),
+                                  {color.r, color.g, color.b, color.a});
             }
             else if (auto rect = dynamic_cast<const game::object::RectObject*>(obj))
             {
-                drawRectangleOutline(static_cast<int>(rect->getPosition().x),
-                                     static_cast<int>(rect->getPosition().y),
-                                     static_cast<int>(rect->get_width()),
-                                     static_cast<int>(rect->get_height()), {255, 255, 0, 255});
+                drawRectangleOutline(
+                    static_cast<int>(rect->getPosition().x),
+                    static_cast<int>(rect->getPosition().y), static_cast<int>(rect->get_width()),
+                    static_cast<int>(rect->get_height()), {color.r, color.g, color.b, color.a});
             }
         }
     }
-    SDL_RenderPresent(m_renderer);  // Ensure changes are updated on the screen
 }
 
 }  // namespace game::sdl
