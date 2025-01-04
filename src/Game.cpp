@@ -5,8 +5,6 @@
 
 #define PI 3.14159265358979323846
 
-#define WINDOW_WIDTH  800
-#define WINDOW_HEIGHT 600
 namespace game
 {
 Game::Game() : m_sdl(nullptr)
@@ -30,7 +28,7 @@ void Game::init()
     gameObjects = std::vector<std::unique_ptr<game::object::GameObject>>();
 
     std::string loggerName = "GameLogger";
-    m_sdl = std::make_unique<game::sdl::SDLHelper>("Game Title", WINDOW_WIDTH, WINDOW_HEIGHT,
+    m_sdl = std::make_unique<game::sdl::SDLHelper>("Game Title", m_window_width, m_window_height,
                                                    loggerName);
 }
 

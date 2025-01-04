@@ -20,6 +20,22 @@ class Game
     void addRandomGameObject();
     void addRandomGameObject(int num_objects);
     int getObjectCount() const;  // Retrieve the count of game objects
+    void setWindowWidth(int width)
+    {
+        m_window_width = width;
+    }
+    void setWindowHeight(int height)
+    {
+        m_window_height = height;
+    }
+    int getWindowWidth() const
+    {
+        return m_window_width;
+    }
+    int getWindowHeight() const
+    {
+        return m_window_height;
+    }
 
   private:
     void init();
@@ -29,6 +45,9 @@ class Game
     std::unique_ptr<game::sdl::SDLHelper> m_sdl;
     std::vector<std::unique_ptr<game::object::GameObject>> gameObjects;  // Vector of game objects
     game::engine::CollisionManager m_collisionManager;
+
+    int m_window_width = 600;
+    int m_window_height = 600;
 };
 }  // namespace game
 
