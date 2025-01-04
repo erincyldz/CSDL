@@ -18,6 +18,5 @@ int main(int argc, char* argv[])
     }
 
     game::Game game;
-    std::string loggerName = "CircleLogger";
     game.run();
 }
