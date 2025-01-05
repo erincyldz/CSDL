@@ -2,23 +2,37 @@
 #define SDL_HELPER_HPP
 
 #include <ClassLogger.hpp>
+#include <GameObject.hpp>
+#include <IRenderer.hpp>
 #include <SDL2/SDL.h>
+#include <SDLSound.hpp>
+#include <memory>
 #include <stdexcept>
 #include <string>
-namespace game::sdl
-{
+#include <vector>
 #define DELTA_TIME_COFACTOR 1000.0f
-#define FPS                 30
+#define FPS                 60
 #define FRAME_TARGET_TIME   (1000 / FPS)
 
-class SDLHelper
+namespace game::sdl
+{
+
+class SDLHelper : public game::IRenderer
 {
   public:
     SDLHelper(const std::string& title, int width, int height, std::string& logger_name);
     ~SDLHelper();
 
+    // rendering
+    void present();  // Call SDL_RenderPresent once here
     // Main loop
-    void run();
+    void run(const std::vector<std::unique_ptr<game::object::GameObject>>& gameObjects);
+    float getDeltaTime();
+    bool isRunning() const;
+    std::pair<int, int> getScreenDim();
+    void renderCollisionHighlights(
+        const std::vector<std::pair<game::object::GameObject*, game::object::GameObject*>>&
+            collisions) override;
 
   protected:
     // Initialization and cleanup
@@ -27,13 +41,15 @@ class SDLHelper
 
     // Event handling
     void handleEvents();
-    void update(float deltaTime);
-    void render();
+    void update();
+    void render(const std::vector<std::unique_ptr<game::object::GameObject>>& gameObjects);
 
     // Utility
-    void drawCircle(int x, int y, int radius, SDL_Color color);
-    void drawRectangle(int x, int y, int width, int height, SDL_Color color);
-    void drawGameObjects();
+    void drawCircleFill(int x, int y, int radius, SDL_Color color);
+    void drawRectangleFill(int x, int y, int width, int height, SDL_Color color);
+    void drawOutline(const game::object::RectObject& rect);
+    void drawOutline(const game::object::CircleObject& circle);
+    void drawGameObjects(const std::vector<std::unique_ptr<game::object::GameObject>>& gameObjects);
 
     ClassLogger m_logger;
 
@@ -41,7 +57,7 @@ class SDLHelper
     // SDL-related members
     SDL_Window* m_window;
     SDL_Renderer* m_renderer;
-
+    sound::Sound* m_sound;
     // Application state
     bool m_isRunning;
     int m_windowWidth;
