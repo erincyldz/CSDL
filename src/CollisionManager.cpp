@@ -2,7 +2,7 @@
 namespace game::engine
 {
 void CollisionManager::resolve_collisions(
-    const std::vector<std::unique_ptr<game::object::GameObject>>& objects)
+    const std::vector<std::unique_ptr<game::object::GameObject>>& objects, float delta_time)
 {
     // Temporary set to track current collisions
     std::vector<std::pair<game::object::GameObject*, game::object::GameObject*>> currentCollisions;
@@ -17,8 +17,8 @@ void CollisionManager::resolve_collisions(
                           << " y: " << objects[i]->getVelocity().y << std::endl;
                 std::cout << "before collision velocity x: " << objects[j]->getVelocity().x
                           << " y: " << objects[j]->getVelocity().y << std::endl;
-                objects[i]->on_collision(*objects[j]);
-                objects[j]->on_collision(*objects[i]);
+                objects[i]->on_collision(*objects[j], delta_time);
+                objects[j]->on_collision(*objects[i], delta_time);
                 std::cout << "Collision detected between objects " << i << " and " << j
                           << std::endl;
                 std::cout << "after collision velocity x: " << objects[i]->getVelocity().x
