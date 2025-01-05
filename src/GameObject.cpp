@@ -196,11 +196,11 @@ bool GameObject::is_colliding_with(const GameObject& other) const
     return false;  // Default: no collision
 }
 
-void GameObject::on_collision(GameObject& other)
+void GameObject::on_collision(GameObject& other, float delta_time)
 {
     // Calculate normal vector between objects
-    double normalX = other.m_pos.x - this->m_pos.x;
-    double normalY = other.m_pos.y - this->m_pos.y;
+    double normalX = (other.m_pos.x - this->m_pos.x) * delta_time;
+    double normalY = (other.m_pos.y - this->m_pos.y) * delta_time;
     double magnitude = std::sqrt(normalX * normalX + normalY * normalY);
     // Prevent division by zero or exact overlap
     if (magnitude == 0.0f)
