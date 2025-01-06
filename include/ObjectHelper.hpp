@@ -29,7 +29,7 @@ typedef struct Color
 
 typedef struct Vector2
 {
-    float x, y;
+    double x, y;
 } Vector2_t;
 
 }  // namespace game::object::helper

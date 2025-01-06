@@ -55,7 +55,7 @@ void SDLHelper::initSDL()
 {
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0)
         throw std::runtime_error("Failed to initialize SDL: " + std::string(SDL_GetError()));
-    m_sound = new sound::Sound("./soundfiles/8bitCollision.wav");
+    m_sound = new sound::Sound();
     // m_sound->SetupDevice();
     m_sound->initMixer();
 }
