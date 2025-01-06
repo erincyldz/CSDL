@@ -33,6 +33,7 @@ class SDLHelper : public game::IRenderer
     void renderCollisionHighlights(
         const std::vector<std::pair<game::object::GameObject*, game::object::GameObject*>>&
             collisions) override;
+    sound::Sound* m_sound;
 
   protected:
     // Initialization and cleanup
@@ -57,7 +58,6 @@ class SDLHelper : public game::IRenderer
     // SDL-related members
     SDL_Window* m_window;
     SDL_Renderer* m_renderer;
-    sound::Sound* m_sound;
     // Application state
     bool m_isRunning;
     int m_windowWidth;

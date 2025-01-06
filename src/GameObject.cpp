@@ -199,8 +199,10 @@ bool GameObject::is_colliding_with(const GameObject& other) const
 void GameObject::on_collision(GameObject& other, float delta_time)
 {
     // Calculate normal vector between objects
-    double normalX = (other.m_pos.x - this->m_pos.x);
-    double normalY = (other.m_pos.y - this->m_pos.y);
+
+    double normalX = (other.m_pos.x - this->m_pos.x) * delta_time;
+    double normalY = (other.m_pos.y - this->m_pos.y) * delta_time;
+
     double magnitude = std::sqrt(normalX * normalX + normalY * normalY);
     // Prevent division by zero or exact overlap
     if (magnitude == 0.0f)
@@ -223,7 +225,6 @@ void GameObject::on_collision(GameObject& other, float delta_time)
     // Skip resolving if objects are separating
     if (velocityAlongNormal > 0)
         return;
-
     double e = std::min(this->m_restitution, other.m_restitution);
     // Calculate impulse scalar
     double impulse = (-(1 + e) * velocityAlongNormal) / (1 / this->m_mass + 1 / other.m_mass);
@@ -231,12 +232,25 @@ void GameObject::on_collision(GameObject& other, float delta_time)
     // Apply impulse along the normal
     double impulseX = impulse * normalX;
     double impulseY = impulse * normalY;
+    auto xSpeedThis = impulseX / this->m_mass;
+    auto ySpeedThis = impulseY / this->m_mass;
+    auto xSpeedOther = impulseX / other.m_mass;
+    auto ySpeedOther = impulseY / other.m_mass;
+    const double velocityQuantizationStep = 0.01;
 
-    this->m_velocity.x -= impulseX / this->m_mass;
-    this->m_velocity.y -= impulseY / this->m_mass;
+    this->m_velocity.x -=
+        std::round(xSpeedThis / velocityQuantizationStep) * velocityQuantizationStep;
+    this->m_velocity.y -=
+        std::round(ySpeedThis / velocityQuantizationStep) * velocityQuantizationStep;
 
-    other.m_velocity.x += impulseX / other.m_mass;
-    other.m_velocity.y += impulseY / other.m_mass;
+    other.m_velocity.x +=
+        std::round(xSpeedOther / velocityQuantizationStep) * velocityQuantizationStep;
+    other.m_velocity.y +=
+        std::round(ySpeedOther / velocityQuantizationStep) * velocityQuantizationStep;
+}
+void GameObject::setRestitution(double rest)
+{
+    m_restitution = rest;
 }
 
 }  // namespace game::object

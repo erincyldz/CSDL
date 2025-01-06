@@ -33,7 +33,7 @@ class GameObject
         m_force = {0.0f, 0.0f};
         m_velocity = {0.1f, 0.1f};
         m_pos = {0.0f, 0.0f};
-        m_restitution = 1.0f;
+        m_restitution = 1;
     };
     virtual ~GameObject() {}
 
@@ -58,14 +58,15 @@ class GameObject
     Position getPosition() const;
     Velocity getVelocity() const;
     ObjectType m_type;
+    void setRestitution(double rest);
 
   protected:
     ClassLogger m_logger;
     Position m_pos;
     Velocity m_velocity;
-    float m_mass;
-    float m_restitution;  //  Coefficient of restitution (bounciness) for elastic/inelastic
-                          //  collisions. 1.0 for perfectly elastic, 0.0 for perfectly inelastic.
+    double m_mass;
+    double m_restitution;  //  Coefficient of restitution (bounciness) for elastic/inelastic
+                           //  collisions. 1.0 for perfectly elastic, 0.0 for perfectly inelastic.
     Force m_force;
     ColorState m_color_state;
     Color m_color;
