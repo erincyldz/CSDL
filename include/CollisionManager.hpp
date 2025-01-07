@@ -16,8 +16,7 @@ class CollisionManager
   public:
     CollisionManager() = default;
     ~CollisionManager() = default;
-    void resolve_collisions(const std::vector<std::unique_ptr<game::object::GameObject>>& objects,
-                            float delta_time);
+    void resolve_collisions(const std::vector<std::unique_ptr<game::object::GameObject>>& objects);
     const std::vector<std::pair<game::object::GameObject*, game::object::GameObject*>>&
         get_active_collisions() const;
     struct pair_hash

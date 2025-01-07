@@ -22,8 +22,10 @@ int main(int argc, char* argv[])
     std::string logger = "Circle";
     auto circle1 = std::make_unique<game::object::CircleObject>(5, logger);
     auto circle2 = std::make_unique<game::object::CircleObject>(5, logger);
-    game::object::Position pos1 = {game.getWindowWidth() / 2 - 100, game.getWindowHeight() / 2};
-    game::object::Position pos2 = {game.getWindowWidth() / 2, game.getWindowHeight() / 2 + 100};
+    float width = game.getWindowWidth();
+    float height = game.getWindowHeight();
+    game::object::Position pos1 = {width / 2 - 100, height / 2};
+    game::object::Position pos2 = {width / 2, height / 2 + 100};
     circle1->setPosition(pos1);
     circle2->setPosition(pos2);
 
