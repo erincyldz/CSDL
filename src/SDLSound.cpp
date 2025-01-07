@@ -52,11 +52,14 @@ void Sound::setVolume(int v)
 
 int Sound::playMusic()
 {
+    int res = 0;
     if (!Mix_PlayingMusic())
     {
         Mix_Volume(1, volume);
         Mix_PlayMusic(music[game_music], -1);
+        return res;
     }
+    return 1;
 }
 
 int Sound::playSound()
