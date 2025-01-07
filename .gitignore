@@ -2,7 +2,11 @@
 #build files
 /build
 /bin
-/scripts
+/scripts/*
+#chat gpt said to add this
+!/scripts/build.sh 
+!/scripts/clean_build.sh
+
 # make files
 *.lst
 *.o
