@@ -9,7 +9,7 @@ Sound::Sound()
     {
         std::cerr << "Fucked up openAudio" << Mix_GetError() << std::endl;
     }
-    setVolume(30);
+    setVolume(10);
     sound_collision = loadSound("./assets/sounds/8bitCollision.wav");
     return;
 }
@@ -52,11 +52,14 @@ void Sound::setVolume(int v)
 
 int Sound::playMusic()
 {
+    int res = 0;
     if (!Mix_PlayingMusic())
     {
         Mix_Volume(1, volume);
         Mix_PlayMusic(music[game_music], -1);
+        return res;
     }
+    return 1;
 }
 
 int Sound::playSound()
@@ -73,7 +76,7 @@ void Sound::initMixer()
     {
         std::cerr << "Fucked up openAudio" << Mix_GetError() << std::endl;
     }
-    setVolume(80);
+    setVolume(10);
     sound_collision = loadSound("assets/sounds/8bitCollision.wav");
     game_music = loadMusic("assets/sounds/rhcp-snow.mp3");
     return;
