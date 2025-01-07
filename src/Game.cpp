@@ -129,7 +129,7 @@ void Game::update()
     {
         object->update(m_sdl->getDeltaTime(), screenDim.first, screenDim.second);
     }
-    m_collisionManager.resolve_collisions(gameObjects, m_sdl->getDeltaTime());
+    m_collisionManager.resolve_collisions(gameObjects);
 }
 
 void Game::cleanup()
