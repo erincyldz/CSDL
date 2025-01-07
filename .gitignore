@@ -2,6 +2,7 @@
 #build files
 /build
 /bin
+/scripts
 # make files
 *.lst
 *.o
