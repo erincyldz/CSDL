@@ -20,8 +20,9 @@ Sound::~Sound()
 
 int Sound::loadMusic(std::string filename)
 {
+    std::string full_path = std::filesystem::path(PROJECT_ROOT_DIR) / filename;
     Mix_Music* m = NULL;
-    m = Mix_LoadMUS(filename.c_str());
+    m = Mix_LoadMUS(full_path.c_str());
     if (m == NULL)
     {
         std::cerr << "Failed to load music." << Mix_GetError() << std::endl;
@@ -32,8 +33,10 @@ int Sound::loadMusic(std::string filename)
 
 int Sound::loadSound(std::string filename)
 {
+    std::string full_path = std::filesystem::path(PROJECT_ROOT_DIR) / filename;
+
     Mix_Chunk* s = NULL;
-    s = Mix_LoadWAV(filename.c_str());
+    s = Mix_LoadWAV(full_path.c_str());
     if (s == NULL)
     {
         std::cerr << "Failed to load music." << Mix_GetError() << std::endl;
@@ -71,8 +74,8 @@ void Sound::initMixer()
         std::cerr << "Fucked up openAudio" << Mix_GetError() << std::endl;
     }
     setVolume(80);
-    sound_collision = loadSound("./assets/sounds/8bitCollision.wav");
-    game_music = loadMusic("./assets/sounds/rhcp-snow.mp3");
+    sound_collision = loadSound("assets/sounds/8bitCollision.wav");
+    game_music = loadMusic("assets/sounds/rhcp-snow.mp3");
     return;
 }
 void Sound::quitMixer()
