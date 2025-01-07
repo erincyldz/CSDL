@@ -7,11 +7,23 @@ project(engine VERSION 1.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+
+# Set the project root directory (the directory where CMakeLists.txt is located)
+set(PROJECT_ROOT_DIR ${CMAKE_SOURCE_DIR})
+
+# Optionally, you can set the working directory to the root of the project for your target
+# You can do this by modifying the runtime output directory (the directory where the executable will be placed)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_ROOT_DIR}/bin)
+
 # Set the output directory for build artifacts
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+set(CMAKE_BINARY_DIR ${PROJECT_ROOT_DIR}/build)
 
 # Set the prefix path to include /usr/local for package searches
 set(CMAKE_PREFIX_PATH "/usr/local" ${CMAKE_PREFIX_PATH})
+
+# Define PROJECT_ROOT_DIR as a preprocessor macro for C++ code
+add_definitions(-DPROJECT_ROOT_DIR="${PROJECT_ROOT_DIR}")
+
 # Include directories for the project
 
 # Automatically add all .cpp files in the src directory
