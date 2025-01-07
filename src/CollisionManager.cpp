@@ -2,7 +2,7 @@
 namespace game::engine
 {
 void CollisionManager::resolve_collisions(
-    const std::vector<std::unique_ptr<game::object::GameObject>>& objects, float delta_time)
+    const std::vector<std::unique_ptr<game::object::GameObject>>& objects)
 {
     // Define the grid size
     const float cellSize = 50.0f;  // Adjust based on object size and game world
@@ -62,8 +62,8 @@ void CollisionManager::resolve_collisions(
                             std::cout
                                 << "[OBJ2]\tbefore collision velocity x: " << obj2->getVelocity().x
                                 << " y: " << obj2->getVelocity().y << std::endl;
-                            obj1->on_collision(*obj2, delta_time);
-                            obj2->on_collision(*obj1, delta_time);
+                            obj1->on_collision(*obj2);
+                            obj2->on_collision(*obj1);
 
                             std::cout
                                 << "[OBJ1]\tafter collision velocity x: " << obj1->getVelocity().x
