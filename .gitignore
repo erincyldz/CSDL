@@ -1,6 +1,7 @@
 .vscode
 #build files
 /build
+/bin
 # make files
 *.lst
 *.o
