@@ -5,4 +5,4 @@ mkdir build
 
 cd ./build
 
-cmake .. && make
+cmake .. && make -j12
