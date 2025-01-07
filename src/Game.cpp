@@ -17,9 +17,15 @@ void Game::run()
     // m_sdl->m_sound->playMusic();
     while (m_sdl->isRunning())
     {
-
-        update();
-        m_sdl->run(gameObjects);  // Pass game objects to SDLHelper for rendering
+        m_sdl->update();  // Update SDL timing
+        m_sdl->handleEvents();
+        // Fixed timestep for game logic
+        while (m_sdl->getAccumulator() >= m_LOGIC_TIMESTEP)
+        {
+            update();
+            m_sdl->reduceAccumulator(m_LOGIC_TIMESTEP);
+        }
+        m_sdl->render(gameObjects);  // Pass game objects to SDLHelper for rendering
         m_sdl->renderCollisionHighlights(m_collisionManager.get_active_collisions());
         m_sdl->present();
     }
@@ -127,7 +133,7 @@ void Game::update()
     auto screenDim = m_sdl->getScreenDim();
     for (auto& object : gameObjects)
     {
-        object->update(m_sdl->getDeltaTime(), screenDim.first, screenDim.second);
+        object->update(m_LOGIC_TIMESTEP, screenDim.first, screenDim.second);
     }
     m_collisionManager.resolve_collisions(gameObjects);
 }

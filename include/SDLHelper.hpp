@@ -26,8 +26,9 @@ class SDLHelper : public game::IRenderer
     // rendering
     void present();  // Call SDL_RenderPresent once here
     // Main loop
-    void run(const std::vector<std::unique_ptr<game::object::GameObject>>& gameObjects);
     float getDeltaTime();
+    double getAccumulator() const;
+
     bool isRunning() const;
     std::pair<int, int> getScreenDim();
     void renderCollisionHighlights(
@@ -35,15 +36,16 @@ class SDLHelper : public game::IRenderer
             collisions) override;
     sound::Sound* m_sound;
 
-  protected:
-    // Initialization and cleanup
-    void initSDL();
-    void cleanupSDL();
-
     // Event handling
     void handleEvents();
     void update();
     void render(const std::vector<std::unique_ptr<game::object::GameObject>>& gameObjects);
+    void reduceAccumulator(double timestep);
+
+  protected:
+    // Initialization and cleanup
+    void initSDL();
+    void cleanupSDL();
 
     // Utility
     void drawCircleFill(int x, int y, int radius, SDL_Color color);
@@ -63,6 +65,7 @@ class SDLHelper : public game::IRenderer
     int m_windowWidth;
     int m_windowHeight;
     float m_deltaTime;
+    float m_accumulator;
 
     // Timing
     Uint32 m_lastFrameTime;

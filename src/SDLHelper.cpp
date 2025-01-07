@@ -39,17 +39,6 @@ void SDLHelper::present()
     SDL_RenderPresent(m_renderer);
 }
 
-// Run the main loop
-void SDLHelper::run(const std::vector<std::unique_ptr<game::object::GameObject>>& gameObjects)
-{
-
-    update();
-    handleEvents();
-    SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
-    SDL_RenderClear(m_renderer);
-    render(gameObjects);
-}
-
 // Initialize SDL
 void SDLHelper::initSDL()
 {
@@ -125,13 +114,24 @@ void SDLHelper::handleEvents()
 // Update game state
 void SDLHelper::update()
 {
-    int time_to_wait = FRAME_TARGET_TIME - (SDL_GetTicks() - m_lastFrameTime);
+    // Get current frame time
+    uint32_t currentTime = SDL_GetTicks();
+    uint32_t elapsedTime = currentTime - m_lastFrameTime;
+
+    // Delay to maintain target frame rate
+    int time_to_wait = FRAME_TARGET_TIME - elapsedTime;
     if (time_to_wait > 0 && time_to_wait <= FRAME_TARGET_TIME)
     {
         SDL_Delay(time_to_wait);
     }
-    m_deltaTime = (SDL_GetTicks() - m_lastFrameTime) / DELTA_TIME_COFACTOR;
+
+    // Calculate delta time
+    elapsedTime = SDL_GetTicks() - m_lastFrameTime;  // Recalculate after potential delay
     m_lastFrameTime = SDL_GetTicks();
+    m_deltaTime = elapsedTime / DELTA_TIME_COFACTOR;  // Convert to seconds
+
+    // Accumulate time for fixed timestep
+    m_accumulator += m_deltaTime;
 }
 
 // Render the scene
@@ -139,10 +139,7 @@ void SDLHelper::render(const std::vector<std::unique_ptr<game::object::GameObjec
 {
     SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);  // Black background
     SDL_RenderClear(m_renderer);
-
     drawGameObjects(gameObjects);
-
-    SDL_RenderPresent(m_renderer);
 }
 
 // Draw a circle
@@ -288,7 +285,16 @@ void SDLHelper::renderCollisionHighlights(
             }
         }
         m_sound->playSound();
-        SDL_RenderPresent(m_renderer);  // Ensure changes are updated on the screen
     }
 }
+
+double SDLHelper::getAccumulator() const
+{
+    return m_accumulator;
+}
+void SDLHelper::reduceAccumulator(double timestep)
+{
+    m_accumulator -= timestep;
+}
+
 }  // namespace game::sdl

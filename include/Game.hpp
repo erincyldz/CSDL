@@ -48,6 +48,7 @@ class Game
 
     int m_window_width = 600;
     int m_window_height = 600;
+    static constexpr double m_LOGIC_TIMESTEP = 1.0 / 60.0;  // 60 updates per second
 };
 }  // namespace game
 
