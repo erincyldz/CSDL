@@ -39,11 +39,11 @@ class GameObject
 
     virtual void update(float delta_time, int screen_width,
                         int screen_height) = 0;  // Pure virtual function
-
     virtual bool border_collision(int screen_width, int screen_height) = 0;
     bool is_colliding_with(const GameObject& other) const;
     void on_collision(GameObject& other);
 
+    void apply_gravitational_force(float delta_time);
     void destroy();
     void update_color(float delta_time);  // DONE
     void setPosition(Position pos);
@@ -53,6 +53,7 @@ class GameObject
     void setRestitution(float restitution);
     void setColor(Color color);
     void setColorState(ColorState colorState);
+    double get_mass();
     ObjectType get_type() const;
     Color get_color() const;
     Position getPosition() const;
