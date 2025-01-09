@@ -1,4 +1,4 @@
-# C Gravitation Simulation with using SDL2 Library.
+# C++ Gravitation Simulation with using SDL2 Library.
 
 ## **Installing dependencies and building the project for the first time**.
 This project created using WSL Ubuntu LTS on a windows platform. But before you clone and use make to build the project, you have to make some configuration if this is the first time using C/GCC/SDL in your machine.
