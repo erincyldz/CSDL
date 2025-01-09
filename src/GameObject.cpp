@@ -125,7 +125,10 @@ void GameObject::setColorState(ColorState colorState)
 {
     m_color_state = colorState;
 }
-
+double GameObject::get_mass()
+{
+    return m_mass;
+}
 ObjectType GameObject::get_type() const
 {
     return m_type;
@@ -310,5 +313,12 @@ void GameObject::update_physics(float delta_time)
     // 3. Update the position based on the updated velocity
     update_position(delta_time);
     std::cout << "Position: " << m_pos.x << " " << m_pos.y << std::endl;
+}
+void GameObject::apply_gravitational_force(float delta_time)
+{
+    Position new_pos;
+    new_pos.x = {this->getPosition().x + (this->m_force.x * delta_time / this->m_mass)};
+    new_pos.y = {this->getPosition().y + (this->m_force.y * delta_time / this->m_mass)};
+    this->setPosition(new_pos);
 }
 }  // namespace game::object
