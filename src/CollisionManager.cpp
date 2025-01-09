@@ -1,4 +1,6 @@
+#include <CircleObject.hpp>
 #include <CollisionManager.hpp>
+#include <RectObject.hpp>
 namespace game::engine
 {
 void CollisionManager::resolve_collisions(
@@ -14,8 +16,29 @@ void CollisionManager::resolve_collisions(
     // Helper lambda to compute grid cell for a position
     auto getCell = [cellSize](const game::object::GameObject& obj)
     {
-        int cellX = static_cast<int>(std::floor(obj.getPosition().x / cellSize));
-        int cellY = static_cast<int>(std::floor(obj.getPosition().y / cellSize));
+        int pos_x, pos_y;
+        switch (obj.get_type())
+        {
+            case game::object::helper::ObjectType::CIRCLE:
+                if (const auto* circle = dynamic_cast<const game::object::CircleObject*>(&obj))
+                {
+                    pos_x = static_cast<int>(std::floor(circle->getPosition().x / cellSize));
+                    pos_y = static_cast<int>(std::floor(circle->getPosition().y / cellSize));
+                }
+                break;
+            case game::object::helper::ObjectType::RECTANGLE:
+                if (const auto* rect = dynamic_cast<const game::object::RectObject*>(&obj))
+                {
+                    pos_x = static_cast<int>(
+                        std::floor((rect->getPosition().x + rect->get_width() / 2) / cellSize));
+                    pos_y = static_cast<int>(
+                        std::floor((rect->getPosition().y + rect->get_height() / 2) / cellSize));
+                }
+                break;
+        }
+
+        int cellX = static_cast<int>(std::floor(pos_x / cellSize));
+        int cellY = static_cast<int>(std::floor(pos_y / cellSize));
         return std::make_pair(cellX, cellY);
     };
 
@@ -53,7 +76,6 @@ void CollisionManager::resolve_collisions(
                     {
                         if (obj1 == obj2)
                             continue;  // Skip self-collision
-
                         if (obj1->is_colliding_with(*obj2))
                         {
                             obj1->on_collision(*obj2);
