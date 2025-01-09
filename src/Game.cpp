@@ -131,6 +131,8 @@ int Game::getObjectCount() const
 void Game::update()
 {
     auto screenDim = m_sdl->getScreenDim();
+    m_collisionManager.calculate_gravitational_force(gameObjects);
+
     for (auto& object : gameObjects)
     {
         object->update(m_LOGIC_TIMESTEP, screenDim.first, screenDim.second);
