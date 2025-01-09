@@ -15,8 +15,8 @@ RectObject::RectObject(int width, int height, std::string& logger_name)
 
 RectObject::RectObject(std::string& logger_name) : GameObject(logger_name)
 {
-    m_width = 50;
-    m_height = 150;
+    m_width = 15;
+    m_height = 15;
     m_type = helper::ObjectType::RECTANGLE;
     m_color = {255, 0, 0};
     m_mass = 1.0f;
@@ -59,6 +59,7 @@ void RectObject::update(float delta_time, int screen_width, int screen_height)
     // m_pos.y += m_velocity.y * delta_time;
     update_physics(delta_time);
     border_collision(screen_width, screen_height);
+    apply_gravitational_force(delta_time);
 }
 
 bool RectObject::border_collision(int screen_width, int screen_height)

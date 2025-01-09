@@ -51,6 +51,7 @@ void CircleObject::update(float delta_time, int screen_width, int screen_height)
     // m_pos.y += m_velocity.y * delta_time;
     update_physics(delta_time);
     border_collision(screen_width, screen_height);
+    apply_gravitational_force(delta_time);
 }
 
 bool CircleObject::border_collision(int screen_width, int screen_height)
