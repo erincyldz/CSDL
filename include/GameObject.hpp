@@ -62,7 +62,6 @@ class GameObject
     void setColor(Color color);
     void setColorState(ColorState colorState);
     double get_mass();
-
     ObjectType get_type() const;
     Color get_color() const;
     Position getPosition() const;
