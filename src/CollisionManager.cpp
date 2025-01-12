@@ -156,9 +156,7 @@ void CollisionManager::calculate_gravitational_force(
             applied_force.x += x_axis_force * g_force;
             applied_force.y += y_axis_force * g_force;
         }
-        obj1->setForce(applied_force);
-        std::cout << "x force: " << applied_force.x << "\n"
-                  << "y force: " << applied_force.y << std::endl;
+        obj1->addForce(applied_force);
     }
 }
 }  // namespace game::engine
