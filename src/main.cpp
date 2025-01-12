@@ -27,25 +27,25 @@ int main(int argc, char* argv[])
     float width = game.getWindowWidth();
     float height = game.getWindowHeight();
     game::object::Position pos1 = {width / 2 - 100, height / 2};
-    game::object::Position pos2 = {width / 2, height / 2 + 300};
+    game::object::Position pos2 = {width / 2 + 100, height / 2};
     game::object::Position pos3 = {width / 2, height / 2 - 300};
     circle1->setPosition(pos1);
     circle2->setPosition(pos2);
     rect->setPosition(pos3);
-    circle1->setRestitution(0.0);
-    circle2->setRestitution(0.0);
-    rect->setRestitution(0.0);
+
+    circle1->setMass(1.0);
+    circle2->setMass(1.0);
 
     game::object::Velocity vel1 = {0.0f, 0.0f};
-    game::object::Velocity vel2 = {0.0f, -50.0f};
-    game::object::Velocity vel3 = {10.0f, 0.0f};
+    game::object::Velocity vel2 = {0.0f, 0.0f};
+    game::object::Velocity vel3 = {0.0f, 0.0f};
     circle1->setVelocity(vel1);
     circle2->setVelocity(vel2);
     rect->setVelocity(vel3);
 
     game.addGameObject(std::move(circle1));
     game.addGameObject(std::move(circle2));
-    game.addGameObject(std::move(rect));
+    // game.addGameObject(std::move(rect));
 
     game.run();
 }
