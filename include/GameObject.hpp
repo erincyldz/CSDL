@@ -13,6 +13,7 @@ namespace game::object
 using Force = helper::Vector2_t;
 using Position = helper::Vector2_t;
 using Velocity = helper::Vector2_t;
+using Acceleration = helper::Vector2_t;
 using Color = helper::Color_t;
 using ColorState = helper::ObjectColor;
 using ObjectType = helper::ObjectType;
@@ -33,13 +34,17 @@ class GameObject
         m_force = {0.0f, 0.0f};
         m_velocity = {0.1f, 0.1f};
         m_pos = {0.0f, 0.0f};
+        m_acceleration = {0.0f, 0.0f};
         m_restitution = 1;
     };
     virtual ~GameObject() {}
 
     virtual void update(float delta_time, int screen_width,
                         int screen_height) = 0;  // Pure virtual function
-
+    void update_position(float delta_time);
+    void update_velocity(float delta_time);
+    void update_acceleration();
+    void update_physics(float delta_time);
     virtual bool border_collision(int screen_width, int screen_height) = 0;
     bool is_colliding_with(const GameObject& other) const;
     void on_collision(GameObject& other);
@@ -48,15 +53,19 @@ class GameObject
     void update_color(float delta_time);  // DONE
     void setPosition(Position pos);
     void setVelocity(Velocity velocity);
+    void setAcceleration(Acceleration acceleration);
+    void addAcceleration(const Acceleration& acceleration);
     void setForce(Force force);
     void setMass(float mass);
     void setRestitution(float restitution);
     void setColor(Color color);
     void setColorState(ColorState colorState);
+
     ObjectType get_type() const;
     Color get_color() const;
     Position getPosition() const;
     Velocity getVelocity() const;
+    Acceleration getAcceleration() const;
     ObjectType m_type;
     void setRestitution(double rest);
 
@@ -64,6 +73,7 @@ class GameObject
     ClassLogger m_logger;
     Position m_pos;
     Velocity m_velocity;
+    Acceleration m_acceleration;
     double m_mass;
     double m_restitution;  //  Coefficient of restitution (bounciness) for elastic/inelastic
                            //  collisions. 1.0 for perfectly elastic, 0.0 for perfectly inelastic.

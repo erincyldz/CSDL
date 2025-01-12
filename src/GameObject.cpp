@@ -253,4 +253,62 @@ void GameObject::setRestitution(double rest)
     m_restitution = rest;
 }
 
+Acceleration GameObject::getAcceleration() const
+{
+    return m_acceleration;
+}
+
+void GameObject::setAcceleration(Acceleration acceleration)
+{
+    m_acceleration = acceleration;
+}
+
+void GameObject::addAcceleration(const Acceleration& acceleration)
+{
+    m_acceleration.x += acceleration.x;
+    m_acceleration.y += acceleration.y;
+}
+
+void GameObject::update_acceleration()
+{
+    if (m_mass != 0)
+    {
+
+        m_acceleration.x += m_force.x / m_mass;
+        m_acceleration.y += m_force.y / m_mass;
+        m_force = {0, 0};  // reset the m_force after implementation
+    }
+    else
+    {
+        // This is a non-sense case
+        // so dont need to be handled
+    }
+}
+
+void GameObject::update_velocity(float delta_time)
+{
+    m_velocity.x += m_acceleration.x * delta_time;
+    m_velocity.y += m_acceleration.y * delta_time;
+}
+
+void GameObject::update_position(float delta_time)
+{
+    m_pos.x += m_velocity.x * delta_time;
+    m_pos.y += m_velocity.y * delta_time;
+}
+
+void GameObject::update_physics(float delta_time)
+{
+    // 1. Update the acceleration based on the current force and mass
+    update_acceleration();
+    std::cout << "\t -> Object pointer: " << this << std::endl;
+    std::cout << "Acceleration: " << m_acceleration.x << " " << m_acceleration.y << std::endl;
+    // 2. Update the velocity using the newly calculated acceleration
+    update_velocity(delta_time);
+    std::cout << "Velocity: " << m_velocity.x << " " << m_velocity.y << std::endl;
+
+    // 3. Update the position based on the updated velocity
+    update_position(delta_time);
+    std::cout << "Position: " << m_pos.x << " " << m_pos.y << std::endl;
+}
 }  // namespace game::object
