@@ -6,7 +6,7 @@ RectObject::RectObject(int width, int height, std::string& logger_name)
     : GameObject(logger_name), m_width(width), m_height(height)
 {
     m_type = helper::ObjectType::RECTANGLE;
-    m_mass = m_width * m_height;
+    m_mass = 1.0;
     m_force = {0.0f, 0.0f};
     m_restitution = 1;
     m_color_state = helper::ObjectColor::RED;
