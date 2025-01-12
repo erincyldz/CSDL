@@ -9,7 +9,7 @@ CircleObject::CircleObject(float rad, std::string& logger_name)
 {
     m_type = helper::ObjectType::CIRCLE;
     m_type = helper::ObjectType::CIRCLE;
-    m_mass = m_radius * m_radius * PI;
+    m_mass = 1.0;
     m_force = {0.0f, 0.0f};
     m_restitution = 1;
     m_color_state = helper::ObjectColor::RED;
