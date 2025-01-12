@@ -42,6 +42,10 @@ class SDLHelper : public game::IRenderer
     void render(const std::vector<std::unique_ptr<game::object::GameObject>>& gameObjects);
     void reduceAccumulator(double timestep);
 
+    // Physics
+    bool m_isResetObjects = false;
+    bool m_isAddForce = false;
+
   protected:
     // Initialization and cleanup
     void initSDL();
