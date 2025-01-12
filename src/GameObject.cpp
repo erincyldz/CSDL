@@ -1,7 +1,6 @@
 #include <CircleObject.hpp>
 #include <GameObject.hpp>
 #include <RectObject.hpp>
-int game_object_count = 0;
 namespace game::object
 {
 void GameObject::update_color(float delta_time)
