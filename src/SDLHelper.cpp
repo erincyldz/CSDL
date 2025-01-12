@@ -101,6 +101,13 @@ void SDLHelper::handleEvents()
                         // TODO: add random game object
                         break;
 
+                    case SDLK_r:
+                        // reset game object velocities
+                        m_isResetObjects = true;
+                        break;
+                    case SDLK_SPACE:
+                        m_isAddForce = true;
+                        break;
                     default:
                         break;
                 }
