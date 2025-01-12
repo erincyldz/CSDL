@@ -57,6 +57,7 @@ class GameObject
     void setAcceleration(Acceleration acceleration);
     void addAcceleration(const Acceleration& acceleration);
     void setForce(Force force);
+    void addForce(const Force& force);
     void setMass(float mass);
     void setRestitution(float restitution);
     void setColor(Color color);
@@ -67,6 +68,7 @@ class GameObject
     Position getPosition() const;
     Velocity getVelocity() const;
     Acceleration getAcceleration() const;
+    Force getForce() const;
     ObjectType m_type;
     void setRestitution(double rest);
 
