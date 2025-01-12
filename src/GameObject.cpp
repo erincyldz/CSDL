@@ -116,6 +116,13 @@ void GameObject::setForce(Force force)
 {
     m_force = force;
 }
+
+void GameObject::addForce(const Force& force)
+{
+    m_force.x += force.x;
+    m_force.y += force.y;
+}
+
 void GameObject::setColor(Color color)
 {
     m_color = color;
@@ -260,6 +267,11 @@ Acceleration GameObject::getAcceleration() const
     return m_acceleration;
 }
 
+Force GameObject::getForce() const
+{
+    return m_force;
+}
+
 void GameObject::setAcceleration(Acceleration acceleration)
 {
     m_acceleration = acceleration;
@@ -275,7 +287,6 @@ void GameObject::update_acceleration()
 {
     if (m_mass != 0)
     {
-
         m_acceleration.x += m_force.x / m_mass;
         m_acceleration.y += m_force.y / m_mass;
         m_force = {0, 0};  // reset the m_force after implementation
@@ -301,17 +312,15 @@ void GameObject::update_position(float delta_time)
 
 void GameObject::update_physics(float delta_time)
 {
+
     // 1. Update the acceleration based on the current force and mass
     update_acceleration();
-    std::cout << "\t -> Object pointer: " << this << std::endl;
-    std::cout << "Acceleration: " << m_acceleration.x << " " << m_acceleration.y << std::endl;
+
     // 2. Update the velocity using the newly calculated acceleration
     update_velocity(delta_time);
-    std::cout << "Velocity: " << m_velocity.x << " " << m_velocity.y << std::endl;
 
     // 3. Update the position based on the updated velocity
     update_position(delta_time);
-    std::cout << "Position: " << m_pos.x << " " << m_pos.y << std::endl;
 }
 void GameObject::apply_gravitational_force(float delta_time)
 {
