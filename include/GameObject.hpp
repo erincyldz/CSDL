@@ -8,6 +8,7 @@
 #include <cmath>
 #include <memory>
 #include <vector>
+// #define BORDER_COLLISION
 namespace game::object
 {
 using Force = helper::Vector2_t;
