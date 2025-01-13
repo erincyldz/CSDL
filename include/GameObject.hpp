@@ -19,6 +19,9 @@ using Color = helper::Color_t;
 using ColorState = helper::ObjectColor;
 using ObjectType = helper::ObjectType;
 
+constexpr double MIN_VELOCITY = -500;
+constexpr double MAX_VELOCITY = 500;
+
 // forward declaration
 class CircleObject;
 class RectObject;

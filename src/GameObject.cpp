@@ -316,8 +316,8 @@ void GameObject::update_velocity(float delta_time)
 
 void GameObject::update_position(float delta_time)
 {
-    std::clamp(m_velocity.x, -50.0, 50.0);
-    std::clamp(m_velocity.y, -50.0, 50.0);
+    std::clamp(m_velocity.x, MIN_VELOCITY, MAX_VELOCITY);
+    std::clamp(m_velocity.y, MIN_VELOCITY, MAX_VELOCITY);
     m_pos.x += m_velocity.x * delta_time;
     m_pos.y += m_velocity.y * delta_time;
 }
