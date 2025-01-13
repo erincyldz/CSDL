@@ -333,6 +333,7 @@ void GameObject::update_physics(float delta_time)
 
     // 3. Update the position based on the updated velocity
     update_position(delta_time);
+    m_logger.info("Position: x: " + std::to_string(m_pos.x) + "\ty: " + std::to_string(m_pos.y));
 }
 void GameObject::apply_gravitational_force(float delta_time)
 {
