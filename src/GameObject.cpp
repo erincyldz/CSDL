@@ -304,14 +304,14 @@ void GameObject::update_velocity(float delta_time)
     m_velocity.y += m_acceleration.y * delta_time;
     m_velocity.x *= (1.0F - FRICTION_COEFFICIENT);
     m_velocity.y *= (1.0F - FRICTION_COEFFICIENT);
-    if (m_velocity.x <= 0.01)
-    {
-        m_velocity.x = 0;
-    }
-    if (m_velocity.y <= 0.01)
-    {
-        m_velocity.y = 0;
-    }
+    // if (m_velocity.x <= 1e-6)
+    // {
+    //     m_velocity.x = 0;
+    // }
+    // if (m_velocity.y <= 1e-6)
+    // {
+    //     m_velocity.y = 0;
+    // }
 }
 
 void GameObject::update_position(float delta_time)
