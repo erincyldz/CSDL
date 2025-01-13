@@ -287,8 +287,8 @@ void GameObject::update_acceleration()
 {
     if (m_mass != 0)
     {
-        m_acceleration.x += m_force.x / m_mass;
-        m_acceleration.y += m_force.y / m_mass;
+        m_acceleration.x = m_force.x / m_mass;
+        m_acceleration.y = m_force.y / m_mass;
         m_force = {0, 0};  // reset the m_force after implementation
     }
     else
@@ -302,10 +302,22 @@ void GameObject::update_velocity(float delta_time)
 {
     m_velocity.x += m_acceleration.x * delta_time;
     m_velocity.y += m_acceleration.y * delta_time;
+    m_velocity.x *= (1.0F - FRICTION_COEFFICIENT);
+    m_velocity.y *= (1.0F - FRICTION_COEFFICIENT);
+    if (m_velocity.x <= 0.01)
+    {
+        m_velocity.x = 0;
+    }
+    if (m_velocity.y <= 0.01)
+    {
+        m_velocity.y = 0;
+    }
 }
 
 void GameObject::update_position(float delta_time)
 {
+    std::clamp(m_velocity.x, -50.0, 50.0);
+    std::clamp(m_velocity.y, -50.0, 50.0);
     m_pos.x += m_velocity.x * delta_time;
     m_pos.y += m_velocity.y * delta_time;
 }
