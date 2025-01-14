@@ -395,11 +395,12 @@ void SDLHelper::renderObjectDirection(const game::object::GameObject& obj)
     game::object::Position pos = obj.getPosition();
     game::object::Velocity vel = obj.getVelocity();
 
-    // Fixed arrow length
-    const double ARROW_LENGTH = 50.0;
-
     // Normalize the velocity vector
     double magnitude = std::sqrt(vel.x * vel.x + vel.y * vel.y);
+
+    // Fixed arrow length
+    const double ARROW_LENGTH = magnitude;
+
     double dirX = (magnitude > 0) ? vel.x / magnitude : 0.0;
     double dirY = (magnitude > 0) ? vel.y / magnitude : 0.0;
 

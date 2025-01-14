@@ -283,13 +283,18 @@ void GameObject::addAcceleration(const Acceleration& acceleration)
     m_acceleration.x += acceleration.x;
     m_acceleration.y += acceleration.y;
 }
+void GameObject::update_force()
+{
+    m_force.x -= m_force.x * FRICTION_COEFFICIENT;
+    m_force.y -= m_force.y * FRICTION_COEFFICIENT;
+}
 
 void GameObject::update_acceleration()
 {
     if (m_mass != 0)
     {
-        m_acceleration.x = (m_force.x - (m_force.x * FRICTION_COEFFICIENT)) / m_mass;
-        m_acceleration.y = (m_force.y - (m_force.y * FRICTION_COEFFICIENT)) / m_mass;
+        m_acceleration.x = m_force.x / m_mass;
+        m_acceleration.y = m_force.y / m_mass;
         m_force = {0, 0};  // reset the m_force after implementation
     }
     else
@@ -322,14 +327,15 @@ void GameObject::update_position(float delta_time)
 
 void GameObject::update_physics(float delta_time)
 {
-
-    // 1. Update the acceleration based on the current force and mass
+    // 1. Update force corresponding to friction factor.
+    update_force();
+    // 2. Update the acceleration based on the current force and mass
     update_acceleration();
 
-    // 2. Update the velocity using the newly calculated acceleration
+    // 3. Update the velocity using the newly calculated acceleration
     update_velocity(delta_time);
 
-    // 3. Update the position based on the updated velocity
+    // 4. Update the position based on the updated velocity
     update_position(delta_time);
 
     m_logger.info("Position: ({}, {})", this->m_pos.x, this->m_pos.y);

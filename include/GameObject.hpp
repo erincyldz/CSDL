@@ -48,6 +48,7 @@ class GameObject
                         int screen_height) = 0;  // Pure virtual function
     void update_position(float delta_time);
     void update_velocity(float delta_time);
+    void update_force();
     void update_acceleration();
     void update_physics(float delta_time);
     virtual bool border_collision(int screen_width, int screen_height) = 0;
@@ -75,7 +76,6 @@ class GameObject
     Position getPosition() const;
     Velocity getVelocity() const;
     Acceleration getAcceleration() const;
-
 
   protected:
     ClassLogger m_logger;
