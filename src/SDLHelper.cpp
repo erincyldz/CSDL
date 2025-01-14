@@ -24,6 +24,7 @@ SDLHelper::SDLHelper(const std::string& title, int width, int height, std::strin
     if (!m_renderer)
         throw std::runtime_error("Failed to create renderer: " + std::string(SDL_GetError()));
 
+    m_accumulator = 0.0;
     m_isRunning = true;
     SDL_Log("SDLHelper initialized successfully.");
 }
