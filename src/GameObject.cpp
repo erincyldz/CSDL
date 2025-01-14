@@ -104,9 +104,9 @@ void GameObject::setPosition(Position pos)
 {
     m_pos = pos;
 }
-void GameObject::setRestitution(float restitution)
+void GameObject::setRestitution(double rest)
 {
-    m_restitution = restitution;
+    m_restitution = rest;
 }
 void GameObject::setMass(float mass)
 {
@@ -150,6 +150,11 @@ Position GameObject::getPosition() const
 Velocity GameObject::getVelocity() const
 {
     return m_velocity;
+}
+
+std::vector<Position> GameObject::getLastPositions() const
+{
+    return m_last_positions;
 }
 
 bool GameObject::is_colliding_with(const GameObject& other) const
@@ -257,10 +262,6 @@ void GameObject::on_collision(GameObject& other)
     other.m_velocity.y +=
         std::round(ySpeedOther / velocityQuantizationStep) * velocityQuantizationStep;
 }
-void GameObject::setRestitution(double rest)
-{
-    m_restitution = rest;
-}
 
 Acceleration GameObject::getAcceleration() const
 {
@@ -333,6 +334,15 @@ void GameObject::update_physics(float delta_time)
 
     // 3. Update the position based on the updated velocity
     update_position(delta_time);
+
+    std::cout << "Position: " << m_pos.x << " " << m_pos.y << std::endl;
+
+    // keep the last 10 positions
+    if (m_last_positions.size() == LAST_POSITION_SIZE)
+    {
+        m_last_positions.erase(m_last_positions.begin());
+    }
+    m_last_positions.push_back(m_pos);
 }
 void GameObject::apply_gravitational_force(float delta_time)
 {

@@ -13,7 +13,12 @@
 #define DELTA_TIME_COFACTOR 1000.0f
 #define FPS                 60
 #define FRAME_TARGET_TIME   (1000 / FPS)
+
+
+#define RENDER_LAST_POSITIONS true
+
 #define RENDER_DIRECTION    true
+
 namespace game::sdl
 {
 
@@ -34,7 +39,13 @@ class SDLHelper : public game::IRenderer
     void renderCollisionHighlights(
         const std::vector<std::pair<game::object::GameObject*, game::object::GameObject*>>&
             collisions) override;
+
+
+    void renderObjectLastPosition(const std::unique_ptr<game::object::GameObject>& gameObject);
+
+
     void renderObjectDirection(const game::object::GameObject& obj) override;
+
     sound::Sound* m_sound;
 
     // Event handling
