@@ -14,7 +14,11 @@
 #define FPS                 60
 #define FRAME_TARGET_TIME   (1000 / FPS)
 
+
 #define RENDER_LAST_POSITIONS true
+
+#define RENDER_DIRECTION    true
+
 namespace game::sdl
 {
 
@@ -36,7 +40,11 @@ class SDLHelper : public game::IRenderer
         const std::vector<std::pair<game::object::GameObject*, game::object::GameObject*>>&
             collisions) override;
 
+
     void renderObjectLastPosition(const std::unique_ptr<game::object::GameObject>& gameObject);
+
+
+    void renderObjectDirection(const game::object::GameObject& obj) override;
 
     sound::Sound* m_sound;
 
@@ -45,6 +53,10 @@ class SDLHelper : public game::IRenderer
     void update();
     void render(const std::vector<std::unique_ptr<game::object::GameObject>>& gameObjects);
     void reduceAccumulator(double timestep);
+
+    // Physics
+    bool m_isResetObjects = false;
+    bool m_isAddForce = false;
 
   protected:
     // Initialization and cleanup

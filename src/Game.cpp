@@ -15,6 +15,7 @@ Game::Game() : m_sdl(nullptr)
 void Game::run()
 {
     // m_sdl->m_sound->playMusic();
+    std::cout << "Game is running" << std::endl;
     while (m_sdl->isRunning())
     {
         m_sdl->update();  // Update SDL timing
@@ -36,7 +37,7 @@ void Game::init()
 {
     gameObjects = std::vector<std::unique_ptr<game::object::GameObject>>();
 
-    std::string loggerName = "GameLogger";
+    std::string loggerName = "sdl_logger";
     m_sdl = std::make_unique<game::sdl::SDLHelper>("Game Title", m_window_width, m_window_height,
                                                    loggerName);
 }
@@ -130,7 +131,30 @@ int Game::getObjectCount() const
 // It is responsible for the backend logic of the game
 void Game::update()
 {
+    // if (m_sdl->m_isResetObjects)
+    // {
+    //     std::cout << "Resetting game objects" << std::endl;
+    //     for (auto& object : gameObjects)
+    //     {
+    //         object->setVelocity({0, 0});
+    //         object->setAcceleration({0, 0});
+    //         object->setForce({0, 0});
+    //     }
+    //     m_sdl->m_isResetObjects = false;
+    // }
+
+    // if (m_sdl->m_isAddForce)
+    // {
+    //     for (auto& object : gameObjects)
+    //     {
+    //         object->addForce({0, 20});
+    //     }
+    //     m_sdl->m_isAddForce = false;
+    // }
+
     auto screenDim = m_sdl->getScreenDim();
+    m_collisionManager.calculate_gravitational_force(gameObjects);
+
     for (auto& object : gameObjects)
     {
         object->update(m_LOGIC_TIMESTEP, screenDim.first, screenDim.second);
