@@ -292,11 +292,11 @@ void SDLHelper::renderCollisionHighlights(
         for (auto* obj : {collision.first, collision.second})
         {
 
-            if (obj->m_type == game::object::ObjectType::CIRCLE)
+            if (obj->get_type() == game::object::ObjectType::CIRCLE)
             {
                 drawOutline(*(dynamic_cast<game::object::CircleObject*>(obj)));
             }
-            else if (obj->m_type == game::object::ObjectType::RECTANGLE)
+            else if (obj->get_type() == game::object::ObjectType::RECTANGLE)
             {
                 drawOutline(*(dynamic_cast<game::object::RectObject*>(obj)));
             }

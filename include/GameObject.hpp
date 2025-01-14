@@ -76,13 +76,12 @@ class GameObject
     Velocity getVelocity() const;
     Acceleration getAcceleration() const;
 
-       ObjectType m_type;
-
   protected:
     ClassLogger m_logger;
     Position m_pos;
     Velocity m_velocity;
     Acceleration m_acceleration;
+    ObjectType m_type;
     double m_mass;
     double m_restitution;  //  Coefficient of restitution (bounciness) for elastic/inelastic
                            //  collisions. 1.0 for perfectly elastic, 0.0 for perfectly inelastic.
