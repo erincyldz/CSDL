@@ -1,7 +1,8 @@
 #ifndef OBJECT_HELPER_H
 #define OBJECT_HELPER_H
 constexpr int COLOR_CHANGE_SCALAR = 500;
-
+constexpr float FRICTION_COEFFICIENT = 0.00f;
+constexpr double GRAVITATIONAL_CONSTANT = 100;
 namespace game::object::helper
 {
 enum class ObjectColor

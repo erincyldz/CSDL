@@ -9,7 +9,7 @@ Sound::Sound()
     {
         std::cerr << "Fucked up openAudio" << Mix_GetError() << std::endl;
     }
-    setVolume(10);
+    setVolume(0);
     sound_collision = loadSound("./assets/sounds/8bitCollision.wav");
     return;
 }

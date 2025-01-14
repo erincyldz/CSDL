@@ -17,6 +17,8 @@ class CollisionManager
     CollisionManager() = default;
     ~CollisionManager() = default;
     void resolve_collisions(const std::vector<std::unique_ptr<game::object::GameObject>>& objects);
+    void calculate_gravitational_force(
+        const std::vector<std::unique_ptr<game::object::GameObject>>& objects);
     const std::vector<std::pair<game::object::GameObject*, game::object::GameObject*>>&
         get_active_collisions() const;
     struct pair_hash

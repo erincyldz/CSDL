@@ -1,7 +1,6 @@
 #include <CircleObject.hpp>
 #include <GameObject.hpp>
 #include <RectObject.hpp>
-int game_object_count = 0;
 namespace game::object
 {
 void GameObject::update_color(float delta_time)
@@ -117,6 +116,13 @@ void GameObject::setForce(Force force)
 {
     m_force = force;
 }
+
+void GameObject::addForce(const Force& force)
+{
+    m_force.x += force.x;
+    m_force.y += force.y;
+}
+
 void GameObject::setColor(Color color)
 {
     m_color = color;
@@ -125,7 +131,10 @@ void GameObject::setColorState(ColorState colorState)
 {
     m_color_state = colorState;
 }
-
+double GameObject::get_mass()
+{
+    return m_mass;
+}
 ObjectType GameObject::get_type() const
 {
     return m_type;
@@ -258,6 +267,11 @@ Acceleration GameObject::getAcceleration() const
     return m_acceleration;
 }
 
+Force GameObject::getForce() const
+{
+    return m_force;
+}
+
 void GameObject::setAcceleration(Acceleration acceleration)
 {
     m_acceleration = acceleration;
@@ -273,9 +287,8 @@ void GameObject::update_acceleration()
 {
     if (m_mass != 0)
     {
-
-        m_acceleration.x += m_force.x / m_mass;
-        m_acceleration.y += m_force.y / m_mass;
+        m_acceleration.x = m_force.x / m_mass;
+        m_acceleration.y = m_force.y / m_mass;
         m_force = {0, 0};  // reset the m_force after implementation
     }
     else
@@ -289,26 +302,43 @@ void GameObject::update_velocity(float delta_time)
 {
     m_velocity.x += m_acceleration.x * delta_time;
     m_velocity.y += m_acceleration.y * delta_time;
+    m_velocity.x *= (1.0F - FRICTION_COEFFICIENT);
+    m_velocity.y *= (1.0F - FRICTION_COEFFICIENT);
+    // if (m_velocity.x <= 1e-6)
+    // {
+    //     m_velocity.x = 0;
+    // }
+    // if (m_velocity.y <= 1e-6)
+    // {
+    //     m_velocity.y = 0;
+    // }
 }
 
 void GameObject::update_position(float delta_time)
 {
+    std::clamp(m_velocity.x, MIN_VELOCITY, MAX_VELOCITY);
+    std::clamp(m_velocity.y, MIN_VELOCITY, MAX_VELOCITY);
     m_pos.x += m_velocity.x * delta_time;
     m_pos.y += m_velocity.y * delta_time;
 }
 
 void GameObject::update_physics(float delta_time)
 {
+
     // 1. Update the acceleration based on the current force and mass
     update_acceleration();
-    std::cout << "\t -> Object pointer: " << this << std::endl;
-    std::cout << "Acceleration: " << m_acceleration.x << " " << m_acceleration.y << std::endl;
+
     // 2. Update the velocity using the newly calculated acceleration
     update_velocity(delta_time);
-    std::cout << "Velocity: " << m_velocity.x << " " << m_velocity.y << std::endl;
 
     // 3. Update the position based on the updated velocity
     update_position(delta_time);
-    std::cout << "Position: " << m_pos.x << " " << m_pos.y << std::endl;
+}
+void GameObject::apply_gravitational_force(float delta_time)
+{
+    Position new_pos;
+    new_pos.x = {this->getPosition().x + (this->m_force.x * delta_time / this->m_mass)};
+    new_pos.y = {this->getPosition().y + (this->m_force.y * delta_time / this->m_mass)};
+    this->setPosition(new_pos);
 }
 }  // namespace game::object
