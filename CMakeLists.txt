@@ -47,8 +47,14 @@ else()
     message(FATAL_ERROR "SDL2_mixer not found!")
 endif()
 
+find_package(SDL2_ttf REQUIRED)
+if(SDL2_ttf_FOUND)
+    message(STATUS "SDL2_ttf found at: ${SDL2_ttf_DIR}")
+else()
+    message(FATAL_ERROR "SDL2_ttf not found!")
+endif()
 
-target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2 SDL2::SDL2main SDL2_mixer m)
+target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2 SDL2::SDL2main SDL2_mixer SDL2_ttf m)
 
 # Add include directories for the target (optional, more scoped)
 target_include_directories(${PROJECT_NAME} PRIVATE include)
