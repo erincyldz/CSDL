@@ -22,6 +22,7 @@ using ObjectType = helper::ObjectType;
 class CircleObject;
 class RectObject;
 
+#define LAST_POSITION_SIZE 100
 class GameObject
 {
 
@@ -60,14 +61,16 @@ class GameObject
     void setRestitution(float restitution);
     void setColor(Color color);
     void setColorState(ColorState colorState);
+    void setRestitution(double rest);
 
     ObjectType get_type() const;
     Color get_color() const;
     Position getPosition() const;
     Velocity getVelocity() const;
     Acceleration getAcceleration() const;
+    std::vector<Position> getLastPositions() const;
+
     ObjectType m_type;
-    void setRestitution(double rest);
 
   protected:
     ClassLogger m_logger;
@@ -80,6 +83,9 @@ class GameObject
     Force m_force;
     ColorState m_color_state;
     Color m_color;
+
+  private:
+    std::vector<Position> m_last_positions;
 };
 }  // namespace game::object
 #endif
