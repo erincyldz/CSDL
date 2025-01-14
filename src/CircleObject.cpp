@@ -86,14 +86,11 @@ bool CircleObject::border_collision(int screen_width, int screen_height)
     if (m_pos.y + m_radius < 0)
     {
         m_pos.y = screen_height;
-        std::cout << "Top" << std::endl;
         return true;
     }
     if (m_pos.y - m_radius > screen_height)
     {
         m_pos.y = 0;
-        std::cout << "bot" << std::endl;
-
         return true;
     }
 #endif

@@ -15,6 +15,7 @@ Game::Game() : m_sdl(nullptr)
 void Game::run()
 {
     // m_sdl->m_sound->playMusic();
+    std::cout << "Game is running" << std::endl;
     while (m_sdl->isRunning())
     {
         m_sdl->update();  // Update SDL timing
@@ -36,7 +37,7 @@ void Game::init()
 {
     gameObjects = std::vector<std::unique_ptr<game::object::GameObject>>();
 
-    std::string loggerName = "GameLogger";
+    std::string loggerName = "sdl_logger";
     m_sdl = std::make_unique<game::sdl::SDLHelper>("Game Title", m_window_width, m_window_height,
                                                    loggerName);
 }
