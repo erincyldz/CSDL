@@ -143,6 +143,11 @@ Velocity GameObject::getVelocity() const
     return m_velocity;
 }
 
+std::vector<Position> GameObject::getLastPositions() const
+{
+    return m_last_positions;
+}
+
 bool GameObject::is_colliding_with(const GameObject& other) const
 {
     if (this->m_type == ObjectType::CIRCLE && other.m_type == ObjectType::CIRCLE)
@@ -310,5 +315,12 @@ void GameObject::update_physics(float delta_time)
     // 3. Update the position based on the updated velocity
     update_position(delta_time);
     std::cout << "Position: " << m_pos.x << " " << m_pos.y << std::endl;
+
+    // keep the last 10 positions
+    if (m_last_positions.size() == LAST_POSITION_SIZE)
+    {
+        m_last_positions.erase(m_last_positions.begin());
+    }
+    m_last_positions.push_back(m_pos);
 }
 }  // namespace game::object

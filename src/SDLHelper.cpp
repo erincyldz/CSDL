@@ -253,6 +253,10 @@ void SDLHelper::drawGameObjects(
             default:
                 break;
         }
+
+#if RENDER_LAST_POSITIONS
+        renderObjectLastPosition(obj);
+#endif
     }
 }
 
@@ -295,6 +299,18 @@ double SDLHelper::getAccumulator() const
 void SDLHelper::reduceAccumulator(double timestep)
 {
     m_accumulator -= timestep;
+}
+
+void SDLHelper::renderObjectLastPosition(
+    const std::unique_ptr<game::object::GameObject>& gameObject)
+{
+    // render the last position vector
+    auto last_pos = gameObject->getLastPositions();
+    SDL_SetRenderDrawColor(m_renderer, 255, 0, 0, 255);  // Red color for last positions
+    for (const auto& pos : last_pos)
+    {
+        SDL_RenderDrawPoint(m_renderer, pos.x, pos.y);
+    }
 }
 
 }  // namespace game::sdl
