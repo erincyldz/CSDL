@@ -54,7 +54,6 @@ class GameObject
     bool is_colliding_with(const GameObject& other) const;
     void on_collision(GameObject& other);
 
-    void apply_gravitational_force(float delta_time);
     void destroy();
     void update_color(float delta_time);  // DONE
     void setPosition(Position pos);
