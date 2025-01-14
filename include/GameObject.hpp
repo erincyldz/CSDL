@@ -26,6 +26,7 @@ constexpr double MAX_VELOCITY = 500;
 class CircleObject;
 class RectObject;
 
+#define LAST_POSITION_SIZE 100
 class GameObject
 {
 
@@ -63,18 +64,20 @@ class GameObject
     void setForce(Force force);
     void addForce(const Force& force);
     void setMass(float mass);
-    void setRestitution(float restitution);
+    void setRestitution(double restitution);
     void setColor(Color color);
     void setColorState(ColorState colorState);
+    std::vector<Position> getLastPositions() const;
+    Force getForce() const;
     double get_mass();
+
     ObjectType get_type() const;
     Color get_color() const;
     Position getPosition() const;
     Velocity getVelocity() const;
     Acceleration getAcceleration() const;
-    Force getForce() const;
-    ObjectType m_type;
-    void setRestitution(double rest);
+
+       ObjectType m_type;
 
   protected:
     ClassLogger m_logger;
@@ -87,6 +90,9 @@ class GameObject
     Force m_force;
     ColorState m_color_state;
     Color m_color;
+
+  private:
+    std::vector<Position> m_last_positions;
 };
 }  // namespace game::object
 #endif

@@ -21,7 +21,12 @@ class IRenderer
     virtual void renderCollisionHighlights(
         const std::vector<std::pair<game::object::GameObject*, game::object::GameObject*>>&
             collisions) = 0;
+
+    virtual void
+        renderObjectLastPosition(const std::unique_ptr<game::object::GameObject>& gameObject) = 0;
+
     virtual void renderObjectDirection(const game::object::GameObject& obj) = 0;
+
 };
 }  // namespace game
 
