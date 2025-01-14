@@ -294,8 +294,7 @@ void GameObject::update_acceleration()
     }
     else
     {
-        // This is a non-sense case
-        // so dont need to be handled
+        m_logger.error("GameObject has zero mass. Acceleration update skipped.");
     }
 }
 
@@ -335,7 +334,7 @@ void GameObject::update_physics(float delta_time)
     // 3. Update the position based on the updated velocity
     update_position(delta_time);
 
-    std::cout << "Position: " << m_pos.x << " " << m_pos.y << std::endl;
+    m_logger.info("Position: ({}, {})", this->m_pos.x, this->m_pos.y);
 
     // keep the last 10 positions
     if (m_last_positions.size() == LAST_POSITION_SIZE)
