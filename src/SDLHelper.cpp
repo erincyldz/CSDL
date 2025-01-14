@@ -262,9 +262,9 @@ void SDLHelper::drawGameObjects(
                 break;
         }
 
-
 #if RENDER_LAST_POSITIONS
         renderObjectLastPosition(obj);
+#endif
 
 #if RENDER_DIRECTION
         renderObjectDirection(*obj);
