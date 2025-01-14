@@ -261,6 +261,10 @@ void SDLHelper::drawGameObjects(
             default:
                 break;
         }
+
+#if RENDER_DIRECTION
+        renderObjectDirection(*obj);
+#endif
     }
 }
 
@@ -294,6 +298,46 @@ void SDLHelper::renderCollisionHighlights(
         }
         m_sound->playSound();
     }
+}
+
+void SDLHelper::renderObjectDirection(const game::object::GameObject& obj)
+{
+    game::object::Position pos = obj.getPosition();
+    game::object::Velocity vel = obj.getVelocity();
+
+    // Fixed arrow length
+    const double ARROW_LENGTH = 50.0;
+
+    // Normalize the velocity vector
+    double magnitude = std::sqrt(vel.x * vel.x + vel.y * vel.y);
+    double dirX = (magnitude > 0) ? vel.x / magnitude : 0.0;
+    double dirY = (magnitude > 0) ? vel.y / magnitude : 0.0;
+
+    // Scale the normalized vector to the fixed arrow length
+    double endX = pos.x + dirX * ARROW_LENGTH;
+    double endY = pos.y + dirY * ARROW_LENGTH;
+
+    // Set arrow color
+    SDL_Color color = {255, 255, 0, 255};  // Yellow
+    SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
+
+    // Draw the main line of the arrow
+    SDL_RenderDrawLine(m_renderer, pos.x, pos.y, endX, endY);
+
+    // Draw the arrowhead
+    const double ARROWHEAD_SIZE = 10.0;
+    const double ARROWHEAD_ANGLE = M_PI / 6;  // 30 degrees
+
+    auto drawArrowhead = [&](double baseX, double baseY, double angle)
+    {
+        double arrowTipX = endX - ARROWHEAD_SIZE * std::cos(angle);
+        double arrowTipY = endY - ARROWHEAD_SIZE * std::sin(angle);
+        SDL_RenderDrawLine(m_renderer, endX, endY, arrowTipX, arrowTipY);
+    };
+
+    double angle = atan2(dirY, dirX);  // Direction of the arrow
+    drawArrowhead(endX, endY, angle - ARROWHEAD_ANGLE);
+    drawArrowhead(endX, endY, angle + ARROWHEAD_ANGLE);
 }
 
 double SDLHelper::getAccumulator() const
