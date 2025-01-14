@@ -76,6 +76,7 @@ class GameObject
     Velocity getVelocity() const;
     Acceleration getAcceleration() const;
 
+
   protected:
     ClassLogger m_logger;
     Position m_pos;

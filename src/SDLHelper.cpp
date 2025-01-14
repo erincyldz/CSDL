@@ -27,6 +27,7 @@ SDLHelper::SDLHelper(const std::string& title, int width, int height, std::strin
     m_accumulator = 0.0;
     m_isRunning = true;
     SDL_Log("SDLHelper initialized successfully.");
+    font = TTF_OpenFont("./assets/fonts/SmartDuck.ttf", 24);
 }
 
 // Destructor
@@ -46,6 +47,7 @@ void SDLHelper::initSDL()
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0)
         throw std::runtime_error("Failed to initialize SDL: " + std::string(SDL_GetError()));
     m_sound = new sound::Sound();
+    TTF_Init();
     // m_sound->SetupDevice();
     m_sound->initMixer();
 }
@@ -62,12 +64,14 @@ void SDLHelper::cleanupSDL()
         SDL_DestroyRenderer(m_renderer);
     if (m_window)
         SDL_DestroyWindow(m_window);
+    TTF_CloseFont(font);
+    TTF_Quit();
     SDL_Quit();
     SDL_Log("SDLHelper cleaned up.");
 }
 
 // Handle events
-void SDLHelper::handleEvents()
+void SDLHelper::handleEvents(GameState& state)
 {
     SDL_Event event;
     while (SDL_PollEvent(&event))
@@ -112,13 +116,73 @@ void SDLHelper::handleEvents()
                     default:
                         break;
                 }
+            case SDL_MOUSEBUTTONDOWN:
+            {
+                if (event.button.button == SDL_BUTTON_LEFT)
+                {
+                    int x = event.button.x;
+                    int y = event.button.y;
+                    if (state == GameState::MENU)
+                    {
+                        if (x > 200 && x < 400)
+                        {
+                            if (y > 100 && y < 150)
+                            {
+                                printf("Game is Started!\n");
+                                state = game::GameState::PLAYING;  // Play button
+                            }
+                            else if (y > 200 && y < 250)
+                            {
+                                printf("SETTINGS!\n");
 
-            default:
-                break;
+                                state = game::GameState::PLAYING;  // Settings button TODO: ITS NOT
+                                                                   // IMPLEMENTED YET SO I KEEP IT
+                                                                   // IN PLAYING STATE
+                            }
+                            else if (y > 300 && y < 350)
+                            {
+                                printf("EXITED THE GAME!\n");
+
+                                state = game::GameState::EXIT;  // Exit button
+                                m_isRunning = false;
+                            }
+                        }
+                    }
+                    break;
+                }
+                default:
+                    break;
+            }
         }
     }
 }
+void SDLHelper::renderMenu()
+{
+    SDL_Color playColor = {0, 255, 0, 255};
+    SDL_Color settingsColor = {0, 0, 255, 255};
+    SDL_Color exitColor = {255, 0, 0, 255};
 
+    SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
+    SDL_RenderClear(m_renderer);
+
+    SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 255);
+    SDL_Rect playButton = {200, 100, 200, 50};
+    SDL_Rect settingsButton = {200, 200, 200, 50};
+    SDL_Rect exitButton = {200, 300, 200, 50};
+    SDL_SetRenderDrawColor(m_renderer, playColor.r, playColor.g, playColor.g, playColor.a);
+    SDL_RenderFillRect(m_renderer, &playButton);
+    SDL_SetRenderDrawColor(m_renderer, settingsColor.r, settingsColor.g, settingsColor.g,
+                           settingsColor.a);
+    SDL_RenderFillRect(m_renderer, &settingsButton);
+    SDL_SetRenderDrawColor(m_renderer, exitColor.r, exitColor.g, exitColor.g, exitColor.a);
+    SDL_RenderFillRect(m_renderer, &exitButton);
+
+    SDL_Color textColor = {255, 255, 255, 255};
+    renderText(font, "Play", playButton.x + 70, playButton.y + 10, textColor);
+    renderText(font, "Settings", settingsButton.x + 50, settingsButton.y + 10, textColor);
+    renderText(font, "Exit", exitButton.x + 70, exitButton.y + 10, textColor);
+    this->present();
+}
 // Update game state
 void SDLHelper::update()
 {
@@ -142,12 +206,33 @@ void SDLHelper::update()
     m_accumulator += m_deltaTime;
 }
 
-// Render the scene
-void SDLHelper::render(const std::vector<std::unique_ptr<game::object::GameObject>>& gameObjects)
+void SDLHelper::renderText(TTF_Font* font, const std::string& text, int x, int y, SDL_Color color)
 {
-    SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);  // Black background
-    SDL_RenderClear(m_renderer);
-    drawGameObjects(gameObjects);
+    SDL_Surface* surface = TTF_RenderText_Solid(font, text.c_str(), color);
+    SDL_Texture* texture = SDL_CreateTextureFromSurface(m_renderer, surface);
+
+    SDL_Rect dstRect = {x, y, surface->w, surface->h};
+    SDL_RenderCopy(m_renderer, texture, nullptr, &dstRect);
+
+    SDL_FreeSurface(surface);
+    SDL_DestroyTexture(texture);
+}
+
+// Render the scene
+void SDLHelper::render(const std::vector<std::unique_ptr<game::object::GameObject>>& gameObjects,
+                       GameState& state)
+{
+    if (state == GameState::PLAYING || state == GameState::SETTINGS)
+    {
+        SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);  // Black background
+        SDL_RenderClear(m_renderer);
+        drawGameObjects(gameObjects);
+    }
+    else if (state == GameState::MENU)
+    {
+
+        this->renderMenu();
+    }
 }
 
 // Draw a circle
