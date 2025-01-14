@@ -119,8 +119,7 @@ void GameObject::setForce(Force force)
 
 void GameObject::addForce(const Force& force)
 {
-    m_force.x += force.x;
-    m_force.y += force.y;
+    m_force += force;
 }
 
 void GameObject::setColor(Color color)
@@ -162,9 +161,8 @@ bool GameObject::is_colliding_with(const GameObject& other) const
     if (this->m_type == ObjectType::CIRCLE && other.m_type == ObjectType::CIRCLE)
     {
         // Circle-Circle collision
-        float dx = this->m_pos.x - other.m_pos.x;
-        float dy = this->m_pos.y - other.m_pos.y;
-        float distance = std::sqrt(dx * dx + dy * dy);
+        auto diff_vector = m_pos - other.m_pos;
+        float distance = diff_vector.magnitude();
         float combinedRadii = static_cast<const CircleObject*>(this)->m_radius +
                               static_cast<const CircleObject*>(&other)->m_radius;
         return distance < combinedRadii;
@@ -179,10 +177,10 @@ bool GameObject::is_colliding_with(const GameObject& other) const
         int rect_2_width = rect2->getDimensions().first;
         int rect_2_height = rect2->getDimensions().second;
 
-        return !(rect1->m_pos.x + rect_1_width < rect2->m_pos.x ||
-                 rect1->m_pos.x > rect2->m_pos.x + rect_2_width ||
-                 rect1->m_pos.y + rect_1_height < rect2->m_pos.y ||
-                 rect1->m_pos.y > rect2->m_pos.y + rect_2_height);
+        return !(rect1->m_pos.getX() + rect_1_width < rect2->m_pos.getX() ||
+                 rect1->m_pos.getX() > rect2->m_pos.getX() + rect_2_width ||
+                 rect1->m_pos.getY() + rect_1_height < rect2->m_pos.getY() ||
+                 rect1->m_pos.getY() > rect2->m_pos.getY() + rect_2_height);
     }
     else if (this->m_type == ObjectType::CIRCLE && other.m_type == ObjectType::RECTANGLE)
     {
@@ -191,13 +189,13 @@ bool GameObject::is_colliding_with(const GameObject& other) const
         const RectObject* rect = static_cast<const RectObject*>(&other);
         int rect_width = rect->getDimensions().first;
         int rect_height = rect->getDimensions().second;
-        float nearestX =
-            std::max(rect->m_pos.x, std::min(circle->m_pos.x, rect->m_pos.x + rect_width));
-        float nearestY =
-            std::max(rect->m_pos.y, std::min(circle->m_pos.y, rect->m_pos.y + rect_height));
+        float nearestX = std::max(rect->m_pos.getX(),
+                                  std::min(circle->m_pos.getX(), rect->m_pos.getX() + rect_width));
+        float nearestY = std::max(rect->m_pos.getY(),
+                                  std::min(circle->m_pos.getY(), rect->m_pos.getY() + rect_height));
 
-        float dx = circle->m_pos.x - nearestX;
-        float dy = circle->m_pos.y - nearestY;
+        float dx = circle->m_pos.getX() - nearestX;
+        float dy = circle->m_pos.getY() - nearestY;
 
         return (dx * dx + dy * dy) < (circle->m_radius * circle->m_radius);
     }
@@ -214,27 +212,24 @@ void GameObject::on_collision(GameObject& other)
 {
     // Calculate normal vector between objects
 
-    double normalX = other.m_pos.x - this->m_pos.x;
-    double normalY = other.m_pos.y - this->m_pos.y;
+    auto diff_vector = other.m_pos - this->m_pos;
 
-    double magnitude = std::sqrt(normalX * normalX + normalY * normalY);
+    double magnitude = diff_vector.magnitude();
     // Prevent division by zero or exact overlap
     if (magnitude == 0.0f)
     {
         magnitude = 0.01f;
-        normalX = 1.0f;
-        normalY = 0.0f;
+        diff_vector.setX(1.0);
+        diff_vector.setY(0.0);
     }
 
-    normalX /= magnitude;
-    normalY /= magnitude;
+    diff_vector = diff_vector.normalized();
 
     // Relative velocity
-    double relativeVelocityX = other.m_velocity.x - this->m_velocity.x;
-    double relativeVelocityY = other.m_velocity.y - this->m_velocity.y;
+    auto relative_velocity = other.m_velocity - this->m_velocity;
 
     // Project the relative velocity onto the collision normal
-    double velocityAlongNormal = relativeVelocityX * normalX + relativeVelocityY * normalY;
+    double velocityAlongNormal = relative_velocity.dot(diff_vector);
 
     // Skip resolving if objects are separating
     if (velocityAlongNormal > 0)
@@ -244,23 +239,19 @@ void GameObject::on_collision(GameObject& other)
     double impulse = (-(1 + e) * velocityAlongNormal) / (1 / this->m_mass + 1 / other.m_mass);
 
     // Apply impulse along the normal
-    double impulseX = impulse * normalX;
-    double impulseY = impulse * normalY;
-    auto xSpeedThis = impulseX / this->m_mass;
-    auto ySpeedThis = impulseY / this->m_mass;
-    auto xSpeedOther = impulseX / other.m_mass;
-    auto ySpeedOther = impulseY / other.m_mass;
+    auto impulse_vector = diff_vector * impulse;
+    auto speed_this = impulse_vector / this->m_mass;
+    auto speed_other = impulse_vector / other.m_mass;
     const double velocityQuantizationStep = 0.01;
 
-    this->m_velocity.x -=
-        std::round(xSpeedThis / velocityQuantizationStep) * velocityQuantizationStep;
-    this->m_velocity.y -=
-        std::round(ySpeedThis / velocityQuantizationStep) * velocityQuantizationStep;
+    this->m_velocity -= game::object::helper::Vector2D(
+        std::round(speed_this.getX() / velocityQuantizationStep) * velocityQuantizationStep,
+        std::round(speed_this.getY() / velocityQuantizationStep) * velocityQuantizationStep);
 
-    other.m_velocity.x +=
-        std::round(xSpeedOther / velocityQuantizationStep) * velocityQuantizationStep;
-    other.m_velocity.y +=
-        std::round(ySpeedOther / velocityQuantizationStep) * velocityQuantizationStep;
+    // Quantize the velocity of the other object
+    other.m_velocity += game::object::helper::Vector2D(
+        std::round(speed_other.getX() / velocityQuantizationStep) * velocityQuantizationStep,
+        std::round(speed_other.getY() / velocityQuantizationStep) * velocityQuantizationStep);
 }
 
 Acceleration GameObject::getAcceleration() const
@@ -280,21 +271,18 @@ void GameObject::setAcceleration(Acceleration acceleration)
 
 void GameObject::addAcceleration(const Acceleration& acceleration)
 {
-    m_acceleration.x += acceleration.x;
-    m_acceleration.y += acceleration.y;
+    m_acceleration += acceleration;
 }
 void GameObject::update_force()
 {
-    m_force.x -= m_force.x * FRICTION_COEFFICIENT;
-    m_force.y -= m_force.y * FRICTION_COEFFICIENT;
+    m_force *= (1 - FRICTION_COEFFICIENT);
 }
 
 void GameObject::update_acceleration()
 {
     if (m_mass != 0)
     {
-        m_acceleration.x = m_force.x / m_mass;
-        m_acceleration.y = m_force.y / m_mass;
+        m_acceleration = m_force / m_mass;
         m_force = {0, 0};  // reset the m_force after implementation
     }
     else
@@ -305,24 +293,25 @@ void GameObject::update_acceleration()
 
 void GameObject::update_velocity(float delta_time)
 {
-    m_velocity.x += m_acceleration.x * delta_time;
-    m_velocity.y += m_acceleration.y * delta_time;
-    // if (m_velocity.x <= 1e-1)
+    m_velocity += m_acceleration * delta_time;
+
+    // if (m_velocity.getX() <= 1e-1)
     // {
-    //     m_velocity.x = 0;
+    //     m_velocity.setX(0);
     // }
-    // if (m_velocity.y <= 1e-1)
+    // if (m_velocity.getY() <= 1e-1)
     // {
-    //     m_velocity.y = 0;
+    //     m_velocity.setY(0);
     // }
 }
 
 void GameObject::update_position(float delta_time)
 {
-    std::clamp(m_velocity.x, MIN_VELOCITY, MAX_VELOCITY);
-    std::clamp(m_velocity.y, MIN_VELOCITY, MAX_VELOCITY);
-    m_pos.x += m_velocity.x * delta_time;
-    m_pos.y += m_velocity.y * delta_time;
+    auto x_speed = std::clamp(m_velocity.getX(), MIN_VELOCITY, MAX_VELOCITY);
+    auto y_speed = std::clamp(m_velocity.getY(), MIN_VELOCITY, MAX_VELOCITY);
+    m_velocity.setX(x_speed);
+    m_velocity.setY(y_speed);
+    m_pos += m_velocity * delta_time;
 }
 
 void GameObject::update_physics(float delta_time)
@@ -338,7 +327,7 @@ void GameObject::update_physics(float delta_time)
     // 4. Update the position based on the updated velocity
     update_position(delta_time);
 
-    m_logger.info("Position: ({}, {})", this->m_pos.x, this->m_pos.y);
+    m_logger.info("Position: {} ", this->m_pos);
 
     // keep the last 10 positions
     if (m_last_positions.size() == LAST_POSITION_SIZE)

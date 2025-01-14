@@ -55,8 +55,7 @@ void RectObject::tellRadius()
 void RectObject::update(float delta_time, int screen_width, int screen_height)
 {
     // update_color(delta_time);
-    // m_pos.x += m_velocity.x * delta_time;
-    // m_pos.y += m_velocity.y * delta_time;
+    // m_pos += m_velocity * delta_time;
     update_physics(delta_time);
     border_collision(screen_width, screen_height);
 }
@@ -64,28 +63,28 @@ void RectObject::update(float delta_time, int screen_width, int screen_height)
 bool RectObject::border_collision(int screen_width, int screen_height)
 {
 
-    if (this->m_pos.x < 0)
+    if (this->m_pos.getX() < 0)
     {
-        this->m_pos.x = 0;
-        this->m_velocity.x *= -1;
+        this->m_pos.setX(0);
+        this->m_velocity.reverseX();
         return true;
     }
-    if (this->m_pos.x + this->m_width > screen_width)
+    if (this->m_pos.getX() + this->m_width > screen_width)
     {
-        this->m_pos.x = screen_width - this->m_width;
-        this->m_velocity.x *= -1;
+        this->m_pos.setX(screen_width - this->m_width);
+        this->m_velocity.reverseX();
         return true;
     }
-    if (this->m_pos.y < 0)
+    if (this->m_pos.getY() < 0)
     {
-        this->m_pos.y = 0;
-        this->m_velocity.y *= -1;
+        this->m_pos.setY(0);
+        this->m_velocity.reverseY();
         return true;
     }
-    if (this->m_pos.y + this->m_height > screen_height)
+    if (this->m_pos.getY() + this->m_height > screen_height)
     {
-        this->m_pos.y = screen_height - this->m_height;
-        this->m_velocity.y *= -1;
+        this->m_pos.setY(screen_height - this->m_height);
+        this->m_velocity.reverseY();
         return true;
     }
     return false;

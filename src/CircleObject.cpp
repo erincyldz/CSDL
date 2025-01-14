@@ -47,8 +47,7 @@ void CircleObject::tellRadius()
 void CircleObject::update(float delta_time, int screen_width, int screen_height)
 {
     // update_color(delta_time);
-    // m_pos.x += m_velocity.x * delta_time;
-    // m_pos.y += m_velocity.y * delta_time;
+    // m_pos += m_velocity * delta_time;
     update_physics(delta_time);
     border_collision(screen_width, screen_height);
 }
@@ -56,41 +55,41 @@ void CircleObject::update(float delta_time, int screen_width, int screen_height)
 bool CircleObject::border_collision(int screen_width, int screen_height)
 {
 #ifdef BORDER_COLLISION
-    if (m_pos.x - m_radius < 0 || m_pos.x + m_radius > screen_width)
+    if (m_pos.getX() - m_radius < 0 || m_pos.getX() + m_radius > screen_width)
     {
-        m_velocity.x = -m_velocity.x;  // Reverse x velocity
-        m_pos.x = std::clamp(m_pos.x, (double)m_radius,
-                             screen_width - (double)m_radius);  // Keep within bounds
+        m_velocity.setX(-m_velocity.getX());  // Reverse x velocity
+        m_pos.setX(std::clamp(m_pos.getX(), (double)m_radius,
+                              screen_width - (double)m_radius));  // Keep within bounds
         return true;
     }
 
-    if (m_pos.y - m_radius < 0 || m_pos.y + m_radius > screen_height)
+    if (m_pos.getY() - m_radius < 0 || m_pos.getY() + m_radius > screen_height)
     {
-        m_velocity.y = -m_velocity.y;  // Reverse y velocity
-        m_pos.y = std::clamp(m_pos.y, (double)m_radius,
-                             screen_height - (double)m_radius);  // Keep within bounds
+        m_velocity.setY(-m_velocity.getY);  // Reverse y velocity
+        m_pos.setY(std::clamp(m_pos.getY(), (double)m_radius,
+                              screen_height - (double)m_radius));  // Keep within bounds
         return true;
     }
 #else
-    if (m_pos.x + m_radius < 0)
+    if (m_pos.getX() + m_radius < 0)
     {
-        m_pos.x = screen_width;
+        m_pos.setX(screen_width);
         return true;
     }
-    if (m_pos.x - m_radius > screen_width)
+    if (m_pos.getX() - m_radius > screen_width)
     {
-        m_pos.x = 0;
+        m_pos.setX(0);
         return true;
     }
 
-    if (m_pos.y + m_radius < 0)
+    if (m_pos.getY() + m_radius < 0)
     {
-        m_pos.y = screen_height;
+        m_pos.setY(screen_height);
         return true;
     }
-    if (m_pos.y - m_radius > screen_height)
+    if (m_pos.getY() - m_radius > screen_height)
     {
-        m_pos.y = 0;
+        m_pos.setY(0);
         return true;
     }
 #endif
