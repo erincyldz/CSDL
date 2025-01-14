@@ -110,4 +110,53 @@ const std::vector<std::pair<game::object::GameObject*, game::object::GameObject*
 {
     return activeCollisions;
 }
+
+static double d_square(double num)
+{
+    return num * num;
+}
+
+void CollisionManager::calculate_gravitational_force(
+    const std::vector<std::unique_ptr<game::object::GameObject>>& objects)
+{
+    auto t = get_active_collisions();
+    for (auto& obj1 : objects)
+    {
+        game::object::Force applied_force{0, 0};
+
+        for (auto& obj2 : objects)
+        {
+            for (auto& collision : t)
+            {
+                for (auto coll : {collision.first, collision.second})
+                {
+                    if (coll == obj1.get() || coll == obj2.get())
+                    {
+                        return;
+                    }
+                }
+            }
+            if (obj1 == obj2)
+                continue;  // Skip self-collision
+            double x_axis_force, y_axis_force = 0;
+            double distance = sqrt(d_square(obj2->getPosition().x - obj1->getPosition().x) +
+                                   d_square(obj2->getPosition().y - obj1->getPosition().y));
+            double g_force =
+                (GRAVITATIONAL_CONSTANT * obj1->get_mass() * obj2->get_mass()) / d_square(distance);
+            if (!distance)
+            {
+                x_axis_force = 0;
+                y_axis_force = 0;
+            }
+            else
+            {
+                x_axis_force = (obj2->getPosition().x - obj1->getPosition().x) / distance;
+                y_axis_force = (obj2->getPosition().y - obj1->getPosition().y) / distance;
+            }
+            applied_force.x += x_axis_force * g_force;
+            applied_force.y += y_axis_force * g_force;
+        }
+        obj1->addForce(applied_force);
+    }
+}
 }  // namespace game::engine

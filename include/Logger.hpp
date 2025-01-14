@@ -64,8 +64,35 @@ class Logger
         std::lock_guard<std::mutex> lock(mtx);
 
         std::string message = formatString(format, args...);
-        std::cout << "[" << className << "] [" << logLevelToString(level) << "] " << message
-                  << std::endl;
+
+        std::string color_code;
+        switch (level)
+        {
+            case LogLevel::INFO:
+                color_code = "\033[92m";  // Bright Green
+                break;
+            case LogLevel::WARNING:
+                color_code = "\033[93m";  // Bright Yellow
+                break;
+            case LogLevel::ERROR:
+                color_code = "\033[91m";  // Bright Red
+                break;
+            case LogLevel::DEBUG:
+                color_code = "\033[94m";  // Bright Blue
+                break;
+            default:
+                color_code = "\033[00m";  // Reset (default terminal color)
+                break;
+        }
+
+        std::string color_code_reset = "\033[00m";
+        std::string bold = "\u001b[1m";
+        std::string black_color = "\033[31m";
+        std::string white_color = "\033[37m";
+
+        std::cout << bold << black_color << "[" << className << "]" << color_code_reset
+                  << color_code << " [" << logLevelToString(level) << "]" << color_code_reset
+                  << "\t-\t" << bold << white_color << message << color_code_reset << std::endl;
     }
 
   private:

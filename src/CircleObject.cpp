@@ -9,7 +9,7 @@ CircleObject::CircleObject(float rad, std::string& logger_name)
 {
     m_type = helper::ObjectType::CIRCLE;
     m_type = helper::ObjectType::CIRCLE;
-    m_mass = m_radius * m_radius * PI;
+    m_mass = 1.0;
     m_force = {0.0f, 0.0f};
     m_restitution = 1;
     m_color_state = helper::ObjectColor::RED;
@@ -55,6 +55,7 @@ void CircleObject::update(float delta_time, int screen_width, int screen_height)
 
 bool CircleObject::border_collision(int screen_width, int screen_height)
 {
+#ifdef BORDER_COLLISION
     if (m_pos.x - m_radius < 0 || m_pos.x + m_radius > screen_width)
     {
         m_velocity.x = -m_velocity.x;  // Reverse x velocity
@@ -70,6 +71,29 @@ bool CircleObject::border_collision(int screen_width, int screen_height)
                              screen_height - (double)m_radius);  // Keep within bounds
         return true;
     }
+#else
+    if (m_pos.x + m_radius < 0)
+    {
+        m_pos.x = screen_width;
+        return true;
+    }
+    if (m_pos.x - m_radius > screen_width)
+    {
+        m_pos.x = 0;
+        return true;
+    }
+
+    if (m_pos.y + m_radius < 0)
+    {
+        m_pos.y = screen_height;
+        return true;
+    }
+    if (m_pos.y - m_radius > screen_height)
+    {
+        m_pos.y = 0;
+        return true;
+    }
+#endif
     return false;
 }
 

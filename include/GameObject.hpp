@@ -8,6 +8,7 @@
 #include <cmath>
 #include <memory>
 #include <vector>
+// #define BORDER_COLLISION
 namespace game::object
 {
 using Force = helper::Vector2_t;
@@ -17,6 +18,9 @@ using Acceleration = helper::Vector2_t;
 using Color = helper::Color_t;
 using ColorState = helper::ObjectColor;
 using ObjectType = helper::ObjectType;
+
+constexpr double MIN_VELOCITY = -500;
+constexpr double MAX_VELOCITY = 500;
 
 // forward declaration
 class CircleObject;
@@ -50,6 +54,7 @@ class GameObject
     bool is_colliding_with(const GameObject& other) const;
     void on_collision(GameObject& other);
 
+    void apply_gravitational_force(float delta_time);
     void destroy();
     void update_color(float delta_time);  // DONE
     void setPosition(Position pos);
@@ -57,18 +62,24 @@ class GameObject
     void setAcceleration(Acceleration acceleration);
     void addAcceleration(const Acceleration& acceleration);
     void setForce(Force force);
+    void addForce(const Force& force);
     void setMass(float mass);
     void setRestitution(float restitution);
     void setColor(Color color);
     void setColorState(ColorState colorState);
-    void setRestitution(double rest);
+    std::vector<Position> getLastPositions() const;
+    Force getForce() const;
+    double get_mass();
 
     ObjectType get_type() const;
     Color get_color() const;
     Position getPosition() const;
     Velocity getVelocity() const;
     Acceleration getAcceleration() const;
-    std::vector<Position> getLastPositions() const;
+
+   
+
+    
 
     ObjectType m_type;
 
