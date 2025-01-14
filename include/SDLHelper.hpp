@@ -2,16 +2,18 @@
 #define SDL_HELPER_HPP
 
 #include <ClassLogger.hpp>
+#include <GameHelper.hpp>
 #include <GameObject.hpp>
 #include <IRenderer.hpp>
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 #include <SDLSound.hpp>
 #include <memory>
 #include <stdexcept>
 #include <string>
 #include <vector>
 #define DELTA_TIME_COFACTOR 1000.0f
-#define FPS                 60
+#define FPS                 175
 #define FRAME_TARGET_TIME   (1000 / FPS)
 
 
@@ -30,6 +32,8 @@ class SDLHelper : public game::IRenderer
 
     // rendering
     void present();  // Call SDL_RenderPresent once here
+    void renderText(TTF_Font* font, const std::string& text, int x, int y, SDL_Color color);
+    void renderMenu();
     // Main loop
     float getDeltaTime();
     double getAccumulator() const;
@@ -49,9 +53,10 @@ class SDLHelper : public game::IRenderer
     sound::Sound* m_sound;
 
     // Event handling
-    void handleEvents();
+    void handleEvents(GameState& state);
     void update();
-    void render(const std::vector<std::unique_ptr<game::object::GameObject>>& gameObjects);
+    void render(const std::vector<std::unique_ptr<game::object::GameObject>>& gameObjects,
+                GameState& state);
     void reduceAccumulator(double timestep);
 
     // Physics
@@ -76,6 +81,7 @@ class SDLHelper : public game::IRenderer
     // SDL-related members
     SDL_Window* m_window;
     SDL_Renderer* m_renderer;
+    TTF_Font* font;
     // Application state
     bool m_isRunning;
     int m_windowWidth;
