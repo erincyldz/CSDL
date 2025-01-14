@@ -75,8 +75,8 @@ void Game::addRandomGameObject()
         // Set properties
         circle->setRadius(randomRadius(gen));
         game::object::Position pos;
-        pos.x = randomX(gen);
-        pos.y = randomY(gen);
+        pos.setX(randomX(gen));
+        pos.setY(randomY(gen));
         circle->setPosition(pos);
         circle->setMass(PI * circle->getRadius() * circle->getRadius());
 
@@ -96,8 +96,8 @@ void Game::addRandomGameObject()
         // Set properties
         rect->setDimensions(randomDimension(gen), randomDimension(gen));
         game::object::Position pos;
-        pos.x = randomX(gen);
-        pos.y = randomY(gen);
+        pos.setX(randomX(gen));
+        pos.setY(randomY(gen));
         rect->setPosition(pos);
         rect->setMass(rect->getDimensions().first * rect->getDimensions().second);
         // Optionally, set velocity, color, or other properties

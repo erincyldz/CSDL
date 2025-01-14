@@ -11,10 +11,10 @@
 // #define BORDER_COLLISION
 namespace game::object
 {
-using Force = helper::Vector2_t;
-using Position = helper::Vector2_t;
-using Velocity = helper::Vector2_t;
-using Acceleration = helper::Vector2_t;
+using Force = helper::Vector2D;
+using Position = helper::Vector2D;
+using Velocity = helper::Vector2D;
+using Acceleration = helper::Vector2D;
 using Color = helper::Color_t;
 using ColorState = helper::ObjectColor;
 using ObjectType = helper::ObjectType;

@@ -22,17 +22,17 @@ void CollisionManager::resolve_collisions(
             case game::object::helper::ObjectType::CIRCLE:
                 if (const auto* circle = dynamic_cast<const game::object::CircleObject*>(&obj))
                 {
-                    pos_x = static_cast<int>(std::floor(circle->getPosition().x / cellSize));
-                    pos_y = static_cast<int>(std::floor(circle->getPosition().y / cellSize));
+                    pos_x = static_cast<int>(std::floor(circle->getPosition().getX() / cellSize));
+                    pos_y = static_cast<int>(std::floor(circle->getPosition().getY() / cellSize));
                 }
                 break;
             case game::object::helper::ObjectType::RECTANGLE:
                 if (const auto* rect = dynamic_cast<const game::object::RectObject*>(&obj))
                 {
-                    pos_x = static_cast<int>(
-                        std::floor((rect->getPosition().x + rect->get_width() / 2) / cellSize));
-                    pos_y = static_cast<int>(
-                        std::floor((rect->getPosition().y + rect->get_height() / 2) / cellSize));
+                    pos_x = static_cast<int>(std::floor(
+                        (rect->getPosition().getX() + rect->get_width() / 2) / cellSize));
+                    pos_y = static_cast<int>(std::floor(
+                        (rect->getPosition().getY() + rect->get_height() / 2) / cellSize));
                 }
                 break;
         }
@@ -139,22 +139,26 @@ void CollisionManager::calculate_gravitational_force(
             if (obj1 == obj2)
                 continue;  // Skip self-collision
             double x_axis_force, y_axis_force = 0;
-            double distance = sqrt(d_square(obj2->getPosition().x - obj1->getPosition().x) +
-                                   d_square(obj2->getPosition().y - obj1->getPosition().y));
+            double distance =
+                sqrt(d_square(obj2->getPosition().getX() - obj1->getPosition().getX()) +
+                     d_square(obj2->getPosition().getY() - obj1->getPosition().getY()));
             double g_force =
                 (GRAVITATIONAL_CONSTANT * obj1->get_mass() * obj2->get_mass()) / d_square(distance);
+            game::object::helper::Vector2D force{0, 0};
+
             if (!distance)
             {
-                x_axis_force = 0;
-                y_axis_force = 0;
+                force.setX(0);
+                force.setY(0);
             }
             else
             {
-                x_axis_force = (obj2->getPosition().x - obj1->getPosition().x) / distance;
-                y_axis_force = (obj2->getPosition().y - obj1->getPosition().y) / distance;
+                x_axis_force = (obj2->getPosition().getX() - obj1->getPosition().getX()) / distance;
+                y_axis_force = (obj2->getPosition().getY() - obj1->getPosition().getY()) / distance;
+                force.setX(x_axis_force);
+                force.setY(y_axis_force);
             }
-            applied_force.x += x_axis_force * g_force;
-            applied_force.y += y_axis_force * g_force;
+            applied_force += force * g_force;
         }
         obj1->addForce(applied_force);
     }
