@@ -104,9 +104,9 @@ void GameObject::setPosition(Position pos)
 {
     m_pos = pos;
 }
-void GameObject::setRestitution(float restitution)
+void GameObject::setRestitution(double rest)
 {
-    m_restitution = restitution;
+    m_restitution = rest;
 }
 void GameObject::setMass(float mass)
 {
@@ -262,10 +262,6 @@ void GameObject::on_collision(GameObject& other)
     other.m_velocity.y +=
         std::round(ySpeedOther / velocityQuantizationStep) * velocityQuantizationStep;
 }
-void GameObject::setRestitution(double rest)
-{
-    m_restitution = rest;
-}
 
 Acceleration GameObject::getAcceleration() const
 {
@@ -347,7 +343,6 @@ void GameObject::update_physics(float delta_time)
         m_last_positions.erase(m_last_positions.begin());
     }
     m_last_positions.push_back(m_pos);
-
 }
 void GameObject::apply_gravitational_force(float delta_time)
 {
@@ -355,6 +350,5 @@ void GameObject::apply_gravitational_force(float delta_time)
     new_pos.x = {this->getPosition().x + (this->m_force.x * delta_time / this->m_mass)};
     new_pos.y = {this->getPosition().y + (this->m_force.y * delta_time / this->m_mass)};
     this->setPosition(new_pos);
-
 }
 }  // namespace game::object

@@ -64,7 +64,7 @@ class GameObject
     void setForce(Force force);
     void addForce(const Force& force);
     void setMass(float mass);
-    void setRestitution(float restitution);
+    void setRestitution(double restitution);
     void setColor(Color color);
     void setColorState(ColorState colorState);
     std::vector<Position> getLastPositions() const;
@@ -77,11 +77,7 @@ class GameObject
     Velocity getVelocity() const;
     Acceleration getAcceleration() const;
 
-   
-
-    
-
-    ObjectType m_type;
+       ObjectType m_type;
 
   protected:
     ClassLogger m_logger;
