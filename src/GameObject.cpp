@@ -334,6 +334,6 @@ void GameObject::update_physics(float delta_time)
     {
         m_last_positions.erase(m_last_positions.begin());
     }
-    m_last_positions.push_back(m_pos);
+    m_last_positions.push_back(this->getCenter());
 }
 }  // namespace game::object

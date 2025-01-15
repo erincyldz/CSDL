@@ -17,6 +17,7 @@ class CircleObject : public GameObject
     void update(float delta_time, int screen_width,
                 int screen_height) override;  // Use `override` for safety
     bool border_collision(int screen_width, int screen_height) override;
+    Position getCenter() const;
     float m_radius;
 
   private:

@@ -16,6 +16,7 @@ class RectObject : public GameObject
     int get_width() const;
     int get_height() const;
     void setDimensions(int width, int height);
+    Position getCenter() const;
 
   private:
     int m_width, m_height;
