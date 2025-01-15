@@ -267,8 +267,9 @@ void SDLHelper::drawOutline(const game::object::RectObject& rect)
     for (int t = 0; t < thickness; ++t)
     {
         // Draw the rectangle with increasing thickness
-        SDL_Rect rect = {static_cast<int>(rect_pos.x - t), static_cast<int>(rect_pos.y - t),
-                         rect_width + 2 * t, rect_height + 2 * t};
+        SDL_Rect rect = {static_cast<int>(rect_pos.getX() - t),
+                         static_cast<int>(rect_pos.getY() - t), rect_width + 2 * t,
+                         rect_height + 2 * t};
         SDL_RenderDrawRect(m_renderer, &rect);
     }
 }
@@ -292,7 +293,7 @@ void SDLHelper::drawOutline(const game::object::CircleObject& circle)
             if (distanceSquared <= (radius * radius) &&
                 distanceSquared >= ((radius - thickness) * (radius - thickness)))
             {
-                SDL_RenderDrawPoint(m_renderer, circle_pos.x + dx, circle_pos.y + dy);
+                SDL_RenderDrawPoint(m_renderer, circle_pos.getX() + dx, circle_pos.getY() + dy);
             }
         }
     }
@@ -320,7 +321,7 @@ void SDLHelper::drawGameObjects(
                 if (auto* circle = dynamic_cast<game::object::CircleObject*>(obj.get()))
                 {
                     int radius = static_cast<int>(circle->getRadius());
-                    drawCircleFill(pos.x, pos.y, radius,
+                    drawCircleFill(pos.getX(), pos.getY(), radius,
                                    {
                                        static_cast<Uint8>(obj->get_color().r),
                                        static_cast<Uint8>(obj->get_color().g),
@@ -334,7 +335,7 @@ void SDLHelper::drawGameObjects(
                 // Safely cast to CircleObject
                 if (auto* rect = dynamic_cast<game::object::RectObject*>(obj.get()))
                 {
-                    drawRectangleFill(pos.x, pos.y, rect->get_width(), rect->get_height(),
+                    drawRectangleFill(pos.getX(), pos.getY(), rect->get_width(), rect->get_height(),
                                       {
                                           static_cast<Uint8>(obj->get_color().r),
                                           static_cast<Uint8>(obj->get_color().g),
@@ -392,28 +393,33 @@ void SDLHelper::renderCollisionHighlights(
 
 void SDLHelper::renderObjectDirection(const game::object::GameObject& obj)
 {
-    game::object::Position pos = obj.getPosition();
+    game::object::Position pos = obj.getCenter();
     game::object::Velocity vel = obj.getVelocity();
 
     // Normalize the velocity vector
-    double magnitude = std::sqrt(vel.x * vel.x + vel.y * vel.y);
+    auto magnitude = vel.magnitude();
 
     // Fixed arrow length
-    const double ARROW_LENGTH = magnitude;
-
-    double dirX = (magnitude > 0) ? vel.x / magnitude : 0.0;
-    double dirY = (magnitude > 0) ? vel.y / magnitude : 0.0;
+    const double MAX_ARROW_LENGTH = 250;
+    const double MIN_ARROW_LENGTH = 20;
+    double arrow_length = std::clamp(magnitude, MIN_ARROW_LENGTH, MAX_ARROW_LENGTH);
+    game::object::helper::Vector2D direction{0, 0};
+    if (magnitude > 0)
+    {
+        direction = vel / magnitude;
+    }
 
     // Scale the normalized vector to the fixed arrow length
-    double endX = pos.x + dirX * ARROW_LENGTH;
-    double endY = pos.y + dirY * ARROW_LENGTH;
+
+    auto arrow_dir = pos + (direction * arrow_length);
 
     // Set arrow color
     SDL_Color color = {255, 255, 0, 255};  // Yellow
     SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
 
     // Draw the main line of the arrow
-    SDL_RenderDrawLine(m_renderer, pos.x, pos.y, endX, endY);
+
+    SDL_RenderDrawLine(m_renderer, pos.getX(), pos.getY(), arrow_dir.getX(), arrow_dir.getY());
 
     // Draw the arrowhead
     const double ARROWHEAD_SIZE = 10.0;
@@ -421,14 +427,14 @@ void SDLHelper::renderObjectDirection(const game::object::GameObject& obj)
 
     auto drawArrowhead = [&](double baseX, double baseY, double angle)
     {
-        double arrowTipX = endX - ARROWHEAD_SIZE * std::cos(angle);
-        double arrowTipY = endY - ARROWHEAD_SIZE * std::sin(angle);
-        SDL_RenderDrawLine(m_renderer, endX, endY, arrowTipX, arrowTipY);
+        double arrowTipX = arrow_dir.getX() - ARROWHEAD_SIZE * std::cos(angle);
+        double arrowTipY = arrow_dir.getY() - ARROWHEAD_SIZE * std::sin(angle);
+        SDL_RenderDrawLine(m_renderer, arrow_dir.getX(), arrow_dir.getY(), arrowTipX, arrowTipY);
     };
 
-    double angle = atan2(dirY, dirX);  // Direction of the arrow
-    drawArrowhead(endX, endY, angle - ARROWHEAD_ANGLE);
-    drawArrowhead(endX, endY, angle + ARROWHEAD_ANGLE);
+    double angle = atan2(vel.getY(), vel.getX());  // Direction of the arrow
+    drawArrowhead(arrow_dir.getX(), arrow_dir.getY(), angle - ARROWHEAD_ANGLE);
+    drawArrowhead(arrow_dir.getX(), arrow_dir.getY(), angle + ARROWHEAD_ANGLE);
 }
 
 double SDLHelper::getAccumulator() const
@@ -448,7 +454,7 @@ void SDLHelper::renderObjectLastPosition(
     SDL_SetRenderDrawColor(m_renderer, 255, 0, 0, 255);  // Red color for last positions
     for (const auto& pos : last_pos)
     {
-        SDL_RenderDrawPoint(m_renderer, pos.x, pos.y);
+        SDL_RenderDrawPoint(m_renderer, pos.getX(), pos.getY());
     }
 }
 

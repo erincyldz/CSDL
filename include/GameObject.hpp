@@ -8,13 +8,13 @@
 #include <cmath>
 #include <memory>
 #include <vector>
-// #define BORDER_COLLISION
+#define BORDER_COLLISION
 namespace game::object
 {
-using Force = helper::Vector2_t;
-using Position = helper::Vector2_t;
-using Velocity = helper::Vector2_t;
-using Acceleration = helper::Vector2_t;
+using Force = helper::Vector2D;
+using Position = helper::Vector2D;
+using Velocity = helper::Vector2D;
+using Acceleration = helper::Vector2D;
 using Color = helper::Color_t;
 using ColorState = helper::ObjectColor;
 using ObjectType = helper::ObjectType;
@@ -76,6 +76,7 @@ class GameObject
     Position getPosition() const;
     Velocity getVelocity() const;
     Acceleration getAcceleration() const;
+    virtual Position getCenter() const = 0;
 
   protected:
     ClassLogger m_logger;

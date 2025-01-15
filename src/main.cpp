@@ -60,7 +60,7 @@ int main(int argc, char* argv[])
     game.addGameObject(std::move(circle1));
     game.addGameObject(std::move(circle2));
     game.addGameObject(std::move(circle3));
-    // game.addGameObject(std::move(rectan1));
+    game.addGameObject(std::move(rectan1));
 
     game.run();
 }
