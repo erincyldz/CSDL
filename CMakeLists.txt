@@ -7,7 +7,6 @@ project(engine VERSION 1.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-
 # Set the project root directory (the directory where CMakeLists.txt is located)
 set(PROJECT_ROOT_DIR ${CMAKE_SOURCE_DIR})
 
@@ -19,7 +18,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_ROOT_DIR}/bin)
 set(CMAKE_BINARY_DIR ${PROJECT_ROOT_DIR}/build)
 
 # Set the prefix path to include /usr/local for package searches
-set(CMAKE_PREFIX_PATH "/usr/local" ${CMAKE_PREFIX_PATH})
+set(CMAKE_PREFIX_PATH "/usr/local;/usr" ${CMAKE_PREFIX_PATH})
 
 # Define PROJECT_ROOT_DIR as a preprocessor macro for C++ code
 add_definitions(-DPROJECT_ROOT_DIR="${PROJECT_ROOT_DIR}")
@@ -34,6 +33,9 @@ add_executable(${PROJECT_NAME} ${SOURCES})
 
 # Find and link SDL2 and SDL2_mixer libraries
 find_package(SDL2 REQUIRED)
+
+find_package(SDL2_mixer REQUIRED CONFIG)
+
 if(SDL2_FOUND)
     message(STATUS "SDL2 found at: ${SDL2_DIR}")
 else()
@@ -41,6 +43,7 @@ else()
 endif()
 
 find_package(SDL2_mixer REQUIRED)
+
 if(SDL2_mixer_FOUND)
     message(STATUS "SDL2_mixer found at: ${SDL2_mixer_DIR}")
 else()
@@ -48,13 +51,19 @@ else()
 endif()
 
 find_package(SDL2_ttf REQUIRED)
+
 if(SDL2_ttf_FOUND)
     message(STATUS "SDL2_ttf found at: ${SDL2_ttf_DIR}")
 else()
     message(FATAL_ERROR "SDL2_ttf not found!")
 endif()
 
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    BUILD_RPATH "/usr/local/lib;/usr/lib"
+    INSTALL_RPATH "/usr/local/lib;/usr/lib"
+)
 target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2 SDL2::SDL2main SDL2_mixer SDL2_ttf m)
 
-# Add include directories for the target (optional, more scoped)
 target_include_directories(${PROJECT_NAME} PRIVATE include)
+
+# Add include directories for the target (optional, more scoped)
