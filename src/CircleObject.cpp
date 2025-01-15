@@ -57,7 +57,7 @@ bool CircleObject::border_collision(int screen_width, int screen_height)
 #ifdef BORDER_COLLISION
     if (m_pos.getX() - m_radius < 0 || m_pos.getX() + m_radius > screen_width)
     {
-        m_velocity.setX(-m_velocity.getX());  // Reverse x velocity
+        m_velocity.reverseX();  // Reverse x velocity
         m_pos.setX(std::clamp(m_pos.getX(), (double)m_radius,
                               screen_width - (double)m_radius));  // Keep within bounds
         return true;
@@ -65,7 +65,7 @@ bool CircleObject::border_collision(int screen_width, int screen_height)
 
     if (m_pos.getY() - m_radius < 0 || m_pos.getY() + m_radius > screen_height)
     {
-        m_velocity.setY(-m_velocity.getY);  // Reverse y velocity
+        m_velocity.reverseY();  // Reverse y velocity
         m_pos.setY(std::clamp(m_pos.getY(), (double)m_radius,
                               screen_height - (double)m_radius));  // Keep within bounds
         return true;

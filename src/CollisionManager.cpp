@@ -153,10 +153,7 @@ void CollisionManager::calculate_gravitational_force(
             }
             else
             {
-                x_axis_force = (obj2->getPosition().getX() - obj1->getPosition().getX()) / distance;
-                y_axis_force = (obj2->getPosition().getY() - obj1->getPosition().getY()) / distance;
-                force.setX(x_axis_force);
-                force.setY(y_axis_force);
+                force = (obj2->getPosition() - obj1->getPosition()) / distance;
             }
             applied_force += force * g_force;
         }

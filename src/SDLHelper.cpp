@@ -401,26 +401,22 @@ void SDLHelper::renderObjectDirection(const game::object::GameObject& obj)
 
     // Fixed arrow length
     const double ARROW_LENGTH = magnitude;
+    game::object::helper::Vector2D direction{0, 0};
     if (magnitude > 0)
     {
-        vel /= magnitude;
-    }
-    else
-    {
-        vel.setX(0);
-        vel.setY(0);
+        direction = vel / magnitude;
     }
 
     // Scale the normalized vector to the fixed arrow length
-    double endX = pos.getX() + vel.getX() * ARROW_LENGTH;
-    double endY = pos.getY() + vel.getY() * ARROW_LENGTH;
+
+    auto arrow_dir = pos + (direction * ARROW_LENGTH);
 
     // Set arrow color
     SDL_Color color = {255, 255, 0, 255};  // Yellow
     SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, color.a);
 
     // Draw the main line of the arrow
-    SDL_RenderDrawLine(m_renderer, pos.getX(), pos.getY(), endX, endY);
+    SDL_RenderDrawLine(m_renderer, pos.getX(), pos.getY(), arrow_dir.getX(), arrow_dir.getY());
 
     // Draw the arrowhead
     const double ARROWHEAD_SIZE = 10.0;
@@ -428,14 +424,14 @@ void SDLHelper::renderObjectDirection(const game::object::GameObject& obj)
 
     auto drawArrowhead = [&](double baseX, double baseY, double angle)
     {
-        double arrowTipX = endX - ARROWHEAD_SIZE * std::cos(angle);
-        double arrowTipY = endY - ARROWHEAD_SIZE * std::sin(angle);
-        SDL_RenderDrawLine(m_renderer, endX, endY, arrowTipX, arrowTipY);
+        double arrowTipX = arrow_dir.getX() - ARROWHEAD_SIZE * std::cos(angle);
+        double arrowTipY = arrow_dir.getY() - ARROWHEAD_SIZE * std::sin(angle);
+        SDL_RenderDrawLine(m_renderer, arrow_dir.getX(), arrow_dir.getY(), arrowTipX, arrowTipY);
     };
 
     double angle = atan2(vel.getY(), vel.getX());  // Direction of the arrow
-    drawArrowhead(endX, endY, angle - ARROWHEAD_ANGLE);
-    drawArrowhead(endX, endY, angle + ARROWHEAD_ANGLE);
+    drawArrowhead(arrow_dir.getX(), arrow_dir.getY(), angle - ARROWHEAD_ANGLE);
+    drawArrowhead(arrow_dir.getX(), arrow_dir.getY(), angle + ARROWHEAD_ANGLE);
 }
 
 double SDLHelper::getAccumulator() const
