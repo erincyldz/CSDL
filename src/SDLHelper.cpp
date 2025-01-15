@@ -393,7 +393,7 @@ void SDLHelper::renderCollisionHighlights(
 
 void SDLHelper::renderObjectDirection(const game::object::GameObject& obj)
 {
-    game::object::Position pos = obj.getPosition();
+    game::object::Position pos = obj.getCenter();
     game::object::Velocity vel = obj.getVelocity();
 
     // Normalize the velocity vector
@@ -419,16 +419,8 @@ void SDLHelper::renderObjectDirection(const game::object::GameObject& obj)
 
     // Draw the main line of the arrow
 
-    if (obj.get_type() == object::helper::ObjectType::RECTANGLE)
-    {
-        const auto* rect = dynamic_cast<const game::object::RectObject*>(&obj);
-        SDL_RenderDrawLine(m_renderer, pos.getX() + rect->get_width() / 2,
-                           pos.getY() + rect->get_height() / 2, arrow_dir.getX(), arrow_dir.getY());
-    }
-    else
-    {
-        SDL_RenderDrawLine(m_renderer, pos.getX(), pos.getY(), arrow_dir.getX(), arrow_dir.getY());
-    }
+    SDL_RenderDrawLine(m_renderer, pos.getX(), pos.getY(), arrow_dir.getX(), arrow_dir.getY());
+
     // Draw the arrowhead
     const double ARROWHEAD_SIZE = 10.0;
     const double ARROWHEAD_ANGLE = M_PI / 6;  // 30 degrees
@@ -462,16 +454,7 @@ void SDLHelper::renderObjectLastPosition(
     SDL_SetRenderDrawColor(m_renderer, 255, 0, 0, 255);  // Red color for last positions
     for (const auto& pos : last_pos)
     {
-        if (gameObject->get_type() == object::helper::ObjectType::RECTANGLE)
-        {
-            const auto rect = dynamic_cast<const game::object::RectObject&>(*gameObject);
-            SDL_RenderDrawPoint(m_renderer, pos.getX() + rect.get_width() / 2,
-                                pos.getY() + rect.get_height() / 2);
-        }
-        else
-        {
-            SDL_RenderDrawPoint(m_renderer, pos.getX(), pos.getY());
-        }
+        SDL_RenderDrawPoint(m_renderer, pos.getX(), pos.getY());
     }
 }
 

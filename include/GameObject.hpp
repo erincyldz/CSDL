@@ -76,6 +76,7 @@ class GameObject
     Position getPosition() const;
     Velocity getVelocity() const;
     Acceleration getAcceleration() const;
+    virtual Position getCenter() const = 0;
 
   protected:
     ClassLogger m_logger;

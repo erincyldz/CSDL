@@ -40,7 +40,12 @@ int RectObject::get_height() const
 {
     return m_height;
 }
-
+Position RectObject::getCenter() const
+{
+    auto center_x = m_pos.getX() + m_width / 2;
+    auto center_y = m_pos.getY() + m_height / 2;
+    return Position{center_x, center_y};
+}
 void RectObject::setDimensions(int width, int height)
 {
     m_width = width;

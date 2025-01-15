@@ -38,7 +38,10 @@ void CircleObject::setRadius(float rad)
 {
     m_radius = rad;
 }
-
+Position CircleObject::getCenter() const
+{
+    return Position{m_pos};
+}
 void CircleObject::tellRadius()
 {
     m_logger.info("Radius is : {}", this->m_radius);
