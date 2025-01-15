@@ -400,7 +400,9 @@ void SDLHelper::renderObjectDirection(const game::object::GameObject& obj)
     auto magnitude = vel.magnitude();
 
     // Fixed arrow length
-    const double ARROW_LENGTH = magnitude;
+    const double MAX_ARROW_LENGTH = 250;
+    const double MIN_ARROW_LENGTH = 20;
+    double arrow_length = std::clamp(magnitude, MIN_ARROW_LENGTH, MAX_ARROW_LENGTH);
     game::object::helper::Vector2D direction{0, 0};
     if (magnitude > 0)
     {
@@ -409,7 +411,7 @@ void SDLHelper::renderObjectDirection(const game::object::GameObject& obj)
 
     // Scale the normalized vector to the fixed arrow length
 
-    auto arrow_dir = pos + (direction * ARROW_LENGTH);
+    auto arrow_dir = pos + (direction * arrow_length);
 
     // Set arrow color
     SDL_Color color = {255, 255, 0, 255};  // Yellow
