@@ -34,7 +34,7 @@ class GameObject
     explicit GameObject(std::string& logger_name) : m_logger(logger_name)
     {
         m_color_state = helper::ObjectColor::RED;
-        m_color = {255, 0, 0};
+        m_color = {255, 0, 0, 255};
         m_mass = 1.0f;
         m_force = {0.0f, 0.0f};
         m_velocity = {0.1f, 0.1f};
