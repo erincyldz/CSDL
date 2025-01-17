@@ -8,8 +8,8 @@ namespace game::sdl
 {
 // Constructor
 SDLHelper::SDLHelper(const std::string& title, int width, int height, std::string& logger_name)
-    : m_window(nullptr), m_renderer(nullptr), m_isRunning(false), m_windowWidth(width),
-      m_windowHeight(height), m_lastFrameTime(0), m_logger(logger_name)
+    : m_logger(logger_name), m_window(nullptr), m_renderer(nullptr), m_isRunning(false),
+      m_windowWidth(width), m_windowHeight(height), m_accumulator(0.0), m_lastFrameTime(0)
 {
     SDL_Log("Initializing SDLHelper...");
     initSDL();
@@ -116,6 +116,7 @@ void SDLHelper::handleEvents(GameState& state)
                     default:
                         break;
                 }
+                break;
             case SDL_MOUSEBUTTONDOWN:
             {
                 if (event.button.button == SDL_BUTTON_LEFT)
@@ -148,8 +149,9 @@ void SDLHelper::handleEvents(GameState& state)
                             }
                         }
                     }
-                    break;
                 }
+                break;
+
                 default:
                     break;
             }
@@ -256,11 +258,11 @@ void SDLHelper::drawCircleFill(int x, int y, int radius, SDL_Color color)
 }
 void SDLHelper::drawOutline(const game::object::RectObject& rect)
 {
-    auto rect_color = rect.get_color();
+    // auto rect_color = rect.get_color();
     auto rect_pos = rect.getPosition();
     auto rect_width = rect.get_width();
     auto rect_height = rect.get_height();
-    auto rect_dim = rect.getDimensions();
+    // auto rect_dim = rect.getDimensions();
     int thickness = 5;
     SDL_SetRenderDrawColor(m_renderer, 255, 255, 0, 255);
 
@@ -276,7 +278,7 @@ void SDLHelper::drawOutline(const game::object::RectObject& rect)
 
 void SDLHelper::drawOutline(const game::object::CircleObject& circle)
 {
-    auto circle_color = circle.get_color();
+    // auto circle_color = circle.get_color();
     SDL_SetRenderDrawColor(m_renderer, 255, 255, 0, 255);
     auto radius = circle.getRadius();
     int thickness = 5;
@@ -425,7 +427,7 @@ void SDLHelper::renderObjectDirection(const game::object::GameObject& obj)
     const double ARROWHEAD_SIZE = 10.0;
     const double ARROWHEAD_ANGLE = M_PI / 6;  // 30 degrees
 
-    auto drawArrowhead = [&](double baseX, double baseY, double angle)
+    auto drawArrowhead = [&](double angle)
     {
         double arrowTipX = arrow_dir.getX() - ARROWHEAD_SIZE * std::cos(angle);
         double arrowTipY = arrow_dir.getY() - ARROWHEAD_SIZE * std::sin(angle);
@@ -433,8 +435,8 @@ void SDLHelper::renderObjectDirection(const game::object::GameObject& obj)
     };
 
     double angle = atan2(vel.getY(), vel.getX());  // Direction of the arrow
-    drawArrowhead(arrow_dir.getX(), arrow_dir.getY(), angle - ARROWHEAD_ANGLE);
-    drawArrowhead(arrow_dir.getX(), arrow_dir.getY(), angle + ARROWHEAD_ANGLE);
+    drawArrowhead(angle - ARROWHEAD_ANGLE);
+    drawArrowhead(angle + ARROWHEAD_ANGLE);
 }
 
 double SDLHelper::getAccumulator() const
