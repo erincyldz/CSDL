@@ -58,3 +58,10 @@ target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2 SDL2::SDL2main SDL2_mix
 
 # Add include directories for the target (optional, more scoped)
 target_include_directories(${PROJECT_NAME} PRIVATE include)
+
+# Enable warnings and treat warnings as errors
+if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Werror -pedantic)
+elseif (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+    target_compile_options(${PROJECT_NAME} PRIVATE /W4 /WX)
+endif()
