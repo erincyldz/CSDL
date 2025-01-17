@@ -210,6 +210,14 @@ bool GameObject::is_colliding_with(const GameObject& other) const
 
 void GameObject::on_collision(GameObject& other)
 {
+    // TODO: this method `MUST` apply the law of force with the conservation of the Momentum.
+    //  but current situation doesnt seem applt the law of force.
+    //  this method should be reconsidered with the physicicst observation.
+    //  what about a p_1 + p_2 = p_1' + p_2'
+    //  or m1_v1 + m2_v2 = m1_v1' + m2_v2'
+    //  you need to calculate the collision angle, you have dot product.
+    //  im not sure but implementation of restituation might be wrong.
+
     // Calculate normal vector between objects
 
     auto diff_vector = other.m_pos - this->m_pos;
@@ -318,6 +326,7 @@ void GameObject::update_physics(float delta_time)
 {
     // 1. Update force corresponding to friction factor.
     update_force();
+
     // 2. Update the acceleration based on the current force and mass
     update_acceleration();
 
@@ -327,13 +336,13 @@ void GameObject::update_physics(float delta_time)
     // 4. Update the position based on the updated velocity
     update_position(delta_time);
 
-    m_logger.info("Position: {} ", this->m_pos);
-
     // keep the last 10 positions
     if (m_last_positions.size() == LAST_POSITION_SIZE)
     {
         m_last_positions.erase(m_last_positions.begin());
     }
     m_last_positions.push_back(this->getCenter());
+
+    m_logger.info("Position: {} ", this->m_pos);
 }
 }  // namespace game::object
