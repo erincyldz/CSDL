@@ -44,7 +44,6 @@ class SDLHelper : public game::IRenderer
             collisions) override;
 
     void renderObjectLastPosition(const std::unique_ptr<game::object::GameObject>& gameObject);
-    void renderObjectLastPosition(const std::unique_ptr<game::object::GameObject>& gameObject);
     void renderObjectDirection(const game::object::GameObject& obj) override;
 
     sound::Sound* m_sound;
