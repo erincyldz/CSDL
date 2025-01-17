@@ -10,7 +10,7 @@ RectObject::RectObject(int width, int height, std::string& logger_name)
     m_force = {0.0f, 0.0f};
     m_restitution = 1;
     m_color_state = helper::ObjectColor::RED;
-    m_color = {255, 0, 0};
+    m_color = {255, 0, 0, 255};
 };
 
 RectObject::RectObject(std::string& logger_name) : GameObject(logger_name)
@@ -18,7 +18,7 @@ RectObject::RectObject(std::string& logger_name) : GameObject(logger_name)
     m_width = 15;
     m_height = 15;
     m_type = helper::ObjectType::RECTANGLE;
-    m_color = {255, 0, 0};
+    m_color = {255, 0, 0, 255};
     m_mass = 1.0f;
     m_force = {0.0f, 0.0f};
     m_velocity = {0.0f, 0.0f};

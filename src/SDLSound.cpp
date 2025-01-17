@@ -83,12 +83,12 @@ void Sound::initMixer()
 }
 void Sound::quitMixer()
 {
-    for (int s = 0; s < sounds.size(); s++)
+    for (int s = 0; s < (int)sounds.size(); s++)
     {
         Mix_FreeChunk(sounds[s]);
         sounds[s] = NULL;
     }
-    for (int m = 0; m < music.size(); m++)
+    for (int m = 0; m < (int)music.size(); m++)
     {
         Mix_FreeMusic(music[m]);
         music[m] = NULL;

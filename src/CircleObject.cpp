@@ -13,14 +13,14 @@ CircleObject::CircleObject(float rad, std::string& logger_name)
     m_force = {0.0f, 0.0f};
     m_restitution = 1;
     m_color_state = helper::ObjectColor::RED;
-    m_color = {255, 0, 0};
+    m_color = {255, 0, 0, 255};
 };
 
 CircleObject::CircleObject(std::string& logger_name) : GameObject(logger_name), m_radius(0.0f)
 {
     m_type = helper::ObjectType::CIRCLE;
     m_radius = 50;
-    m_color = {255, 0, 0};
+    m_color = {255, 0, 0, 255};
     m_mass = 1.0f;
     m_force = {0.0f, 0.0f};
     m_velocity = {0.0f, 0.0f};
