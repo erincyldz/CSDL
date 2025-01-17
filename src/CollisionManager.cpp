@@ -138,7 +138,6 @@ void CollisionManager::calculate_gravitational_force(
             }
             if (obj1 == obj2)
                 continue;  // Skip self-collision
-            double x_axis_force, y_axis_force = 0;
             double distance =
                 sqrt(d_square(obj2->getPosition().getX() - obj1->getPosition().getX()) +
                      d_square(obj2->getPosition().getY() - obj1->getPosition().getY()));
