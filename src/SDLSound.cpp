@@ -88,6 +88,7 @@ void Sound::quitMixer()
         Mix_FreeChunk(sounds[s]);
         sounds[s] = NULL;
     }
+
     for (int m = 0; m < (int)music.size(); m++)
     {
         Mix_FreeMusic(music[m]);

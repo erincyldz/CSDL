@@ -10,6 +10,7 @@ namespace game::sdl
 SDLHelper::SDLHelper(const std::string& title, int width, int height, std::string& logger_name)
     : m_logger(logger_name), m_window(nullptr), m_renderer(nullptr), m_isRunning(false),
       m_windowWidth(width), m_windowHeight(height), m_accumulator(0.0), m_lastFrameTime(0)
+
 {
     SDL_Log("Initializing SDLHelper...");
     initSDL();
@@ -263,6 +264,7 @@ void SDLHelper::drawOutline(const game::object::RectObject& rect)
     auto rect_width = rect.get_width();
     auto rect_height = rect.get_height();
     // auto rect_dim = rect.getDimensions();
+
     int thickness = 5;
     SDL_SetRenderDrawColor(m_renderer, 255, 255, 0, 255);
 
@@ -428,6 +430,7 @@ void SDLHelper::renderObjectDirection(const game::object::GameObject& obj)
     const double ARROWHEAD_ANGLE = M_PI / 6;  // 30 degrees
 
     auto drawArrowhead = [&](double angle)
+
     {
         double arrowTipX = arrow_dir.getX() - ARROWHEAD_SIZE * std::cos(angle);
         double arrowTipY = arrow_dir.getY() - ARROWHEAD_SIZE * std::sin(angle);
