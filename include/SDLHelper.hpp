@@ -32,6 +32,7 @@ class SDLHelper : public game::IRenderer
     void present();  // Call SDL_RenderPresent once here
     void renderText(TTF_Font* font, const std::string& text, int x, int y, SDL_Color color);
     void renderMenu();
+    void renderPaused();
     // Main loop
     float getDeltaTime();
     double getAccumulator() const;
