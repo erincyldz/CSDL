@@ -183,7 +183,6 @@ void SDLHelper::renderMenu()
     renderText(font, "Play", playButton.x + 70, playButton.y + 10, textColor);
     renderText(font, "Settings", settingsButton.x + 50, settingsButton.y + 10, textColor);
     renderText(font, "Exit", exitButton.x + 70, exitButton.y + 10, textColor);
-    this->present();
 }
 // Update game state
 void SDLHelper::update()
