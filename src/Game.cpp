@@ -22,13 +22,13 @@ void Game::run()
 
         m_sdl->handleEvents(*p_gameState);
         // Fixed timestep for game logic
-        if (*p_gameState == game::GameState::PLAYING)
+        while (m_sdl->getAccumulator() >= m_LOGIC_TIMESTEP)
         {
-            while (m_sdl->getAccumulator() >= m_LOGIC_TIMESTEP)
+            if (*p_gameState == game::GameState::PLAYING)
             {
                 update();
-                m_sdl->reduceAccumulator(m_LOGIC_TIMESTEP);
             }
+            m_sdl->reduceAccumulator(m_LOGIC_TIMESTEP);
         }
 
         m_sdl->render(gameObjects, *p_gameState);  // Pass game objects to SDLHelper for rendering
