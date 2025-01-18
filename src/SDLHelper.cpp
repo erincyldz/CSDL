@@ -105,6 +105,16 @@ void SDLHelper::handleEvents(GameState& state)
                     case SDLK_q:
                         // TODO: add random game object
                         break;
+                    case SDLK_p:
+                        if (state == GameState::PLAYING)
+                        {
+                            state = GameState::PAUSED;
+                        }
+                        else if (state == GameState::PAUSED)
+                        {
+                            state = GameState::PLAYING;
+                        }
+                        break;
 
                     case SDLK_r:
                         // reset game object velocities
@@ -185,6 +195,24 @@ void SDLHelper::renderMenu()
     renderText(font, "Exit", exitButton.x + 70, exitButton.y + 10, textColor);
     this->present();
 }
+
+void SDLHelper::renderPaused()
+{
+    // Set the blend mode to allow transparency
+    SDL_SetRenderDrawBlendMode(m_renderer, SDL_BLENDMODE_BLEND);
+
+    // Draw a semi-transparent black rectangle over the entire window
+    SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 2);  // RGBA: Black with 200 alpha
+    SDL_Rect overlay = {0, 0, m_windowWidth, m_windowHeight};
+    SDL_RenderFillRect(m_renderer, &overlay);
+
+    // Set text color
+    SDL_Color textColor = {255, 255, 255, 255};  // White text
+
+    // Render "PAUSED" text
+    renderText(font, "PAUSED", m_windowWidth / 2 - 50, m_windowHeight / 2 - 25, textColor);
+}
+
 // Update game state
 void SDLHelper::update()
 {
@@ -232,8 +260,11 @@ void SDLHelper::render(const std::vector<std::unique_ptr<game::object::GameObjec
     }
     else if (state == GameState::MENU)
     {
-
         this->renderMenu();
+    }
+    else if (state == GameState::PAUSED)
+    {
+        this->renderPaused();
     }
 }
 
