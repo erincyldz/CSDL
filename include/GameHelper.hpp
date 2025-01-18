@@ -6,7 +6,8 @@ enum class GameState
     MENU,
     SETTINGS,
     PLAYING,
-    EXIT
+    EXIT,
+    PAUSED
 };
 
 }  // namespace game
