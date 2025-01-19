@@ -302,15 +302,6 @@ void GameObject::update_acceleration()
 void GameObject::update_velocity(float delta_time)
 {
     m_velocity += m_acceleration * delta_time;
-
-    // if (m_velocity.getX() <= 1e-1)
-    // {
-    //     m_velocity.setX(0);
-    // }
-    // if (m_velocity.getY() <= 1e-1)
-    // {
-    //     m_velocity.setY(0);
-    // }
 }
 
 void GameObject::update_position(float delta_time)
@@ -343,6 +334,6 @@ void GameObject::update_physics(float delta_time)
     }
     m_last_positions.push_back(this->getCenter());
 
-    m_logger.info("Position: {} ", this->m_pos);
+    // m_logger.info("Position: {} ", this->m_pos);
 }
 }  // namespace game::object

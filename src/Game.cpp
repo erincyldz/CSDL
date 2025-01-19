@@ -71,9 +71,7 @@ void Game::run()
 
     while (m_sdl->isRunning())
     {
-
         m_sdl->update();  // Update SDL timing
-
         m_sdl->handleEvents(*p_gameState);
         // Fixed timestep for game logic
         while (m_sdl->getAccumulator() >= m_LOGIC_TIMESTEP)
@@ -190,27 +188,6 @@ int Game::getObjectCount() const
 // It is responsible for the backend logic of the game
 void Game::update()
 {
-    // if (m_sdl->m_isResetObjects)
-    // {
-    //     std::cout << "Resetting game objects" << std::endl;
-    //     for (auto& object : gameObjects)
-    //     {
-    //         object->setVelocity({0, 0});
-    //         object->setAcceleration({0, 0});
-    //         object->setForce({0, 0});
-    //     }
-    //     m_sdl->m_isResetObjects = false;
-    // }
-
-    // if (m_sdl->m_isAddForce)
-    // {
-    //     for (auto& object : gameObjects)
-    //     {
-    //         object->addForce({0, 20});
-    //     }
-    //     m_sdl->m_isAddForce = false;
-    // }
-
     auto screenDim = m_sdl->getScreenDim();
 #if CALCULATE_GRAVITATION
     m_collisionManager.calculate_gravitational_force(gameObjects);
