@@ -73,18 +73,20 @@ void Game::run()
     {
         m_sdl->update();  // Update SDL timing
         m_sdl->handleEvents(*p_gameState);
+        m_sdl->render(gameObjects, *p_gameState);  // Pass game objects to SDLHelper for rendering
+        m_sdl->renderCollisionHighlights(m_collisionManager.get_active_collisions());
         // Fixed timestep for game logic
         while (m_sdl->getAccumulator() >= m_LOGIC_TIMESTEP)
         {
             if (*p_gameState == game::GameState::PLAYING)
             {
                 update();
+                m_sdl->renderCollisionScoreboard(
+                    m_collisionManager.get_collision_count());  // render when state is `playing`
             }
             m_sdl->reduceAccumulator(m_LOGIC_TIMESTEP);
         }
 
-        m_sdl->render(gameObjects, *p_gameState);  // Pass game objects to SDLHelper for rendering
-        m_sdl->renderCollisionHighlights(m_collisionManager.get_active_collisions());
         m_sdl->present();
     }
     cleanup();
