@@ -82,19 +82,20 @@ void CollisionManager::resolve_collisions(
                             obj2->on_collision(*obj1);
                             // Track the colliding pair
                             currentCollisions.emplace_back(obj1, obj2);
+                            m_cumulative_collision_count++;
                         }
                         else
                         {
-                            activeCollisions.erase(
+                            m_active_collisions.erase(
                                 std::remove_if(
-                                    activeCollisions.begin(), activeCollisions.end(),
+                                    m_active_collisions.begin(), m_active_collisions.end(),
                                     [&](const std::pair<game::object::GameObject*,
                                                         game::object::GameObject*>& pair)
                                     {
                                         return (pair.first == obj1 && pair.second == obj2) ||
                                                (pair.first == obj2 && pair.second == obj1);
                                     }),
-                                activeCollisions.end());
+                                m_active_collisions.end());
                         }
                     }
                 }
@@ -103,12 +104,17 @@ void CollisionManager::resolve_collisions(
     }
 
     // Update active collisions
-    activeCollisions = std::move(currentCollisions);
+    m_active_collisions = std::move(currentCollisions);
 }
 const std::vector<std::pair<game::object::GameObject*, game::object::GameObject*>>&
     CollisionManager::get_active_collisions() const
 {
-    return activeCollisions;
+    return m_active_collisions;
+}
+
+int CollisionManager::get_collision_count() const
+{
+    return m_cumulative_collision_count;
 }
 
 static double d_square(double num)
