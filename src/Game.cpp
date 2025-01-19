@@ -86,7 +86,7 @@ void Game::run()
         }
 
         m_sdl->render(gameObjects, *p_gameState);  // Pass game objects to SDLHelper for rendering
-        // m_sdl->renderCollisionHighlights(m_collisionManager.get_active_collisions());
+        m_sdl->renderCollisionHighlights(m_collisionManager.get_active_collisions());
         m_sdl->present();
     }
     cleanup();
