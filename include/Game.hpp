@@ -5,6 +5,7 @@
 #include <GameObject.hpp>
 #include <IRenderer.hpp>
 #include <SDLHelper.hpp>
+#include <iomanip>  // For std::setw
 #include <memory>
 #include <vector>
 #define MAX_GAME_OBJECTS 10
