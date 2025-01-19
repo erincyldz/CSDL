@@ -57,7 +57,7 @@ void CircleObject::update(float delta_time, int screen_width, int screen_height)
 
 bool CircleObject::border_collision(int screen_width, int screen_height)
 {
-#ifdef BORDER_COLLISION
+#if BORDER_COLLISION
     if (m_pos.getX() - m_radius < 0 || m_pos.getX() + m_radius > screen_width)
     {
         m_velocity.reverseX();  // Reverse x velocity
