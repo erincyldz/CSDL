@@ -5,9 +5,16 @@
 #include <GameObject.hpp>
 #include <IRenderer.hpp>
 #include <SDLHelper.hpp>
+#include <iomanip>  // For std::setw
 #include <memory>
 #include <vector>
-#define MAX_GAME_OBJECTS 10
+
+#define MAX_GAME_OBJECTS      10
+#define CALCULATE_GRAVITATION false
+#define BORDER_COLLISION      true
+#define RENDER_LAST_POSITIONS true
+#define RENDER_DIRECTION      true
+
 namespace game
 {
 class Game

@@ -14,12 +14,64 @@ Game::Game() : m_sdl(nullptr)
 
 void Game::run()
 {
+    // ANSI color codes
+    const std::string RESET = "\033[0m";
+    const std::string RED = "\033[31m";
+    const std::string BLUE = "\033[34m";
+    const std::string GREEN = "\033[32m";
+
+    const int COLUMN1_WIDTH = 25;  // Width for "Configuration"
+    const int COLUMN2_WIDTH = 15;  // Width for "Value"
+
     std::cout << "Game is running" << std::endl;
+
+    // Table header
+    std::cout << "+" << std::string(COLUMN1_WIDTH, '-') << "+" << std::string(COLUMN2_WIDTH, '-')
+              << "+" << std::endl;
+    std::cout << "| " << RED << std::setw(COLUMN1_WIDTH - 2) << "Configuration" << RESET << " | "
+              << RED << std::setw(COLUMN2_WIDTH - 2) << "Value" << RESET << " |" << std::endl;
+    std::cout << "+" << std::string(COLUMN1_WIDTH, '-') << "+" << std::string(COLUMN2_WIDTH, '-')
+              << "+" << std::endl;
+
+    // Table rows
+    std::cout << "| " << BLUE << std::setw(COLUMN1_WIDTH - 2) << "Window width" << RESET << " | "
+              << GREEN << std::setw(COLUMN2_WIDTH - 2) << m_window_width << RESET << " |"
+              << std::endl;
+
+    std::cout << "| " << BLUE << std::setw(COLUMN1_WIDTH - 2) << "Window height" << RESET << " | "
+              << GREEN << std::setw(COLUMN2_WIDTH - 2) << m_window_height << RESET << " |"
+              << std::endl;
+
+    std::cout << "| " << BLUE << std::setw(COLUMN1_WIDTH - 2) << "Logic timestep" << RESET << " | "
+              << GREEN << std::setw(COLUMN2_WIDTH - 2) << std::fixed << std::setprecision(6)
+              << m_LOGIC_TIMESTEP << RESET << " |" << std::endl;
+
+    std::cout << "| " << BLUE << std::setw(COLUMN1_WIDTH - 2) << "Max game objects" << RESET
+              << " | " << GREEN << std::setw(COLUMN2_WIDTH - 2) << MAX_GAME_OBJECTS << RESET << " |"
+              << std::endl;
+
+    std::cout << "| " << BLUE << std::setw(COLUMN1_WIDTH - 2) << "Calculate gravitation" << RESET
+              << " | " << GREEN << std::setw(COLUMN2_WIDTH - 2)
+              << (CALCULATE_GRAVITATION ? "true" : "false") << RESET << " |" << std::endl;
+
+    std::cout << "| " << BLUE << std::setw(COLUMN1_WIDTH - 2) << "Border collision" << RESET
+              << " | " << GREEN << std::setw(COLUMN2_WIDTH - 2)
+              << (BORDER_COLLISION ? "true" : "false") << RESET << " |" << std::endl;
+
+    std::cout << "| " << BLUE << std::setw(COLUMN1_WIDTH - 2) << "Render last positions" << RESET
+              << " | " << GREEN << std::setw(COLUMN2_WIDTH - 2)
+              << (RENDER_LAST_POSITIONS ? "true" : "false") << RESET << " |" << std::endl;
+
+    std::cout << "| " << BLUE << std::setw(COLUMN1_WIDTH - 2) << "Render direction" << RESET
+              << " | " << GREEN << std::setw(COLUMN2_WIDTH - 2)
+              << (RENDER_DIRECTION ? "true" : "false") << RESET << " |" << std::endl;
+
+    std::cout << "+" << std::string(COLUMN1_WIDTH, '-') << "+" << std::string(COLUMN2_WIDTH, '-')
+              << "+" << std::endl;
+
     while (m_sdl->isRunning())
     {
-
         m_sdl->update();  // Update SDL timing
-
         m_sdl->handleEvents(*p_gameState);
         // Fixed timestep for game logic
         while (m_sdl->getAccumulator() >= m_LOGIC_TIMESTEP)
@@ -32,7 +84,7 @@ void Game::run()
         }
 
         m_sdl->render(gameObjects, *p_gameState);  // Pass game objects to SDLHelper for rendering
-        // m_sdl->renderCollisionHighlights(m_collisionManager.get_active_collisions());
+        m_sdl->renderCollisionHighlights(m_collisionManager.get_active_collisions());
         m_sdl->present();
     }
     cleanup();
@@ -136,29 +188,10 @@ int Game::getObjectCount() const
 // It is responsible for the backend logic of the game
 void Game::update()
 {
-    // if (m_sdl->m_isResetObjects)
-    // {
-    //     std::cout << "Resetting game objects" << std::endl;
-    //     for (auto& object : gameObjects)
-    //     {
-    //         object->setVelocity({0, 0});
-    //         object->setAcceleration({0, 0});
-    //         object->setForce({0, 0});
-    //     }
-    //     m_sdl->m_isResetObjects = false;
-    // }
-
-    // if (m_sdl->m_isAddForce)
-    // {
-    //     for (auto& object : gameObjects)
-    //     {
-    //         object->addForce({0, 20});
-    //     }
-    //     m_sdl->m_isAddForce = false;
-    // }
-
     auto screenDim = m_sdl->getScreenDim();
+#if CALCULATE_GRAVITATION
     m_collisionManager.calculate_gravitational_force(gameObjects);
+#endif
 
     for (auto& object : gameObjects)
     {
