@@ -212,7 +212,9 @@ void Game::update()
     // }
 
     auto screenDim = m_sdl->getScreenDim();
+#if CALCULATE_GRAVITATION
     m_collisionManager.calculate_gravitational_force(gameObjects);
+#endif
 
     for (auto& object : gameObjects)
     {

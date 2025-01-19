@@ -15,10 +15,6 @@
 #define DELTA_TIME_COFACTOR 1000.0f
 #define FPS                 175
 #define FRAME_TARGET_TIME   (1000 / FPS)
-
-#define RENDER_LAST_POSITIONS true
-#define RENDER_DIRECTION      true
-
 namespace game::sdl
 {
 
