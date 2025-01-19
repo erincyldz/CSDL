@@ -32,6 +32,11 @@ class ClassLogger
         Logger::getInstance().log(className, Logger::LogLevel::DEBUG, format, args...);
     }
 
+    std::string getClassName() const
+    {
+        return className;
+    }
+
   private:
     std::string className;
 };
