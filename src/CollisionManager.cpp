@@ -54,6 +54,43 @@ void CollisionManager::resolve_collisions(
 
                     if (obj1->is_colliding_with(*obj2))
                     {
+                        currentCollisions.emplace_back(obj1, obj2);
+                        m_cumulative_collision_count++;
+                    }
+                    else
+                    {
+                        m_active_collisions.erase(
+                            std::remove_if(m_active_collisions.begin(), m_active_collisions.end(),
+                                           [&](const std::pair<game::object::GameObject*,
+                                                               game::object::GameObject*>& pair)
+                                           {
+                                               return (pair.first == obj1 && pair.second == obj2) ||
+                                                      (pair.first == obj2 && pair.second == obj1);
+                                           }),
+                            m_active_collisions.end());
+                    }
+                }
+            }
+        }
+    }
+
+    // Resolve Collisions
+    for (const auto& [obj1, obj2] : currentCollisions)
+    {
+        obj1->on_collision(*obj2);
+        obj2->on_collision(*obj1);
+            // Check for collisions between objects in the current cell and neighbor cell
+            for (auto* obj1 : cellObjects)
+            {
+                for (auto* obj2 : neighborObjects)
+                {
+                    if (obj1 >= obj2)
+                    {
+                        continue;  // Skip self-collision and duplicate checks
+                    }
+
+                    if (obj1->is_colliding_with(*obj2))
+                    {
                         if(!obj2->getStability())
                         {
                             if(obj2->getVelocity().magnitude()< 2.5)
