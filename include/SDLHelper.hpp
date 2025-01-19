@@ -29,6 +29,7 @@ class SDLHelper : public game::IRenderer
     void renderText(TTF_Font* font, const std::string& text, int x, int y, SDL_Color color);
     void renderMenu();
     void renderPaused();
+    void renderCollisionScoreboard(const int& collision_count);
     // Main loop
     float getDeltaTime();
     double getAccumulator() const;

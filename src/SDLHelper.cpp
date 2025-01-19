@@ -207,6 +207,16 @@ void SDLHelper::renderPaused()
     renderText(font, "PAUSED", m_windowWidth / 2 - 50, m_windowHeight / 2 - 25, textColor);
 }
 
+void SDLHelper::renderCollisionScoreboard(const int& collision_count)
+{
+    // Set text color
+    SDL_Color textColor = {255, 255, 255, 255};  // White text
+
+    std::string text = "Collision Count: " + std::to_string(collision_count);
+    // Render collision count
+    renderText(font, text, m_windowWidth / 2 - 50, 10, textColor);
+}
+
 // Update game state
 void SDLHelper::update()
 {
