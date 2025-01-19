@@ -11,7 +11,9 @@ namespace game::engine
 class CollisionManager
 {
   private:
-    std::vector<std::pair<game::object::GameObject*, game::object::GameObject*>> activeCollisions;
+    std::vector<std::pair<game::object::GameObject*, game::object::GameObject*>>
+        m_active_collisions;
+    int m_cumulative_collision_count = 0;
 
   public:
     CollisionManager() = default;
@@ -21,6 +23,7 @@ class CollisionManager
         const std::vector<std::unique_ptr<game::object::GameObject>>& objects);
     const std::vector<std::pair<game::object::GameObject*, game::object::GameObject*>>&
         get_active_collisions() const;
+    int get_collision_count() const;
     struct pair_hash
     {
         template<class T1, class T2>
