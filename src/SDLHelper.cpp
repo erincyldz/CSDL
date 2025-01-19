@@ -139,21 +139,16 @@ void SDLHelper::handleEvents(GameState& state)
                         {
                             if (y > 100 && y < 150)
                             {
-                                printf("Game is Started!\n");
                                 state = game::GameState::PLAYING;  // Play button
                             }
                             else if (y > 200 && y < 250)
                             {
-                                printf("SETTINGS!\n");
-
                                 state = game::GameState::PLAYING;  // Settings button TODO: ITS NOT
                                                                    // IMPLEMENTED YET SO I KEEP IT
                                                                    // IN PLAYING STATE
                             }
                             else if (y > 300 && y < 350)
                             {
-                                printf("EXITED THE GAME!\n");
-
                                 state = game::GameState::EXIT;  // Exit button
                                 m_isRunning = false;
                             }
@@ -161,10 +156,10 @@ void SDLHelper::handleEvents(GameState& state)
                     }
                 }
                 break;
-
-                default:
-                    break;
             }
+
+            default:
+                break;
         }
     }
 }
