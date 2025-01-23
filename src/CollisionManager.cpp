@@ -126,7 +126,7 @@ void CollisionManager::calculate_gravitational_force(
                 sqrt(d_square(obj2->getPosition().getX() - obj1->getPosition().getX()) +
                      d_square(obj2->getPosition().getY() - obj1->getPosition().getY()));
             double g_force =
-                (GRAVITATIONAL_CONSTANT * obj1->get_mass() * obj2->get_mass()) / d_square(distance);
+                (GRAVITATIONAL_CONSTANT * obj1->getMass() * obj2->getMass()) / d_square(distance);
             game::object::helper::Vector2D force{0, 0};
 
             if (!distance)
