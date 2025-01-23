@@ -67,7 +67,7 @@ void RectObject::update(float delta_time, int screen_width, int screen_height)
 
 bool RectObject::border_collision(int screen_width, int screen_height)
 {
-
+    #ifdef BORDER_COLLISION
     if (this->m_pos.getX() < 0)
     {
         this->m_pos.setX(0);
@@ -92,6 +92,30 @@ bool RectObject::border_collision(int screen_width, int screen_height)
         this->m_velocity.reverseY();
         return true;
     }
+    #else
+    if (m_pos.getX() + m_width < 0)
+    {
+        m_pos.setX(screen_width);
+        return true;
+    }
+    if (m_pos.getX() - m_width > screen_width)
+    {
+        m_pos.setX(0);
+        return true;
+    }
+
+    if (m_pos.getY() + m_height < 0)
+    {
+        m_pos.setY(screen_height);
+        return true;
+    }
+    if (m_pos.getY() - m_height > screen_height)
+    {
+        m_pos.setY(0);
+        return true;
+    }
+    #endif
+
     return false;
 }
 
