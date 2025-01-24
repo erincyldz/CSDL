@@ -28,13 +28,33 @@ jobs:
           sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-11 11
           gcc --version
 
-      - name: Install **`SDL`** Dependency
+      - name: Install SDL Dependency
         run: |
           sudo apt-get update && sudo apt-get upgrade -y
           sudo apt-cache search libsdl2 && sudo apt-get install libsdl2-dev -y
 
-      - name: Install **`SDL Mixer`** Dependency
+      - name: Install SDL Mixer Dependency
         run: |
           sudo apt-get update && sudo apt-get upgrade -y
-          sudo apt install libopusfile-dev && sudo apt install libxmp-dev && sudo apt install fluidsynth libfluidsynth-dev && sudo apt install wavpack libwavpack-dev
-          sudo apt-cache search libsdl2-mixer && sudo apt-get install libsdl2-mixer-dev -y
+          # Install dependencies required for SDL2 Mixer
+          sudo apt-get install -y libopusfile-dev libxmp-dev fluidsynth libfluidsynth-dev wavpack libwavpack-dev
+          # Install SDL2 Mixer library
+          sudo apt-cache search libsdl2-mixer
+          sudo apt-get install -y libsdl2-mixer-dev
+
+      - name: Install SDL2 TTF Dependency
+        run: |
+          # Update and install base dependencies
+          sudo apt-get update && sudo apt-get upgrade -y
+          sudo apt-get install -y libfreetype6-dev
+
+          # Download and build SDL2 TTF version 2.24.0
+          mkdir -p dependencies
+          cd dependencies
+          wget https://github.com/libsdl-org/SDL_ttf/releases/download/release-2.24.0/SDL2_ttf-2.24.0.tar.gz
+          tar -xzf SDL2_ttf-2.24.0.tar.gz
+          cd SDL2_ttf-2.24.0
+          mkdir build && cd build
+          cmake ..
+          make
+          sudo make install
