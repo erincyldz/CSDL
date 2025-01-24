@@ -16,21 +16,13 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Restore SDL2 Cache
-        uses: actions/cache@v3
-        with:
-          path: dependencies
-          key: sdl2-${{ runner.os }}-${{ hashFiles('**/CMakeLists.txt') }}
-          restore-keys: |
-            sdl2-${{ runner.os }}-
-
       - name: Install Base Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y software-properties-common build-essential cmake make wget
+          sudo apt-get install -y software-properties-common build-essential cmake make wget \
+                                libsdl2-dev
 
-      - name: Install SDL2 Mixer (If Not Cached)
-        if: steps.cache.outputs.cache-hit != 'true'
+      - name: Install SDL2 Mixer
         run: |
           mkdir -p dependencies
           cd dependencies
@@ -38,10 +30,9 @@ jobs:
           tar -xzf SDL2_mixer-2.8.0.tar.gz
           cd SDL2_mixer-2.8.0
           mkdir build && cd build
-          cmake .. && make && sudo make install
+          cmake -DSDL2_DIR=/usr/lib/x86_64-linux-gnu/cmake/SDL2 .. && make && sudo make install
 
-      - name: Install SDL2 TTF (If Not Cached)
-        if: steps.cache.outputs.cache-hit != 'true'
+      - name: Install SDL2 TTF
         run: |
           mkdir -p dependencies
           cd dependencies
@@ -49,14 +40,7 @@ jobs:
           tar -xzf SDL2_ttf-2.24.0.tar.gz
           cd SDL2_ttf-2.24.0
           mkdir build && cd build
-          cmake .. && make && sudo make install
-
-      - name: Save SDL2 Cache
-        if: steps.cache.outputs.cache-hit != 'true'
-        uses: actions/cache@v3
-        with:
-          path: dependencies
-          key: sdl2-${{ runner.os }}-${{ hashFiles('**/CMakeLists.txt') }}
+          cmake -DSDL2_DIR=/usr/lib/x86_64-linux-gnu/cmake/SDL2 .. && make && sudo make install
 
       - name: Build Project
         run: |
