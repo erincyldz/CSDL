@@ -13,14 +13,16 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
+      # Step 1: Checkout Code
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      # Step 2: Install GCC 11.4.0 and Base Dependencies
       - name: Install GCC 11.4.0 and Base Dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y software-properties-common wget \
-                                build-essential cmake make libopusfile-dev
+                                build-essential cmake make
           sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
           sudo apt-get update
           sudo apt-get install -y gcc-11 g++-11
@@ -28,27 +30,23 @@ jobs:
           sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-11 11
           gcc --version
 
-      - name: Install SDL Dependency
+      # Step 3: Install SDL2
+      - name: Install SDL2 Dependency
         run: |
-          sudo apt-get update && sudo apt-get upgrade -y
-          sudo apt-cache search libsdl2 && sudo apt-get install libsdl2-dev -y
+          sudo apt-get update && sudo apt-get install -y libsdl2-dev
 
+      # Step 4: Install SDL2 Mixer
       - name: Install SDL Mixer Dependency
         run: |
-          sudo apt-get update && sudo apt-get upgrade -y
-          # Install dependencies required for SDL2 Mixer
-          sudo apt-get install -y libopusfile-dev libxmp-dev fluidsynth libfluidsynth-dev wavpack libwavpack-dev
-          # Install SDL2 Mixer library
-          sudo apt-cache search libsdl2-mixer
-          sudo apt-get install -y libsdl2-mixer-dev
+          sudo apt-get update
+          sudo apt-get install -y libopusfile-dev libxmp-dev fluidsynth libfluidsynth-dev \
+                                wavpack libwavpack-dev libsdl2-mixer-dev
 
+      # Step 5: Install SDL2 TTF
       - name: Install SDL2 TTF Dependency
         run: |
-          # Update and install base dependencies
-          sudo apt-get update && sudo apt-get upgrade -y
+          sudo apt-get update
           sudo apt-get install -y libfreetype6-dev
-
-          # Download and build SDL2 TTF version 2.24.0
           mkdir -p dependencies
           cd dependencies
           wget https://github.com/libsdl-org/SDL_ttf/releases/download/release-2.24.0/SDL2_ttf-2.24.0.tar.gz
@@ -59,11 +57,13 @@ jobs:
           make
           sudo make install
 
+      # Step 6: Build Project
       - name: Build Project
         run: |
           mkdir -p build
           ./scripts/clean_build.sh
 
-      - name: Run Tests
-        run: |
-          # ./scripts/run_tests.sh
+      # # Step 7: Run Tests
+      # - name: Run Tests
+      #   run: |
+      #     ./scripts/run_tests.sh
