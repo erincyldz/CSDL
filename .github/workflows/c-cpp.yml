@@ -1,0 +1,71 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+      # Step 1: Checkout Code
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # Step 2: Install GCC 11.4.0 and Base Dependencies
+      - name: Install GCC 11.4.0 and Base Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y software-properties-common wget \
+                                build-essential cmake make
+          sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+          sudo apt-get update
+          sudo apt-get install -y gcc-11 g++-11
+          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 11
+          sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-11 11
+          gcc --version
+
+      # Step 3: Install SDL2
+      - name: Install SDL2 Dependency
+        run: |
+          sudo apt-get update && sudo apt-get install -y libsdl2-dev
+
+      # Step 4: Install SDL2 Mixer
+      - name: Install SDL Mixer Dependency
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libopusfile-dev libxmp-dev fluidsynth libfluidsynth-dev \
+                                wavpack libwavpack-dev libsdl2-mixer-dev
+
+      # Step 5: Install SDL2 TTF
+      - name: Install SDL2 TTF Dependency
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libfreetype6-dev
+          mkdir -p dependencies
+          cd dependencies
+          wget https://github.com/libsdl-org/SDL_ttf/releases/download/release-2.24.0/SDL2_ttf-2.24.0.tar.gz
+          tar -xzf SDL2_ttf-2.24.0.tar.gz
+          cd SDL2_ttf-2.24.0
+          mkdir build && cd build
+          cmake ..
+          make
+          sudo make install
+
+      # Step 6: Build Project
+      - name: Build Project
+        run: |
+          mkdir -p build
+          cd build
+          cmake -DSDL2_mixer_DIR=/usr/lib/x86_64-linux-gnu/cmake/SDL2_mixer ..
+          make
+
+      # # Step 7: Run Tests
+      # - name: Run Tests
+      #   run: |
+      #     ./scripts/run_tests.sh
