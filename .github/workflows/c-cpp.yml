@@ -10,45 +10,31 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Install Base Dependencies
+      - name: Install GCC 11.4.0 and Base Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y software-properties-common build-essential cmake make wget \
-                                libsdl2-dev
+          sudo apt-get install -y software-properties-common wget \
+                                build-essential cmake make libopusfile-dev
+          sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+          sudo apt-get update
+          sudo apt-get install -y gcc-11 g++-11
+          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 11
+          sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-11 11
+          gcc --version
 
-      - name: Install SDL2 Mixer
+      - name: Install **`SDL`** Dependency
         run: |
-          mkdir -p dependencies
-          cd dependencies
-          wget https://github.com/libsdl-org/SDL_mixer/releases/download/release-2.8.0/SDL2_mixer-2.8.0.tar.gz
-          tar -xzf SDL2_mixer-2.8.0.tar.gz
-          cd SDL2_mixer-2.8.0
-          mkdir build && cd build
-          cmake -DSDL2_DIR=/usr/lib/x86_64-linux-gnu/cmake/SDL2 .. && make && sudo make install
+          sudo apt-get update && sudo apt-get upgrade -y
+          sudo apt-cache search libsdl2 && sudo apt-get install libsdl2-dev -y
 
-      - name: Install SDL2 TTF
+      - name: Install **`SDL Mixer`** Dependency
         run: |
-          mkdir -p dependencies
-          cd dependencies
-          wget https://github.com/libsdl-org/SDL_ttf/releases/download/release-2.24.0/SDL2_ttf-2.24.0.tar.gz
-          tar -xzf SDL2_ttf-2.24.0.tar.gz
-          cd SDL2_ttf-2.24.0
-          mkdir build && cd build
-          cmake -DSDL2_DIR=/usr/lib/x86_64-linux-gnu/cmake/SDL2 .. && make && sudo make install
-
-      - name: Build Project
-        run: |
-          mkdir build
-          cd build
-          cmake ..
-          make
-
-      - name: Run Project
-        run: |
-          ./build/project_name
+          sudo apt-get update && sudo apt-get upgrade -y
+          sudo apt install libopusfile-dev && sudo apt install libxmp-dev && sudo apt install fluidsynth libfluidsynth-dev && sudo apt install wavpack libwavpack-dev
+          sudo apt-cache search libsdl2-mixer && sudo apt-get install libsdl2-mixer-dev -y
