@@ -61,7 +61,9 @@ jobs:
       - name: Build Project
         run: |
           mkdir -p build
-          ./scripts/clean_build.sh
+          cd build
+          cmake -DSDL2_mixer_DIR=/usr/lib/x86_64-linux-gnu/cmake/SDL2_mixer ..
+          make
 
       # # Step 7: Run Tests
       # - name: Run Tests
