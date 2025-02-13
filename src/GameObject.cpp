@@ -98,7 +98,14 @@ void GameObject::update_color(float delta_time)
 }
 void GameObject::setVelocity(Velocity velocity)
 {
-    m_velocity = velocity;
+    if(!m_is_stable)
+    {
+        m_velocity = velocity;
+    }
+    else
+    {
+        m_velocity *= 0;
+    }
 }
 void GameObject::setPosition(Position pos)
 {
@@ -130,15 +137,27 @@ void GameObject::setColorState(ColorState colorState)
 {
     m_color_state = colorState;
 }
-double GameObject::get_mass()
+void GameObject::setStability(bool stable)
+{
+    if(stable)
+    {
+        m_velocity *= 0;
+    }
+    m_is_stable = stable;
+}
+bool GameObject::getStability() const
+{
+    return m_is_stable;
+}
+double GameObject::getMass() const
 {
     return m_mass;
 }
-ObjectType GameObject::get_type() const
+ObjectType GameObject::getType() const
 {
     return m_type;
 }
-Color GameObject::get_color() const
+Color GameObject::getColor() const
 {
     return m_color;
 }
@@ -251,15 +270,19 @@ void GameObject::on_collision(GameObject& other)
     auto speed_this = impulse_vector / this->m_mass;
     auto speed_other = impulse_vector / other.m_mass;
     const double velocityQuantizationStep = 0.01;
-
-    this->m_velocity -= game::object::helper::Vector2D(
-        std::round(speed_this.getX() / velocityQuantizationStep) * velocityQuantizationStep,
-        std::round(speed_this.getY() / velocityQuantizationStep) * velocityQuantizationStep);
-
+    if(!getStability())
+    {
+        this->m_velocity -= game::object::helper::Vector2D(
+            std::round(speed_this.getX() / velocityQuantizationStep) * velocityQuantizationStep,
+            std::round(speed_this.getY() / velocityQuantizationStep) * velocityQuantizationStep);
+    }
     // Quantize the velocity of the other object
-    other.m_velocity += game::object::helper::Vector2D(
-        std::round(speed_other.getX() / velocityQuantizationStep) * velocityQuantizationStep,
-        std::round(speed_other.getY() / velocityQuantizationStep) * velocityQuantizationStep);
+    if(!other.getStability())
+    {
+        other.m_velocity += game::object::helper::Vector2D(
+            std::round(speed_other.getX() / velocityQuantizationStep) * velocityQuantizationStep,
+             std::round(speed_other.getY() / velocityQuantizationStep) * velocityQuantizationStep);
+    }
 }
 
 Acceleration GameObject::getAcceleration() const
@@ -302,14 +325,22 @@ void GameObject::update_acceleration()
 void GameObject::update_velocity(float delta_time)
 {
     m_velocity += m_acceleration * delta_time;
+    m_logger.debug("\nCurrent speed x: {}\nCurrent speed y: {}\nCurrent magnitude:{}", m_velocity.getX(), m_velocity.getY(),m_velocity.magnitude());
 }
 
 void GameObject::update_position(float delta_time)
 {
     auto x_speed = std::clamp(m_velocity.getX(), MIN_VELOCITY, MAX_VELOCITY);
     auto y_speed = std::clamp(m_velocity.getY(), MIN_VELOCITY, MAX_VELOCITY);
-    m_velocity.setX(x_speed);
-    m_velocity.setY(y_speed);
+    if(!getStability())
+    {
+        m_velocity.setX(x_speed);
+        m_velocity.setY(y_speed);
+    }
+    else
+    {
+        m_velocity *= 0;
+    }
     m_pos += m_velocity * delta_time;
 }
 
