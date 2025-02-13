@@ -54,6 +54,15 @@ void CollisionManager::resolve_collisions(
 
                     if (obj1->is_colliding_with(*obj2))
                     {
+                        if(!obj2->getStability())
+                        {
+                            if(obj2->getVelocity().magnitude()< 2.5)
+                            {
+                                object::helper::Vector2D zeroSpeed{0,0};
+                                obj2->setVelocity(zeroSpeed);
+                                return;
+                            }
+                        }
                         currentCollisions.emplace_back(obj1, obj2);
                         m_cumulative_collision_count++;
                     }

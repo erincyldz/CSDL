@@ -325,6 +325,7 @@ void GameObject::update_acceleration()
 void GameObject::update_velocity(float delta_time)
 {
     m_velocity += m_acceleration * delta_time;
+    m_logger.debug("\nCurrent speed x: {}\nCurrent speed y: {}\nCurrent magnitude:{}", m_velocity.getX(), m_velocity.getY(),m_velocity.magnitude());
 }
 
 void GameObject::update_position(float delta_time)
