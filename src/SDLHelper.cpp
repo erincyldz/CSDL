@@ -348,7 +348,7 @@ void SDLHelper::drawGameObjects(
     {
         game::object::Position pos = obj->getPosition();
 
-        switch (obj->get_type())
+        switch (obj->getType())
         {
             case game::object::helper::ObjectType::CIRCLE:
                 // Safely cast to CircleObject
@@ -357,9 +357,9 @@ void SDLHelper::drawGameObjects(
                     int radius = static_cast<int>(circle->getRadius());
                     drawCircleFill(pos.getX(), pos.getY(), radius,
                                    {
-                                       static_cast<Uint8>(obj->get_color().r),
-                                       static_cast<Uint8>(obj->get_color().g),
-                                       static_cast<Uint8>(obj->get_color().b),
+                                       static_cast<Uint8>(obj->getColor().r),
+                                       static_cast<Uint8>(obj->getColor().g),
+                                       static_cast<Uint8>(obj->getColor().b),
                                        255  // Fully opaque
                                    });
                 }
@@ -371,9 +371,9 @@ void SDLHelper::drawGameObjects(
                 {
                     drawRectangleFill(pos.getX(), pos.getY(), rect->get_width(), rect->get_height(),
                                       {
-                                          static_cast<Uint8>(obj->get_color().r),
-                                          static_cast<Uint8>(obj->get_color().g),
-                                          static_cast<Uint8>(obj->get_color().b),
+                                          static_cast<Uint8>(obj->getColor().r),
+                                          static_cast<Uint8>(obj->getColor().g),
+                                          static_cast<Uint8>(obj->getColor().b),
                                           255  // Fully opaque
                                       });
                 }
@@ -412,11 +412,11 @@ void SDLHelper::renderCollisionHighlights(
         for (auto* obj : {collision.first, collision.second})
         {
 
-            if (obj->get_type() == game::object::ObjectType::CIRCLE)
+            if (obj->getType() == game::object::ObjectType::CIRCLE)
             {
                 drawOutline(*(dynamic_cast<game::object::CircleObject*>(obj)));
             }
-            else if (obj->get_type() == game::object::ObjectType::RECTANGLE)
+            else if (obj->getType() == game::object::ObjectType::RECTANGLE)
             {
                 drawOutline(*(dynamic_cast<game::object::RectObject*>(obj)));
             }
