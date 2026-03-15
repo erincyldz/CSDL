@@ -3,7 +3,7 @@
 
 #include "ClassLogger.hpp"
 #include "ObjectHelper.hpp"
-
+#include "GameHelper.hpp"
 #include <algorithm>
 #include <cmath>
 #include <memory>
@@ -40,6 +40,7 @@ class GameObject
         m_pos = {0.0f, 0.0f};
         m_acceleration = {0.0f, 0.0f};
         m_restitution = 1;
+        m_is_stable = false;
     };
     virtual ~GameObject() {}
 
@@ -66,12 +67,14 @@ class GameObject
     void setRestitution(double restitution);
     void setColor(Color color);
     void setColorState(ColorState colorState);
+    void setStability(bool stable);
+    bool getStability() const;
     std::vector<Position> getLastPositions() const;
     Force getForce() const;
-    double get_mass();
+    double getMass() const;
 
-    ObjectType get_type() const;
-    Color get_color() const;
+    ObjectType getType() const;
+    Color getColor() const;
     Position getPosition() const;
     Velocity getVelocity() const;
     Acceleration getAcceleration() const;
@@ -86,6 +89,7 @@ class GameObject
     double m_mass;
     double m_restitution;  //  Coefficient of restitution (bounciness) for elastic/inelastic
                            //  collisions. 1.0 for perfectly elastic, 0.0 for perfectly inelastic.
+    bool m_is_stable;
     Force m_force;
     ColorState m_color_state;
     Color m_color;

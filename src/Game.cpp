@@ -72,13 +72,13 @@ void Game::run()
     while (m_sdl->isRunning())
     {
         m_sdl->update();  // Update SDL timing
-        m_sdl->handleEvents(*p_gameState);
-        m_sdl->render(gameObjects, *p_gameState);  // Pass game objects to SDLHelper for rendering
+        m_sdl->handleEvents(m_gameState);
+        m_sdl->render(gameObjects, m_gameState);  // Pass game objects to SDLHelper for rendering
         m_sdl->renderCollisionHighlights(m_collisionManager.get_active_collisions());
         // Fixed timestep for game logic
         while (m_sdl->getAccumulator() >= m_LOGIC_TIMESTEP)
         {
-            if (*p_gameState == game::GameState::PLAYING)
+            if (m_gameState == game::GameState::PLAYING)
             {
                 update();
                 m_sdl->renderCollisionScoreboard(
@@ -95,7 +95,7 @@ void Game::run()
 void Game::init()
 {
     gameObjects = std::vector<std::unique_ptr<game::object::GameObject>>();
-    *p_gameState = GameState::MENU;
+    m_gameState = GameState::MENU;
     std::string loggerName = "sdl_logger";
     m_sdl = std::make_unique<game::sdl::SDLHelper>("Game Title", m_window_width, m_window_height,
                                                    loggerName);
