@@ -54,15 +54,6 @@ void CollisionManager::resolve_collisions(
 
                     if (obj1->is_colliding_with(*obj2))
                     {
-                        if(!obj2->getStability())
-                        {
-                            if(obj2->getVelocity().magnitude()< 2.5)
-                            {
-                                object::helper::Vector2D zeroSpeed{0,0};
-                                obj2->setVelocity(zeroSpeed);
-                                return;
-                            }
-                        }
                         currentCollisions.emplace_back(obj1, obj2);
                         m_cumulative_collision_count++;
                     }
@@ -86,6 +77,14 @@ void CollisionManager::resolve_collisions(
     // Resolve Collisions
     for (const auto& [obj1, obj2] : currentCollisions)
     {
+        // Dampen low-velocity unstable objects to prevent infinite micro-bouncing
+        if (!obj2->getStability() && obj2->getVelocity().magnitude() < 2.5)
+        {
+            object::helper::Vector2D zeroSpeed{0, 0};
+            obj2->setVelocity(zeroSpeed);
+            continue;
+        }
+
         obj1->on_collision(*obj2);
         obj2->on_collision(*obj1);
     }
@@ -112,41 +111,41 @@ static double d_square(double num)
 void CollisionManager::calculate_gravitational_force(
     const std::vector<std::unique_ptr<game::object::GameObject>>& objects)
 {
-    auto t = get_active_collisions();
+    const auto& active = get_active_collisions();
     for (auto& obj1 : objects)
     {
         game::object::Force applied_force{0, 0};
 
         for (auto& obj2 : objects)
         {
-            for (auto& collision : t)
+            if (obj1 == obj2)
+                continue;
+
+            // Skip gravity for objects currently colliding
+            bool in_collision = false;
+            for (const auto& collision : active)
             {
-                for (auto coll : {collision.first, collision.second})
+                if ((collision.first == obj1.get() && collision.second == obj2.get()) ||
+                    (collision.first == obj2.get() && collision.second == obj1.get()))
                 {
-                    if (coll == obj1.get() || coll == obj2.get())
-                    {
-                        return;
-                    }
+                    in_collision = true;
+                    break;
                 }
             }
-            if (obj1 == obj2)
-                continue;  // Skip self-collision
+            if (in_collision)
+                continue;
+
             double distance =
                 sqrt(d_square(obj2->getPosition().getX() - obj1->getPosition().getX()) +
                      d_square(obj2->getPosition().getY() - obj1->getPosition().getY()));
+
+            if (distance == 0.0)
+                continue;
+
             double g_force =
                 (GRAVITATIONAL_CONSTANT * obj1->getMass() * obj2->getMass()) / d_square(distance);
-            game::object::helper::Vector2D force{0, 0};
-
-            if (!distance)
-            {
-                force.setX(0);
-                force.setY(0);
-            }
-            else
-            {
-                force = (obj2->getPosition() - obj1->getPosition()) / distance;
-            }
+            game::object::helper::Vector2D force =
+                (obj2->getPosition() - obj1->getPosition()) / distance;
             applied_force += force * g_force;
         }
         obj1->addForce(applied_force);
