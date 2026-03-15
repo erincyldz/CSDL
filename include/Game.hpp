@@ -37,7 +37,7 @@ class Game
     {
         return m_window_height;
     }
-    GameState* p_gameState;
+    GameState m_gameState;
 
   private:
     void init();
