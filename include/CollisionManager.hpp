@@ -6,6 +6,8 @@
 #include <cmath>
 #include <memory>
 #include <vector>
+#include <unordered_map>
+
 namespace game::engine
 {
 class CollisionManager
