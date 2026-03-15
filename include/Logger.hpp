@@ -1,8 +1,10 @@
 #pragma once
+#include <array>
 #include <iostream>
 #include <mutex>
 #include <sstream>
 #include <string>
+#include <type_traits>
 namespace utils
 {
 class Logger
