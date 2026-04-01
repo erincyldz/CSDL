@@ -27,3 +27,13 @@ You have to install LLVM for formatting your code. Refer to [this](https://llvm.
 
 - (**PROBABLY ONLY FOR WSL USERS**)When SDL library tries to popup a textbox or etc. via using xServer over windows, it fails and gets a core dump fail. To fix this, you need to install the correct GUI package for your wsl. It is most probably gets fixed with  ```sudo apt install zenity ``` but it may depend on the linux version and distribution you are currently using. For further questions, go and search it on Google, Stackoverflow or ask ChatGPT. Don't bother me. 
 - In systems other than Ubuntu 22.04LTS, some building problems might occur (for example, i could not build Logger class because i had to include each C++ standard library by hand, such as **`#include <array>`** **`#include <unordered_map>`**). If you know how to fix it, please feel free to contribute to this file.
+
+
+### ** Test `Action` on local
+In order to test the project on local computer before you push, you can use [`act`](https://github.com/nektos/act) module. This module uses the Docker API to either pull or build the necessary images, as defined in your workflow files and finally determines the execution path baseed on the dependencies that were defined.
+Please look at the [act user guide](https://nektosact.com/) for more documentation.
+
+```bash
+curl -s https://raw.githubusercontent.com/nektos/act/master/install.sh | bash
+act .github/workflows/c-cpp.yml 
+```
