@@ -1,33 +1,52 @@
-#ifndef IRENDERER_HPP
-#define IRENDERER_HPP
+#pragma once
+#include "Menu.hpp"
+#include "PhysicsWorld.hpp"
 
-#include <GameObject.hpp>
-#include <SDL2/SDL.h>
-#include <memory>
-#include <vector>
+#include <cstddef>
+#include <cstdint>
+#include <optional>
+#include <utility>
 
 namespace game
 {
+struct RenderOptions
+{
+    bool trails = true;
+    bool direction = true;
+    bool collisionHighlights = true;
+};
+
+struct HudInfo
+{
+    std::uint64_t collisions = 0;
+    std::size_t objects = 0;
+    double fps = 0.0;
+    int viewWidth = 0;  // Width of the simulation area (window minus the docked panel)
+};
+
+// Editor feedback drawn on top of the world.
+struct SandboxOverlay
+{
+    std::optional<object::ObjectId> selected;
+    std::optional<object::ObjectId> hovered;
+    std::optional<std::pair<math::Vector2D, math::Vector2D>> dragLine;  // Spawn velocity preview
+    std::optional<object::Shape> ghostShape;  // Spawn tool preview under the cursor
+    math::Vector2D ghostPosition;
+};
+
+// Backend-independent drawing interface used by Game.
 class IRenderer
 {
   public:
     virtual ~IRenderer() = default;
 
-    // // Render all game objects
-    // virtual void renderGameObjects(
-    //     const std::vector<std::unique_ptr<game::object::GameObject>>& gameObjects) = 0;
-
-    // Highlight specific game objects for collision
-    virtual void renderCollisionHighlights(
-        const std::vector<std::pair<game::object::GameObject*, game::object::GameObject*>>&
-            collisions) = 0;
-
-    virtual void
-        renderObjectLastPosition(const std::unique_ptr<game::object::GameObject>& gameObject) = 0;
-
-    virtual void renderObjectDirection(const game::object::GameObject& obj) = 0;
-
+    virtual void beginFrame() = 0;
+    virtual void drawWorld(const physics::PhysicsWorld& world, const RenderOptions& options) = 0;
+    virtual void drawHud(const HudInfo& hud) = 0;
+    virtual void drawSandboxOverlay(const physics::PhysicsWorld& world,
+                                    const SandboxOverlay& overlay) = 0;
+    virtual void drawMenu(const ui::Menu& menu) = 0;
+    virtual void drawPausedOverlay(int viewWidth) = 0;
+    virtual void endFrame() = 0;
 };
 }  // namespace game
-
-#endif  // IRENDERER_HPP

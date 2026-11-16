@@ -1,370 +1,135 @@
-#include <CircleObject.hpp>
-#include <GameObject.hpp>
-#include <RectObject.hpp>
+#include "GameObject.hpp"
+
+#include <algorithm>
+#include <cmath>
+#include <stdexcept>
+#include <utility>
+
 namespace game::object
 {
-void GameObject::update_color(float delta_time)
+namespace
 {
-    switch (this->m_color_state)
-    {
-        case ColorState::RED:
-            this->m_color.b += COLOR_CHANGE_SCALAR * delta_time;
-            if (this->m_color.b == 255)
-            {
-                this->m_color_state = ColorState::PINK;
-                break;
-            }
-            if (this->m_color.b >= 255)
-            {
-                this->m_color.b = 255;
-                this->m_color_state = ColorState::PINK;
-                break;
-            }
-            break;
-        case ColorState::PINK:
-            this->m_color.r -= COLOR_CHANGE_SCALAR * delta_time;
-            if (this->m_color.r == 0)
-            {
-                this->m_color_state = ColorState::BLUE;
-                break;
-            }
-            if (this->m_color.r <= 0)
-            {
-                this->m_color.r = 0;
-                this->m_color_state = ColorState::BLUE;
-                break;
-            }
-            break;
-        case ColorState::BLUE:
-            this->m_color.g += COLOR_CHANGE_SCALAR * delta_time;
-            if (this->m_color.g == 255)
-            {
-                this->m_color_state = ColorState::CYAN;
-                break;
-            }
-            if (this->m_color.g >= 255)
-            {
-                this->m_color.g = 255;
-                this->m_color_state = ColorState::CYAN;
-                break;
-            }
-            break;
-        case ColorState::CYAN:
-            this->m_color.b -= COLOR_CHANGE_SCALAR * delta_time;
-            if (this->m_color.b == 0)
-            {
-                this->m_color_state = ColorState::GREEN;
-                break;
-            }
-            if (this->m_color.b <= 0)
-            {
-                this->m_color.b = 0;
-                this->m_color_state = ColorState::GREEN;
-                break;
-            }
-            break;
-        case ColorState::GREEN:
-            this->m_color.r += COLOR_CHANGE_SCALAR * delta_time;
-            if (this->m_color.r == 255)
-            {
-                this->m_color_state = ColorState::YELLOW;
-                break;
-            }
-            if (this->m_color.r >= 255)
-            {
-                this->m_color.r = 255;
-                this->m_color_state = ColorState::YELLOW;
-                break;
-            }
-            break;
-        case ColorState::YELLOW:
-            this->m_color.g -= COLOR_CHANGE_SCALAR * delta_time;
-            if (this->m_color.g == 0)
-            {
-                this->m_color_state = ColorState::RED;
-                break;
-            }
-            if (this->m_color.g <= 0)
-            {
-                this->m_color.g = 0;
-                this->m_color_state = ColorState::RED;
-                break;
-            }
-            break;
+constexpr double COLOR_CYCLE_DEGREES_PER_SECOND = 120.0;
+}
 
+Color colorFromHue(double hueDegrees)
+{
+    const double h = std::fmod(std::fmod(hueDegrees, 360.0) + 360.0, 360.0) / 60.0;
+    const double x = 1.0 - std::fabs(std::fmod(h, 2.0) - 1.0);
+    double r = 0.0, g = 0.0, b = 0.0;
+    switch (static_cast<int>(h))
+    {
+        case 0:
+            r = 1.0, g = x;
+            break;
+        case 1:
+            r = x, g = 1.0;
+            break;
+        case 2:
+            g = 1.0, b = x;
+            break;
+        case 3:
+            g = x, b = 1.0;
+            break;
+        case 4:
+            r = x, b = 1.0;
+            break;
         default:
+            r = 1.0, b = x;
             break;
     }
-}
-void GameObject::setVelocity(Velocity velocity)
-{
-    if(!m_is_stable)
+    auto to8 = [](double v)
     {
-        m_velocity = velocity;
-    }
-    else
-    {
-        m_velocity *= 0;
-    }
+        return static_cast<std::uint8_t>(std::lround(v * 255.0));
+    };
+    return Color{to8(r), to8(g), to8(b), 255};
 }
-void GameObject::setPosition(Position pos)
+
+GameObject::GameObject(std::string name, Shape shape) : m_name(std::move(name)), m_shape(shape) {}
+
+GameObject GameObject::circle(std::string name, double radius)
 {
-    m_pos = pos;
+    return GameObject(std::move(name), CircleShape{radius});
 }
-void GameObject::setRestitution(double rest)
+
+GameObject GameObject::rect(std::string name, double width, double height)
 {
-    m_restitution = rest;
+    return GameObject(std::move(name), RectShape{width, height});
 }
-void GameObject::setMass(float mass)
+
+void GameObject::setVelocity(const Velocity& vel)
 {
+    m_vel = m_stable ? Velocity{} : vel;
+}
+
+void GameObject::applyImpulse(const math::Vector2D& impulse)
+{
+    if (!m_stable)
+        m_vel += impulse * (1.0 / m_mass);
+}
+
+void GameObject::translate(const math::Vector2D& delta)
+{
+    if (!m_stable)
+        m_pos += delta;
+}
+
+void GameObject::setMass(double mass)
+{
+    if (!(mass > 0.0))
+        throw std::invalid_argument("GameObject '" + m_name + "': mass must be positive");
     m_mass = mass;
 }
-void GameObject::setForce(Force force)
+
+void GameObject::setRestitution(double restitution)
 {
-    m_force = force;
+    m_restitution = std::clamp(restitution, 0.0, 1.0);
 }
 
-void GameObject::addForce(const Force& force)
+void GameObject::setStable(bool stable)
 {
-    m_force += force;
+    m_stable = stable;
+    if (stable)
+        m_vel = {};
 }
 
-void GameObject::setColor(Color color)
+void GameObject::integrate(double dt, double maxSpeed)
 {
-    m_color = color;
-}
-void GameObject::setColorState(ColorState colorState)
-{
-    m_color_state = colorState;
-}
-void GameObject::setStability(bool stable)
-{
-    if(stable)
+    if (m_stable)
     {
-        m_velocity *= 0;
-    }
-    m_is_stable = stable;
-}
-bool GameObject::getStability() const
-{
-    return m_is_stable;
-}
-double GameObject::getMass() const
-{
-    return m_mass;
-}
-ObjectType GameObject::getType() const
-{
-    return m_type;
-}
-Color GameObject::getColor() const
-{
-    return m_color;
-}
-Position GameObject::getPosition() const
-{
-    return m_pos;
-}
-Velocity GameObject::getVelocity() const
-{
-    return m_velocity;
-}
-
-std::vector<Position> GameObject::getLastPositions() const
-{
-    return m_last_positions;
-}
-
-bool GameObject::is_colliding_with(const GameObject& other) const
-{
-    if (this->m_type == ObjectType::CIRCLE && other.m_type == ObjectType::CIRCLE)
-    {
-        // Circle-Circle collision
-        auto diff_vector = m_pos - other.m_pos;
-        float distance = diff_vector.magnitude();
-        float combinedRadii = static_cast<const CircleObject*>(this)->m_radius +
-                              static_cast<const CircleObject*>(&other)->m_radius;
-        return distance < combinedRadii;
-    }
-    else if (this->m_type == ObjectType::RECTANGLE && other.m_type == ObjectType::RECTANGLE)
-    {
-        // Rectangle-Rectangle collision (AABB)
-        const RectObject* rect1 = static_cast<const RectObject*>(this);
-        const RectObject* rect2 = static_cast<const RectObject*>(&other);
-        int rect_1_width = rect1->getDimensions().first;
-        int rect_1_height = rect1->getDimensions().second;
-        int rect_2_width = rect2->getDimensions().first;
-        int rect_2_height = rect2->getDimensions().second;
-
-        return !(rect1->m_pos.getX() + rect_1_width < rect2->m_pos.getX() ||
-                 rect1->m_pos.getX() > rect2->m_pos.getX() + rect_2_width ||
-                 rect1->m_pos.getY() + rect_1_height < rect2->m_pos.getY() ||
-                 rect1->m_pos.getY() > rect2->m_pos.getY() + rect_2_height);
-    }
-    else if (this->m_type == ObjectType::CIRCLE && other.m_type == ObjectType::RECTANGLE)
-    {
-        // Circle-Rectangle collision
-        const CircleObject* circle = static_cast<const CircleObject*>(this);
-        const RectObject* rect = static_cast<const RectObject*>(&other);
-        int rect_width = rect->getDimensions().first;
-        int rect_height = rect->getDimensions().second;
-        float nearestX = std::max(rect->m_pos.getX(),
-                                  std::min(circle->m_pos.getX(), rect->m_pos.getX() + rect_width));
-        float nearestY = std::max(rect->m_pos.getY(),
-                                  std::min(circle->m_pos.getY(), rect->m_pos.getY() + rect_height));
-
-        float dx = circle->m_pos.getX() - nearestX;
-        float dy = circle->m_pos.getY() - nearestY;
-
-        return (dx * dx + dy * dy) < (circle->m_radius * circle->m_radius);
-    }
-    else if (this->m_type == ObjectType::RECTANGLE && other.m_type == ObjectType::CIRCLE)
-    {
-        // Rectangle-Circle collision (reusing the logic by swapping)
-        return other.is_colliding_with(*this);
-    }
-
-    return false;  // Default: no collision
-}
-
-void GameObject::on_collision(GameObject& other)
-{
-    // TODO: this method `MUST` apply the law of force with the conservation of the Momentum.
-    //  but current situation doesnt seem applt the law of force.
-    //  this method should be reconsidered with the physicicst observation.
-    //  what about a p_1 + p_2 = p_1' + p_2'
-    //  or m1_v1 + m2_v2 = m1_v1' + m2_v2'
-    //  you need to calculate the collision angle, you have dot product.
-    //  im not sure but implementation of restituation might be wrong.
-
-    // Calculate normal vector between objects
-
-    auto diff_vector = other.m_pos - this->m_pos;
-
-    double magnitude = diff_vector.magnitude();
-    // Prevent division by zero or exact overlap
-    if (magnitude == 0.0f)
-    {
-        magnitude = 0.01f;
-        diff_vector.setX(1.0);
-        diff_vector.setY(0.0);
-    }
-
-    diff_vector = diff_vector.normalized();
-
-    // Relative velocity
-    auto relative_velocity = other.m_velocity - this->m_velocity;
-
-    // Project the relative velocity onto the collision normal
-    double velocityAlongNormal = relative_velocity.dot(diff_vector);
-
-    // Skip resolving if objects are separating
-    if (velocityAlongNormal > 0)
+        m_vel = {};
+        m_force = {};
         return;
-    double e = std::min(this->m_restitution, other.m_restitution);
-    // Calculate impulse scalar
-    double impulse = (-(1 + e) * velocityAlongNormal) / (1 / this->m_mass + 1 / other.m_mass);
-
-    // Apply impulse along the normal
-    auto impulse_vector = diff_vector * impulse;
-    auto speed_this = impulse_vector / this->m_mass;
-    auto speed_other = impulse_vector / other.m_mass;
-    const double velocityQuantizationStep = 0.01;
-    if(!getStability())
-    {
-        this->m_velocity -= game::object::helper::Vector2D(
-            std::round(speed_this.getX() / velocityQuantizationStep) * velocityQuantizationStep,
-            std::round(speed_this.getY() / velocityQuantizationStep) * velocityQuantizationStep);
     }
-    // Quantize the velocity of the other object
-    if(!other.getStability())
-    {
-        other.m_velocity += game::object::helper::Vector2D(
-            std::round(speed_other.getX() / velocityQuantizationStep) * velocityQuantizationStep,
-             std::round(speed_other.getY() / velocityQuantizationStep) * velocityQuantizationStep);
-    }
+
+    m_vel += m_force * (dt / m_mass);
+    const double speed = m_vel.magnitude();
+    if (maxSpeed > 0.0 && speed > maxSpeed)
+        m_vel *= maxSpeed / speed;  // Clamp magnitude, keep direction.
+    m_pos += m_vel * dt;
+    m_force = {};
 }
 
-Acceleration GameObject::getAcceleration() const
+void GameObject::updateColorCycle(double dt)
 {
-    return m_acceleration;
+    m_hue = std::fmod(m_hue + COLOR_CYCLE_DEGREES_PER_SECOND * dt, 360.0);
+    const Color c = colorFromHue(m_hue);
+    m_color = Color{c.r, c.g, c.b, m_color.a};
 }
 
-Force GameObject::getForce() const
+void GameObject::recordTrail()
 {
-    return m_force;
-}
-
-void GameObject::setAcceleration(Acceleration acceleration)
-{
-    m_acceleration = acceleration;
-}
-
-void GameObject::addAcceleration(const Acceleration& acceleration)
-{
-    m_acceleration += acceleration;
-}
-void GameObject::update_force()
-{
-    m_force *= (1 - FRICTION_COEFFICIENT);
-}
-
-void GameObject::update_acceleration()
-{
-    if (m_mass != 0)
-    {
-        m_acceleration = m_force / m_mass;
-        m_force = {0, 0};  // reset the m_force after implementation
-    }
+    const std::size_t writeIdx = (m_trailHead + m_trailCount) % TRAIL_LENGTH;
+    m_trail[writeIdx] = m_pos;
+    if (m_trailCount < TRAIL_LENGTH)
+        ++m_trailCount;
     else
-    {
-        m_logger.error("GameObject has zero mass. Acceleration update skipped.");
-    }
+        m_trailHead = (m_trailHead + 1) % TRAIL_LENGTH;
 }
 
-void GameObject::update_velocity(float delta_time)
+void GameObject::clearTrail()
 {
-    m_velocity += m_acceleration * delta_time;
-    m_logger.debug("\nCurrent speed x: {}\nCurrent speed y: {}\nCurrent magnitude:{}", m_velocity.getX(), m_velocity.getY(),m_velocity.magnitude());
-}
-
-void GameObject::update_position(float delta_time)
-{
-    auto x_speed = std::clamp(m_velocity.getX(), MIN_VELOCITY, MAX_VELOCITY);
-    auto y_speed = std::clamp(m_velocity.getY(), MIN_VELOCITY, MAX_VELOCITY);
-    if(!getStability())
-    {
-        m_velocity.setX(x_speed);
-        m_velocity.setY(y_speed);
-    }
-    else
-    {
-        m_velocity *= 0;
-    }
-    m_pos += m_velocity * delta_time;
-}
-
-void GameObject::update_physics(float delta_time)
-{
-    // 1. Update force corresponding to friction factor.
-    update_force();
-
-    // 2. Update the acceleration based on the current force and mass
-    update_acceleration();
-
-    // 3. Update the velocity using the newly calculated acceleration
-    update_velocity(delta_time);
-
-    // 4. Update the position based on the updated velocity
-    update_position(delta_time);
-
-    // keep the last 10 positions
-    if (m_last_positions.size() == LAST_POSITION_SIZE)
-    {
-        m_last_positions.erase(m_last_positions.begin());
-    }
-    m_last_positions.push_back(this->getCenter());
-
-    // m_logger.info("Position: {} ", this->m_pos);
+    m_trailHead = 0;
+    m_trailCount = 0;
 }
 }  // namespace game::object
