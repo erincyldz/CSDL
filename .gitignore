@@ -1,4 +1,7 @@
 .vscode
+# Visual Studio "Open Folder" files
+/.vs/
+/out/
 #build files
 /build
 /build-*/

@@ -38,6 +38,7 @@
       "displayName": "Windows (Visual Studio + vcpkg)",
       "description": "Run from a Developer PowerShell for Visual Studio (it sets VCPKG_ROOT) or set VCPKG_ROOT yourself.",
       "binaryDir": "${sourceDir}/build-windows",
+      "generator": "Visual Studio 17 2022",
       "architecture": { "value": "x64", "strategy": "set" },
       "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
       "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Windows" }

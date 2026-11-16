@@ -35,6 +35,8 @@ cmake --build --preset windows
 ```
 Alternatively, open the folder in Visual Studio, select the `windows` preset and build. The DLLs and the `assets` folder are copied next to `engine.exe`.
 
+The preset uses the Visual Studio 2022 generator. With Visual Studio 2026, configure with `cmake --preset windows -G "Visual Studio 18 2026"`. If a configure fails and you change something, delete the `build-windows` folder before trying again, because CMake keeps the old generator in its cache.
+
 Keep the clone in a short path such as `C:\dev\CSDL`. Some dependencies fail to build when their paths go over the Windows 260-character limit.
 
 ### **Continuous integration**
