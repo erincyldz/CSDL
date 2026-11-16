@@ -27,14 +27,14 @@ Needs Visual Studio 2022 or newer with the *Desktop development with C++* worklo
 
 **Visual Studio, VS Code or CLion:** open the folder and pick the `windows` (or `windows-debug`) preset. The IDE sets up the compiler itself.
 
-**Command line:** open *x64 Native Tools Command Prompt for VS* (or *x64 Native Tools PowerShell*) from the Start menu and run:
+**Command line:** from any terminal (PowerShell, cmd, Windows Terminal), no IDE needed:
 ```
 git clone https://github.com/erincyldz/CSDL.git
 cd CSDL
-cmake --preset windows
-cmake --build --preset windows
+scripts\build-windows.cmd
 .\bin\engine.exe
 ```
+The script finds Visual Studio (or Build Tools), loads its 64-bit compiler environment and runs the CMake preset. Use `-Config Debug` for a debug build (output in `build-windows-debug\bin`) and `-Run` to start the app after building. To call CMake yourself, open *x64 Native Tools Command Prompt for VS* from the Start menu and run `cmake --preset windows` and `cmake --build --preset windows`.
 The presets use Ninja, so the same setup works with any Visual Studio version (2022, 2026, Build Tools). The IDE and the command line can share one build folder. The executable, the DLLs and the `assets` folder end up in `bin`, as on Linux. CMake stops with a clear message when it is run from a 32-bit prompt or without `VCPKG_ROOT`.
 
 Keep the clone in a short path such as `C:\dev\CSDL`. Some dependencies fail to build when their paths go over the Windows 260-character limit.

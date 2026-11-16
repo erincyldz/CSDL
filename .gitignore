@@ -10,6 +10,8 @@
 #chat gpt said to add this
 !/scripts/build.sh 
 !/scripts/clean_build.sh
+!/scripts/build-windows.ps1
+!/scripts/build-windows.cmd
 
 # make files
 *.lst
