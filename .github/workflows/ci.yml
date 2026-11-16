@@ -1,0 +1,74 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: ${{ matrix.name }}
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: gcc Release
+            cxx: g++
+            build_type: Release
+            cxx_flags: ""
+          - name: clang Debug + ASan/UBSan
+            cxx: clang++
+            build_type: Debug
+            cxx_flags: "-fsanitize=address,undefined -fno-omit-frame-pointer"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Ubuntu 24.04 ships every dependency, nothing has to be built from source anymore.
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake libsdl2-dev libsdl2-mixer-dev libsdl2-ttf-dev
+
+      - name: Configure
+        run: >
+          cmake -S . -B build
+          -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+          -DCMAKE_CXX_COMPILER=${{ matrix.cxx }}
+          -DCMAKE_CXX_FLAGS="${{ matrix.cxx_flags }}"
+          -DCMAKE_EXE_LINKER_FLAGS="${{ matrix.cxx_flags }}"
+          -DCSDL_BUILD_BENCHMARKS=ON
+
+      - name: Build
+        run: cmake --build build -j "$(nproc)"
+
+      # Start the real app without a display/sound card, let the physics run, then stop it
+      # with SIGINT (SDL turns it into a quit event). Any sanitizer report fails the job.
+      - name: Smoke test
+        env:
+          SDL_VIDEODRIVER: dummy
+          SDL_AUDIODRIVER: dummy
+          UBSAN_OPTIONS: halt_on_error=1:print_stacktrace=1
+        run: |
+          ./bin/engine --help > /dev/null
+          timeout --preserve-status -s INT 5 ./bin/engine --skip-menu --random-objects=100 --time-scale=4 -w
+          printf 'circle name=A x=100 y=100 radius=10\nrect name=W x=300 y=300 width=20 height=200 stable=1\n' > scene.txt
+          timeout --preserve-status -s INT 5 ./bin/engine --config csdl.example.conf --skip-menu --scene scene.txt -w
+
+      - name: Benchmark
+        run: ./bin/csdl_bench
+
+  format:
+    name: clang-format
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install clang-format 18
+        run: sudo apt-get update && sudo apt-get install -y clang-format-18
+      - name: Check formatting
+        run: clang-format-18 --dry-run --Werror include/*.hpp src/*.cpp bench/*.cpp
