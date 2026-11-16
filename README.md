@@ -25,17 +25,17 @@ cmake --build build -j
 ### **Windows (native)**
 Needs Visual Studio 2022 or newer with the *Desktop development with C++* workload, which already contains CMake and vcpkg. SDL2, SDL2_mixer and SDL2_ttf are installed by vcpkg from `vcpkg.json`, with the versions pinned. The first configure builds them, which takes a few minutes; later configures reuse vcpkg's cache.
 
-From a *Developer PowerShell for VS*:
+**Visual Studio, VS Code or CLion:** open the folder and pick the `windows` (or `windows-debug`) preset. The IDE sets up the compiler itself.
+
+**Command line:** open *x64 Native Tools Command Prompt for VS* (or *x64 Native Tools PowerShell*) from the Start menu and run:
 ```
 git clone https://github.com/erincyldz/CSDL.git
 cd CSDL
 cmake --preset windows
 cmake --build --preset windows
-.\bin\Release\engine.exe
+.\bin\engine.exe
 ```
-Alternatively, open the folder in Visual Studio, select the `windows` preset and build. The DLLs and the `assets` folder are copied next to `engine.exe`.
-
-The preset uses the Visual Studio 2022 generator. With Visual Studio 2026, configure with `cmake --preset windows -G "Visual Studio 18 2026"`. If a configure fails and you change something, delete the `build-windows` folder before trying again, because CMake keeps the old generator in its cache.
+The presets use Ninja, so the same setup works with any Visual Studio version (2022, 2026, Build Tools). The IDE and the command line can share one build folder. The executable, the DLLs and the `assets` folder end up in `bin`, as on Linux. CMake stops with a clear message when it is run from a 32-bit prompt or without `VCPKG_ROOT`.
 
 Keep the clone in a short path such as `C:\dev\CSDL`. Some dependencies fail to build when their paths go over the Windows 260-character limit.
 

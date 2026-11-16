@@ -34,20 +34,43 @@
       "condition": { "type": "notEquals", "lhs": "${hostSystemName}", "rhs": "Windows" }
     },
     {
-      "name": "windows",
-      "displayName": "Windows (Visual Studio + vcpkg)",
-      "description": "Run from a Developer PowerShell for Visual Studio (it sets VCPKG_ROOT) or set VCPKG_ROOT yourself.",
-      "binaryDir": "${sourceDir}/build-windows",
-      "generator": "Visual Studio 17 2022",
-      "architecture": { "value": "x64", "strategy": "set" },
+      "name": "windows-base",
+      "hidden": true,
+      "description": "MSVC x64 with Ninja. The IDE (Visual Studio, VS Code, CLion) sets up the compiler environment; on the command line, run from an x64 Native Tools prompt for Visual Studio.",
+      "generator": "Ninja",
+      "architecture": { "value": "x64", "strategy": "external" },
+      "toolset": { "value": "host=x64", "strategy": "external" },
       "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": "cl",
+        "VCPKG_TARGET_TRIPLET": "x64-windows"
+      },
       "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Windows" }
+    },
+    {
+      "name": "windows",
+      "displayName": "Windows Release (MSVC + vcpkg)",
+      "inherits": "windows-base",
+      "binaryDir": "${sourceDir}/build-windows",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Release" }
+    },
+    {
+      "name": "windows-debug",
+      "displayName": "Windows Debug (MSVC + vcpkg)",
+      "inherits": "windows-base",
+      "binaryDir": "${sourceDir}/build-windows-debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CSDL_WERROR": "ON",
+        "CMAKE_RUNTIME_OUTPUT_DIRECTORY": "${sourceDir}/build-windows-debug/bin"
+      }
     }
   ],
   "buildPresets": [
     { "name": "release", "configurePreset": "release" },
     { "name": "debug", "configurePreset": "debug" },
     { "name": "asan", "configurePreset": "asan" },
-    { "name": "windows", "configurePreset": "windows", "configuration": "Release" }
+    { "name": "windows", "configurePreset": "windows" },
+    { "name": "windows-debug", "configurePreset": "windows-debug" }
   ]
 }

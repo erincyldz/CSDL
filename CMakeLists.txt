@@ -1,7 +1,21 @@
 cmake_minimum_required(VERSION 3.16)
 
+# The windows presets find vcpkg through VCPKG_ROOT, which the Visual Studio prompts and the IDE set.
+if(CMAKE_TOOLCHAIN_FILE STREQUAL "/scripts/buildsystems/vcpkg.cmake")
+    message(FATAL_ERROR "VCPKG_ROOT is not set. Use the \"x64 Native Tools\" prompt for Visual "
+                        "Studio (or open the folder in the IDE), or set VCPKG_ROOT yourself.")
+endif()
+
 # Set the project name and version
 project(engine VERSION 1.0 LANGUAGES CXX)
+
+# The Visual Studio "Developer" prompts start in 32-bit mode, which cannot link the 64-bit vcpkg
+# libraries. Stop early with a clear message instead of failing at link time.
+if(MSVC AND CMAKE_SIZEOF_VOID_P EQUAL 4)
+    message(FATAL_ERROR "The 32-bit MSVC compiler was found. Use the \"x64 Native Tools\" prompt "
+                        "for Visual Studio (or open the folder in the IDE), delete the build "
+                        "folder and configure again.")
+endif()
 
 # Specify the C++ standard
 set(CMAKE_CXX_STANDARD 17)
