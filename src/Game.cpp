@@ -89,6 +89,8 @@ Game::Game(Config config)
         m_sceneSource.randomCount = std::min(m_config.randomObjects, m_config.maxObjects);
     }
     resetScene();
+    if (m_config.skipMenu)
+        m_state = GameState::Playing;
 }
 
 void Game::run()

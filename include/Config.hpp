@@ -25,6 +25,7 @@ struct Config
     int maxObjects = 200;   // Upper bound for random spawning.
 
     // Sandbox UI
+    bool skipMenu = false;  // Start the simulation directly instead of the main menu.
     bool showUi = true;
     double uiScale = 1.25;
 

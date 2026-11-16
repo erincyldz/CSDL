@@ -35,6 +35,7 @@ const Field FIELDS[] = {
     {"time_scale", &Config::timeScale, "Simulation speed multiplier (0.05 .. 8)"},
     {"vsync", &Config::vsync, "Synchronize rendering with the display"},
     {"max_fps", &Config::maxFps, "Frame cap (0 = none)"},
+    {"skip_menu", &Config::skipMenu, "Start the simulation directly (no main menu)"},
     {"show_ui", &Config::showUi, "Show the sandbox panel (toggle with F1)"},
     {"ui_scale", &Config::uiScale, "Sandbox panel scale (0.5 .. 4)"},
     {"scene", &Config::scene, "Scene file to load at start and on reset"},
