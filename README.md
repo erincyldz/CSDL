@@ -20,6 +20,22 @@ cmake --build build -j
 - Debug build: `-DCMAKE_BUILD_TYPE=Debug`.
 - Compiler warnings are shown but don't stop the build. CI builds with `-DCSDL_WERROR=ON` (warnings are errors), so turn it on locally before opening a PR.
 - Libraries installed somewhere unusual: `-DCMAKE_PREFIX_PATH=/path/to/prefix`.
+- The same with presets: `cmake --preset release && cmake --build --preset release`. There are also `debug` (warnings as errors, output in `build-debug/bin`) and `asan` (AddressSanitizer + UBSan, output in `build-asan/bin`) presets.
+
+### **Windows (native)**
+Needs Visual Studio 2022 or newer with the *Desktop development with C++* workload, which already contains CMake and vcpkg. SDL2, SDL2_mixer and SDL2_ttf are installed by vcpkg from `vcpkg.json`, with the versions pinned. The first configure builds them, which takes a few minutes; later configures reuse vcpkg's cache.
+
+From a *Developer PowerShell for VS*:
+```
+git clone https://github.com/erincyldz/CSDL.git
+cd CSDL
+cmake --preset windows
+cmake --build --preset windows
+.\bin\Release\engine.exe
+```
+Alternatively, open the folder in Visual Studio, select the `windows` preset and build. The DLLs and the `assets` folder are copied next to `engine.exe`.
+
+Keep the clone in a short path such as `C:\dev\CSDL`. Some dependencies fail to build when their paths go over the Windows 260-character limit.
 
 ### **Continuous integration**
 `.github/workflows/ci.yml` runs on every push and pull request to `main`: gcc (Release) and clang (Debug + ASan/UBSan) builds, a short headless smoke test of the real app (`SDL_VIDEODRIVER=dummy`), the benchmarks and a clang-format check. To run the workflow locally before pushing, use [act](https://github.com/nektos/act) (needs Docker): `act -j build`.

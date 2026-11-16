@@ -1,0 +1,14 @@
+{
+  "$comment": "Dependencies for builds that use vcpkg (Windows). Linux builds use the system packages and ignore this file.",
+  "name": "csdl",
+  "version-string": "1.0",
+  "dependencies": [
+    "sdl2",
+    {
+      "name": "sdl2-mixer",
+      "default-features": false
+    },
+    "sdl2-ttf"
+  ],
+  "builtin-baseline": "4df3365fcbb4795a44795883f8719bbb3b3bcd77"
+}

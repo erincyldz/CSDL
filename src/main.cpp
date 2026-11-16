@@ -1,12 +1,15 @@
 #include "Config.hpp"
 #include "Game.hpp"
 #include "Logger.hpp"
+#include "Platform.hpp"
 
 #include <exception>
 #include <iostream>
 
 int main(int argc, char* argv[])
 {
+    game::platform::enableConsoleColors();
+
     game::Config config;
     switch (game::parseArgs(config, argc, argv, std::cerr))
     {

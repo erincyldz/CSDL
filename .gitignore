@@ -1,6 +1,7 @@
 .vscode
 #build files
 /build
+/build-*/
 /bin
 /scripts/*
 #chat gpt said to add this
