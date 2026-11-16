@@ -2,20 +2,24 @@
 #include <array>
 #include <iostream>
 #include <mutex>
+#include <optional>
 #include <sstream>
 #include <string>
+#include <string_view>
 #include <type_traits>
+
 namespace utils
 {
 class Logger
 {
   public:
+    // Ordered by severity: a message is printed when level >= current log level.
     enum class LogLevel
     {
-        DEBUG,
-        ERROR,
+        DEBUG = 0,
+        INFO,
         WARNING,
-        INFO
+        ERROR
     };
 
     static Logger& getInstance()
@@ -24,115 +28,83 @@ class Logger
         return instance;
     }
 
-    void setLogLevel(LogLevel level);
-    Logger::LogLevel parseLogLevel(int argc, char* argv[])
+    void setLogLevel(LogLevel level)
     {
-        if (argc > 1)
-        {
-            std::string arg = argv[1];
-            if (arg == "-i")
-            {
-                return Logger::LogLevel::INFO;
-            }
-            else if (arg == "-w")
-            {
-                return Logger::LogLevel::WARNING;
-            }
-            else if (arg == "-e")
-            {
-                return Logger::LogLevel::ERROR;
-            }
-            else if (arg == "-d")
-            {
-                return Logger::LogLevel::DEBUG;
-            }
-            else
-            {
-                std::cerr << "Unknown log level argument: " << arg << std::endl;
-                std::cerr << "Usage: " << argv[0] << " [-i | -w | -e]" << std::endl;
-                std::exit(EXIT_FAILURE);
-            }
-        }
-
-        return Logger::LogLevel::INFO;  // Default log level
+        m_logLevel = level;
+    }
+    LogLevel getLogLevel() const
+    {
+        return m_logLevel;
     }
 
+    // Accepts "debug", "info", "warning"/"warn", "error" (case-sensitive, lower case).
+    static std::optional<LogLevel> parseLevel(std::string_view text);
+    static const char* toString(LogLevel level);
+
     template<typename... Args>
-    void log(const std::string& className, LogLevel level, const std::string& format, Args... args)
+    void log(std::string_view className, LogLevel level, std::string_view format,
+             const Args&... args)
     {
         if (level < m_logLevel)
             return;
 
-        std::lock_guard<std::mutex> lock(mtx);
+        const std::string message = formatString(format, args...);
 
-        std::string message = formatString(format, args...);
-
-        std::string color_code;
-        switch (level)
-        {
-            case LogLevel::INFO:
-                color_code = "\033[92m";  // Bright Green
-                break;
-            case LogLevel::WARNING:
-                color_code = "\033[93m";  // Bright Yellow
-                break;
-            case LogLevel::ERROR:
-                color_code = "\033[91m";  // Bright Red
-                break;
-            case LogLevel::DEBUG:
-                color_code = "\033[94m";  // Bright Blue
-                break;
-            default:
-                color_code = "\033[00m";  // Reset (default terminal color)
-                break;
-        }
-
-        std::string color_code_reset = "\033[00m";
-        std::string bold = "\u001b[1m";
-        std::string black_color = "\033[31m";
-        std::string white_color = "\033[37m";
-
-        std::cout << bold << black_color << "[" << className << "]" << color_code_reset
-                  << color_code << " [" << logLevelToString(level) << "]" << color_code_reset
-                  << "\t-\t" << bold << white_color << message << color_code_reset << std::endl;
+        std::lock_guard<std::mutex> lock(m_mutex);
+        std::ostream& out = (level >= LogLevel::WARNING) ? std::cerr : std::cout;
+        out << BOLD << RED << "[" << className << "]" << RESET << colorFor(level) << " ["
+            << toString(level) << "]" << RESET << "\t-\t" << BOLD << WHITE << message << RESET
+            << '\n';
+        if (level >= LogLevel::WARNING)
+            out.flush();
     }
 
   private:
+    static constexpr const char* RESET = "\033[0m";
+    static constexpr const char* BOLD = "\033[1m";
+    static constexpr const char* RED = "\033[31m";
+    static constexpr const char* WHITE = "\033[37m";
+
     LogLevel m_logLevel = LogLevel::INFO;
-    std::mutex mtx;
+    std::mutex m_mutex;
 
     Logger() = default;
     Logger(const Logger&) = delete;
     Logger& operator=(const Logger&) = delete;
 
-    template<typename... Args>
-    std::string formatString(const std::string& format, Args... args)
-    {
-        std::ostringstream oss;
-        const char* ptr = format.c_str();
-        std::array<std::string, sizeof...(Args)> argArray = {toString(args)...};
-        size_t argIndex = 0;
+    static const char* colorFor(LogLevel level);
 
-        while (*ptr)
+    // Replaces each "{}" in `format` with the next argument.
+    template<typename... Args>
+    static std::string formatString(std::string_view format, const Args&... args)
+    {
+        const std::array<std::string, sizeof...(Args)> argArray = {toString(args)...};
+        std::ostringstream oss;
+        std::size_t argIndex = 0;
+        for (std::size_t i = 0; i < format.size(); ++i)
         {
-            if (*ptr == '{' && *(ptr + 1) == '}' && argIndex < argArray.size())
+            if (format[i] == '{' && i + 1 < format.size() && format[i + 1] == '}' &&
+                argIndex < argArray.size())
             {
                 oss << argArray[argIndex++];
-                ptr += 2;  // Skip "{}"
+                ++i;
             }
             else
             {
-                oss << *ptr++;
+                oss << format[i];
             }
         }
-
         return oss.str();
     }
 
     template<typename T>
-    std::string toString(const T& value)
+    static std::string toString(const T& value)
     {
-        if constexpr (std::is_arithmetic<T>::value)
+        if constexpr (std::is_same_v<T, bool>)
+        {
+            return value ? "true" : "false";
+        }
+        else if constexpr (std::is_arithmetic_v<T>)
         {
             return std::to_string(value);
         }
@@ -143,7 +115,5 @@ class Logger
             return oss.str();
         }
     }
-
-    std::string logLevelToString(LogLevel level) const;
 };
 }  // namespace utils

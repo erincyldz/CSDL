@@ -1,101 +1,158 @@
-#ifndef GAME_OBJECT_H
-#define GAME_OBJECT_H
+#pragma once
+#include "Shape.hpp"
+#include "Vector2D.hpp"
 
-#include "ClassLogger.hpp"
-#include "ObjectHelper.hpp"
-#include "GameHelper.hpp"
-#include <algorithm>
-#include <cmath>
-#include <memory>
-#include <vector>
+#include <array>
+#include <cstddef>
+#include <cstdint>
+#include <string>
+
 namespace game::object
 {
-using Force = helper::Vector2D;
-using Position = helper::Vector2D;
-using Velocity = helper::Vector2D;
-using Acceleration = helper::Vector2D;
-using Color = helper::Color_t;
-using ColorState = helper::ObjectColor;
-using ObjectType = helper::ObjectType;
+using Position = math::Vector2D;
+using Velocity = math::Vector2D;
+using Force = math::Vector2D;
 
-constexpr double MIN_VELOCITY = -500;
-constexpr double MAX_VELOCITY = 500;
+struct Color
+{
+    std::uint8_t r = 255;
+    std::uint8_t g = 0;
+    std::uint8_t b = 0;
+    std::uint8_t a = 255;
+};
 
-// forward declaration
-class CircleObject;
-class RectObject;
+// Converts a hue in degrees (saturation = value = 1) to an RGB color.
+Color colorFromHue(double hueDegrees);
 
-#define LAST_POSITION_SIZE 100
+using ObjectId = std::uint32_t;
+
+// A rigid body with a circle or rectangle shape. Position is the shape's center.
 class GameObject
 {
-
   public:
-    explicit GameObject(std::string& logger_name) : m_logger(logger_name)
+    static constexpr std::size_t TRAIL_LENGTH = 100;
+
+    GameObject(std::string name, Shape shape);
+    static GameObject circle(std::string name, double radius);
+    static GameObject rect(std::string name, double width, double height);
+
+    // Identity (the id is assigned by PhysicsWorld when the object is added).
+    ObjectId getId() const
     {
-        m_color_state = helper::ObjectColor::RED;
-        m_color = {255, 0, 0, 255};
-        m_mass = 1.0f;
-        m_force = {0.0f, 0.0f};
-        m_velocity = {0.1f, 0.1f};
-        m_pos = {0.0f, 0.0f};
-        m_acceleration = {0.0f, 0.0f};
-        m_restitution = 1;
-        m_is_stable = false;
-    };
-    virtual ~GameObject() {}
+        return m_id;
+    }
+    void setId(ObjectId id)
+    {
+        m_id = id;
+    }
+    const std::string& getName() const
+    {
+        return m_name;
+    }
 
-    virtual void update(float delta_time, int screen_width,
-                        int screen_height) = 0;  // Pure virtual function
-    void update_position(float delta_time);
-    void update_velocity(float delta_time);
-    void update_force();
-    void update_acceleration();
-    void update_physics(float delta_time);
-    virtual bool border_collision(int screen_width, int screen_height) = 0;
-    bool is_colliding_with(const GameObject& other) const;
-    void on_collision(GameObject& other);
+    // Shape
+    const Shape& getShape() const
+    {
+        return m_shape;
+    }
+    void setShape(Shape shape)
+    {
+        m_shape = shape;
+    }
+    math::Vector2D halfExtents() const
+    {
+        return object::halfExtents(m_shape);
+    }
+    double boundingRadius() const
+    {
+        return object::boundingRadius(m_shape);
+    }
 
-    void destroy();
-    void update_color(float delta_time);  // DONE
-    void setPosition(Position pos);
-    void setVelocity(Velocity velocity);
-    void setAcceleration(Acceleration acceleration);
-    void addAcceleration(const Acceleration& acceleration);
-    void setForce(Force force);
-    void addForce(const Force& force);
-    void setMass(float mass);
-    void setRestitution(double restitution);
-    void setColor(Color color);
-    void setColorState(ColorState colorState);
-    void setStability(bool stable);
-    bool getStability() const;
-    std::vector<Position> getLastPositions() const;
-    Force getForce() const;
-    double getMass() const;
+    // Kinematics
+    const Position& getPosition() const
+    {
+        return m_pos;
+    }
+    void setPosition(const Position& pos)
+    {
+        m_pos = pos;
+    }
+    const Velocity& getVelocity() const
+    {
+        return m_vel;
+    }
+    void setVelocity(const Velocity& vel);  // Ignored (kept at zero) for stable objects.
+    const Force& getForce() const
+    {
+        return m_force;
+    }
+    void addForce(const Force& force)
+    {
+        m_force += force;
+    }
+    void applyImpulse(const math::Vector2D& impulse);  // v += J / m (no-op if stable)
+    void translate(const math::Vector2D& delta);       // no-op if stable
 
-    ObjectType getType() const;
-    Color getColor() const;
-    Position getPosition() const;
-    Velocity getVelocity() const;
-    Acceleration getAcceleration() const;
-    virtual Position getCenter() const = 0;
+    // Mass properties. Stable objects behave as if they had infinite mass.
+    double getMass() const
+    {
+        return m_mass;
+    }
+    double getInverseMass() const
+    {
+        return m_stable ? 0.0 : 1.0 / m_mass;
+    }
+    void setMass(double mass);  // Throws std::invalid_argument for mass <= 0.
+    double getRestitution() const
+    {
+        return m_restitution;
+    }
+    void setRestitution(double restitution);  // Clamped to [0, 1].
+    bool isStable() const
+    {
+        return m_stable;
+    }
+    void setStable(bool stable);
 
-  protected:
-    ClassLogger m_logger;
-    Position m_pos;
-    Velocity m_velocity;
-    Acceleration m_acceleration;
-    ObjectType m_type;
-    double m_mass;
-    double m_restitution;  //  Coefficient of restitution (bounciness) for elastic/inelastic
-                           //  collisions. 1.0 for perfectly elastic, 0.0 for perfectly inelastic.
-    bool m_is_stable;
-    Force m_force;
-    ColorState m_color_state;
-    Color m_color;
+    // Semi-implicit Euler step. Consumes the accumulated force.
+    void integrate(double dt, double maxSpeed);
+
+    // Visuals
+    Color getColor() const
+    {
+        return m_color;
+    }
+    void setColor(Color color)
+    {
+        m_color = color;
+    }
+    void updateColorCycle(double dt);
+    void recordTrail();
+    void clearTrail();
+    template<typename F>
+    void forEachTrailPoint(F&& fn) const
+    {
+        for (std::size_t i = 0; i < m_trailCount; ++i)
+            fn(m_trail[(m_trailHead + i) % TRAIL_LENGTH]);
+    }
 
   private:
-    std::vector<Position> m_last_positions;
+    ObjectId m_id = 0;
+    std::string m_name;
+    Shape m_shape;
+
+    Position m_pos;
+    Velocity m_vel;
+    Force m_force;
+    double m_mass = 1.0;
+    double m_restitution = 1.0;  // 1 = perfectly elastic, 0 = perfectly inelastic
+    bool m_stable = false;
+
+    Color m_color;
+    double m_hue = 0.0;
+
+    std::array<Position, TRAIL_LENGTH> m_trail{};
+    std::size_t m_trailHead = 0;
+    std::size_t m_trailCount = 0;
 };
 }  // namespace game::object
-#endif

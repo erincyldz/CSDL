@@ -14,7 +14,60 @@ Before you get started, make sure you run ```sudo apt-get update && sudo apt-get
 After completing the previous steps, now you can build and run the project by running the code ```mkdir build && cd build && cmake .. && make``` in the root folder of the project. The make configurations are __basically__ configured in the CMake file, but it might require further steps for optimization and generalization of the build steps. I don't know how to write a CMake bro.
 
 ### **Running the Project**.
-After ```make``` command, an executable with the name of the project will be created under ```build``` folder. Just run ```./build/project_name``` on your terminal.
+The executable is created as `bin/engine` and the `assets` folder is copied next to it, so it can be started from any directory. The first CMake configure downloads Dear ImGui (pinned version + checksum); for offline builds pass `-DCSDL_IMGUI_DIR=/path/to/imgui`.
+
+```
+./bin/engine                          # default scene, sandbox panel on the right
+./bin/engine --random-objects=40      # 40 random circles/rectangles
+./bin/engine --scene my_test.txt      # start from a saved scene (R reloads it)
+./bin/engine --no-gravity --time-scale=0.25
+./bin/engine --config csdl.example.conf
+./bin/engine --help                   # all options with their defaults
+```
+
+Every option can be given on the command line (`--key=value`, `--key value`, `--flag`, `--no-flag`) or in a config file with one `key = value` per line (see `csdl.example.conf`). The log level is set with `--log-level debug|info|warning|error` (or the old `-d`, `-i`, `-w`, `-e` shortcuts).
+
+### **Sandbox**
+The panel on the right (toggle with `F1`) is meant for testing the physics:
+
+- **Mouse tool**: *Select / drag* - click to select, drag to move, release to throw (or just place it, if "Throw on release" is off). Stable objects can be dragged too. *Spawn* - click to place an object from the spawn template, drag to give it an initial velocity. Right click always deletes the object under the cursor.
+- **Selected object**: edit radius / size, position, velocity, mass, restitution, stable flag and color live; stop, duplicate or delete it.
+- **Spawn template**: shape, size, mass (or mass = area), restitution, stable, color, aim factor.
+- **Objects**: list of all objects; click a row to select it.
+- **Scene**: built-in presets (default, empty, random, circular orbits, head-on collisions, Newton's cradle, container) and saving / loading scene files.
+- **Physics / Rendering & audio**: every runtime option, applied immediately.
+- **Stats**: kinetic, potential and total energy, total momentum and an energy graph. A flat energy line is the quickest sanity check for a physics change.
+- Pause, single step (`N`) and a time scale slider (slow motion / fast forward without changing the physics step size).
+
+Scene files are plain text, one object per line, `#` starts a comment:
+```
+circle name=Sun    x=400 y=300 radius=25 mass=1000 restitution=0.5 stable=1 color=255,200,0
+circle name=Planet x=550 y=300 vx=0 vy=-80 radius=6 mass=1
+rect   name=Wall   x=100 y=300 width=20 height=400 stable=1
+```
+Missing keys use defaults (mass defaults to the area).
+
+### **Controls**
+| Key / action | Effect |
+|---|---|
+| Mouse (menu) | Play, Settings, Exit |
+| Left mouse (in game) | Select / drag / throw, or spawn (see Sandbox) |
+| Right mouse | Delete the object under the cursor |
+| `P` | Pause / resume |
+| `N` | Single physics step while paused |
+| `R` | Reload the current scene or preset |
+| `Q` | Add a random object (up to `--max-objects`) |
+| `SPACE` | Kick every movable object in a random direction |
+| `DEL` / `BACKSPACE` | Delete the selected object |
+| `F1` | Show / hide the sandbox panel |
+| `ESC` | Back to the menu (quits from the main menu) |
+
+### **Code layout**
+- `PhysicsWorld`, `Collision`, `GameObject`, `Shape`, `Vector2D`: SDL-free physics core (impulse-based collisions with positional correction, softened N-body gravity, energy/momentum statistics).
+- `Sandbox` (mouse tools), `SceneIO` (scene files), `Scenario` (presets): SDL-free, testable editor logic.
+- `Window`, `SdlRenderer` (`IRenderer`), `Input`, `Audio`, `FrameClock`, `Menu`: platform layer, SDL resources are owned through RAII wrappers in `SdlRaii.hpp`.
+- `ImGuiLayer`, `SandboxPanel`: Dear ImGui integration and the sandbox window.
+- `Config`: runtime configuration (CLI + config file). `Game`: state machine and main loop.
 
 ### **Setting up the formatter**
 You have to install LLVM for formatting your code. Refer to [this](https://llvm.org/docs/GettingStarted.html).

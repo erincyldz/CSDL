@@ -2,41 +2,43 @@
 #include "Logger.hpp"
 
 #include <string>
-using Logger = utils::Logger;
+#include <string_view>
+#include <utility>
+
+// Thin per-component front-end for the global Logger that prefixes messages with a name.
 class ClassLogger
 {
   public:
-    ClassLogger(const std::string& className) : className(className) {}
+    using Level = utils::Logger::LogLevel;
+
+    explicit ClassLogger(std::string className) : m_className(std::move(className)) {}
 
     template<typename... Args>
-    void info(const std::string& format, Args... args)
+    void debug(std::string_view format, const Args&... args) const
     {
-        Logger::getInstance().log(className, Logger::LogLevel::INFO, format, args...);
+        utils::Logger::getInstance().log(m_className, Level::DEBUG, format, args...);
     }
-
     template<typename... Args>
-    void warning(const std::string& format, Args... args)
+    void info(std::string_view format, const Args&... args) const
     {
-        Logger::getInstance().log(className, Logger::LogLevel::WARNING, format, args...);
+        utils::Logger::getInstance().log(m_className, Level::INFO, format, args...);
     }
-
     template<typename... Args>
-    void error(const std::string& format, Args... args)
+    void warning(std::string_view format, const Args&... args) const
     {
-        Logger::getInstance().log(className, Logger::LogLevel::ERROR, format, args...);
+        utils::Logger::getInstance().log(m_className, Level::WARNING, format, args...);
     }
-
     template<typename... Args>
-    void debug(const std::string& format, Args... args)
+    void error(std::string_view format, const Args&... args) const
     {
-        Logger::getInstance().log(className, Logger::LogLevel::DEBUG, format, args...);
+        utils::Logger::getInstance().log(m_className, Level::ERROR, format, args...);
     }
 
-    std::string getClassName() const
+    const std::string& getClassName() const
     {
-        return className;
+        return m_className;
     }
 
   private:
-    std::string className;
+    std::string m_className;
 };
