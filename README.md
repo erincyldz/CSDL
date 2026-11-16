@@ -14,9 +14,12 @@ On older releases (e.g. Ubuntu 22.04) the SDL2_mixer / SDL2_ttf packages are too
 
 ### **Building the project**
 ```
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake -S . -B build        # Release by default
 cmake --build build -j
 ```
+- Debug build: `-DCMAKE_BUILD_TYPE=Debug`.
+- Compiler warnings are shown but don't stop the build. CI builds with `-DCSDL_WERROR=ON` (warnings are errors), so turn it on locally before opening a PR.
+- Libraries installed somewhere unusual: `-DCMAKE_PREFIX_PATH=/path/to/prefix`.
 
 ### **Continuous integration**
 `.github/workflows/ci.yml` runs on every push and pull request to `main`: gcc (Release) and clang (Debug + ASan/UBSan) builds, a short headless smoke test of the real app (`SDL_VIDEODRIVER=dummy`), the benchmarks and a clang-format check. To run the workflow locally before pushing, use [act](https://github.com/nektos/act) (needs Docker): `act -j build`.
