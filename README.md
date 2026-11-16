@@ -68,6 +68,7 @@ Missing keys use defaults (mass defaults to the area).
 - `Window`, `SdlRenderer` (`IRenderer`), `Input`, `Audio`, `FrameClock`, `Menu`: platform layer, SDL resources are owned through RAII wrappers in `SdlRaii.hpp`.
 - `ImGuiLayer`, `SandboxPanel`: Dear ImGui integration and the sandbox window.
 - `Config`: runtime configuration (CLI + config file). `Game`: state machine and main loop.
+- `bench/`: standalone micro benchmarks (no SDL) comparing the old and new trail buffer, collision lookup and circle drawing. Build with `cmake -DCSDL_BUILD_BENCHMARKS=ON ..`, run `./bin/csdl_bench`.
 
 ### **Setting up the formatter**
 You have to install LLVM for formatting your code. Refer to [this](https://llvm.org/docs/GettingStarted.html).

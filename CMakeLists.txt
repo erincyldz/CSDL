@@ -82,9 +82,21 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
             ${CMAKE_SOURCE_DIR}/assets $<TARGET_FILE_DIR:${PROJECT_NAME}>/assets)
 
 # Enable warnings and treat warnings as errors (only for our own code, not for ImGui)
-if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-    target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Werror -pedantic)
-    target_compile_options(${PROJECT_NAME} PRIVATE $<$<CONFIG:Release>:-O2> $<$<CONFIG:Debug>:-O0 -g>)
-elseif (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-    target_compile_options(${PROJECT_NAME} PRIVATE /W4 /WX)
+function(csdl_set_warnings target)
+    if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        target_compile_options(${target} PRIVATE -Wall -Wextra -Werror -pedantic)
+        target_compile_options(${target} PRIVATE $<$<CONFIG:Release>:-O2> $<$<CONFIG:Debug>:-O0 -g>)
+    elseif (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+        target_compile_options(${target} PRIVATE /W4 /WX)
+    endif()
+endfunction()
+csdl_set_warnings(${PROJECT_NAME})
+
+# ---------------------------------------------------------------------------
+# Micro benchmarks (standalone, no SDL): cmake -DCSDL_BUILD_BENCHMARKS=ON .. && ./bin/csdl_bench
+# ---------------------------------------------------------------------------
+option(CSDL_BUILD_BENCHMARKS "Build the micro benchmarks in bench/" OFF)
+if(CSDL_BUILD_BENCHMARKS)
+    add_executable(csdl_bench bench/optimization_bench.cpp)
+    csdl_set_warnings(csdl_bench)
 endif()
