@@ -14,7 +14,7 @@
 #include "SdlRenderer.hpp"
 #include "Window.hpp"
 
-#include <optional>
+#include <cstdint>
 #include <random>
 #include <string>
 
@@ -53,12 +53,7 @@ class Game
     };
 
     // What R (reset) reloads.
-    struct SceneSource
-    {
-        std::optional<std::string> file;
-        scenario::Preset preset = scenario::Preset::Default;
-        int randomCount = 0;
-    };
+    using SceneSource = scenario::SceneSource;
 
     bool inGame() const
     {
@@ -110,6 +105,7 @@ class Game
     bool m_stepRequested = false;
     double m_fps = 0.0;
     double m_frameTime = 0.0;
+    std::uint32_t m_seed = 0;
     std::mt19937 m_rng;
 };
 }  // namespace game

@@ -2,7 +2,10 @@
 #include "GameObject.hpp"
 #include "PhysicsWorld.hpp"
 
+#include <optional>
 #include <random>
+#include <string>
+#include <string_view>
 
 namespace game::scenario
 {
@@ -18,9 +21,24 @@ enum class Preset
     Container       // Stable walls forming a box with a pile of objects inside
 };
 constexpr int PRESET_COUNT = 7;
+constexpr int DEFAULT_RANDOM_COUNT = 20;  // Object count of the Random preset unless one is given.
 const char* presetName(Preset preset);
 const char* presetDescription(Preset preset);
+// Short lower-case name used in config files and on the command line (e.g. "head_on").
+const char* presetKey(Preset preset);
+// Accepts the key, with '-' or '_' as the separator. Returns nullopt for an unknown name.
+std::optional<Preset> presetFromKey(std::string_view key);
+// "default, empty, random, ..." for help texts and error messages.
+std::string presetKeyList();
 void loadPreset(physics::PhysicsWorld& world, Preset preset, std::mt19937& rng, int randomCount);
+
+// What a reset reloads: a scene file if set, otherwise a preset.
+struct SceneSource
+{
+    std::optional<std::string> file;
+    Preset preset = Preset::Default;
+    int randomCount = 0;
+};
 
 // A small body orbiting / bouncing off a heavy stable one (the original main.cpp setup).
 void loadDefault(physics::PhysicsWorld& world);

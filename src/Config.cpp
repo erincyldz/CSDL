@@ -10,6 +10,7 @@
 #include <fstream>
 #include <iomanip>
 #include <ostream>
+#include <random>
 #include <sstream>
 #include <variant>
 
@@ -39,8 +40,16 @@ const Field FIELDS[] = {
     {"show_ui", &Config::showUi, "Show the sandbox panel (toggle with F1)"},
     {"ui_scale", &Config::uiScale, "Sandbox panel scale (0.5 .. 4)"},
     {"scene", &Config::scene, "Scene file to load at start and on reset"},
+    {"preset", &Config::preset,
+     "Built-in scene: default, empty, random, orbits, head_on, cradle, container"},
     {"random_objects", &Config::randomObjects, "Start with N random objects (0 = default scene)"},
     {"max_objects", &Config::maxObjects, "Maximum number of random objects"},
+    {"seed", &Config::seed, "Seed for random scenes (0 = new one on every start)"},
+    {"headless", &Config::headless, "Run the physics without window/sound, print stats, exit"},
+    {"duration", &Config::duration, "Headless: simulated seconds"},
+    {"report_interval", &Config::reportInterval,
+     "Headless: seconds between stats lines (0 = end only)"},
+    {"save_scene", &Config::saveScene, "Headless: save the final scene to this file"},
     {"gravity", &Config::gravity, "Enable mutual gravitation"},
     {"gravitational_constant", &Config::gravitationalConstant, "Gravitational constant G"},
     {"softening", &Config::softening, "Gravity softening length (px)"},
@@ -236,6 +245,13 @@ bool validateConfig(const Config& c, std::string& error)
         return fail("softening, max_speed and restitution_threshold must be >= 0");
     if (!utils::Logger::parseLevel(c.logLevel))
         return fail("log_level must be one of debug, info, warning, error");
+    if (!c.preset.empty() && !scenario::presetFromKey(c.preset))
+        return fail("preset must be one of " + scenario::presetKeyList());
+    // The upper bound keeps the step count (duration * physics_hz) far from integer overflow.
+    if (!(c.duration > 0.0 && c.duration <= 1e6))
+        return fail("duration must be in (0, 1e6] seconds");
+    if (!(c.reportInterval >= 0.0))
+        return fail("report_interval must be >= 0");
     return true;
 }
 
@@ -354,6 +370,36 @@ physics::PhysicsSettings physicsSettingsFrom(const Config& c)
     s.restitutionThreshold = c.restitutionThreshold;
     s.colorCycle = c.colorCycle;
     return s;
+}
+
+scenario::SceneSource startSceneFrom(const Config& c)
+{
+    scenario::SceneSource source;
+    if (!c.scene.empty())
+        source.file = c.scene;
+
+    // A scene file still needs a preset to fall back to when it fails to load.
+    if (!c.preset.empty())
+        source.preset = scenario::presetFromKey(c.preset).value_or(scenario::Preset::Default);
+    else if (c.randomObjects > 0)
+        source.preset = scenario::Preset::Random;
+
+    if (source.preset == scenario::Preset::Random)
+    {
+        const int count = c.randomObjects > 0 ? c.randomObjects : scenario::DEFAULT_RANDOM_COUNT;
+        source.randomCount = std::min(count, c.maxObjects);
+    }
+    return source;
+}
+
+std::uint32_t resolveSeed(int seed)
+{
+    if (seed != 0)
+        return static_cast<std::uint32_t>(seed);
+    std::uint32_t fresh = 0;
+    while (fresh == 0)  // 0 means "pick one", so never report it as the seed that was used.
+        fresh = std::random_device{}();
+    return fresh;
 }
 
 void printUsage(std::ostream& out, const char* program)

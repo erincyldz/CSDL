@@ -1,5 +1,7 @@
 #include "Sandbox.hpp"
 
+#include "Random.hpp"
+
 #include <string>
 
 namespace game::sandbox
@@ -167,7 +169,7 @@ GameObject Sandbox::makeFromTemplate(const Vector2D& position, const Vector2D& v
     obj.setVelocity(velocity);
     obj.setStable(spawn.stable);
     if (spawn.randomColor)
-        obj.setColor(object::colorFromHue(std::uniform_real_distribution<double>(0.0, 360.0)(rng)));
+        obj.setColor(object::colorFromHue(portable::uniform(rng, 0.0, 360.0)));
     else
         obj.setColor(spawn.color);
     return obj;

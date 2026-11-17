@@ -1,5 +1,6 @@
 #include "Config.hpp"
 #include "Game.hpp"
+#include "Headless.hpp"
 #include "Logger.hpp"
 #include "Platform.hpp"
 
@@ -26,6 +27,10 @@ int main(int argc, char* argv[])
 
     try
     {
+        // Headless runs never touch SDL, so they work without a display or sound device.
+        if (config.headless)
+            return game::headless::run(config, std::cout, std::cerr);
+
         game::Game game(config);
         game.run();
     }

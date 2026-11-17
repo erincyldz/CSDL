@@ -34,6 +34,14 @@
       "condition": { "type": "notEquals", "lhs": "${hostSystemName}", "rhs": "Windows" }
     },
     {
+      "name": "headless",
+      "displayName": "Headless only (no SDL, no ImGui)",
+      "description": "Builds only the SDL-free core and bin/csdl_headless; needs just a compiler and CMake.",
+      "binaryDir": "${sourceDir}/build-headless",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Release", "CSDL_BUILD_APP": "OFF" },
+      "condition": { "type": "notEquals", "lhs": "${hostSystemName}", "rhs": "Windows" }
+    },
+    {
       "name": "windows-base",
       "hidden": true,
       "description": "MSVC x64 with Ninja. The IDE (Visual Studio, VS Code, CLion) sets up the compiler environment; on the command line, run from an x64 Native Tools prompt for Visual Studio.",
@@ -70,6 +78,7 @@
     { "name": "release", "configurePreset": "release" },
     { "name": "debug", "configurePreset": "debug" },
     { "name": "asan", "configurePreset": "asan" },
+    { "name": "headless", "configurePreset": "headless" },
     { "name": "windows", "configurePreset": "windows" },
     { "name": "windows-debug", "configurePreset": "windows-debug" }
   ]

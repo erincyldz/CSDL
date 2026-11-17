@@ -1,6 +1,8 @@
 #pragma once
 #include "PhysicsWorld.hpp"
+#include "Scenario.hpp"
 
+#include <cstdint>
 #include <iosfwd>
 #include <string>
 #include <string_view>
@@ -21,8 +23,16 @@ struct Config
 
     // Scene
     std::string scene;      // Scene file to load at start (and on reset).
+    std::string preset;     // Built-in preset key (see scenario::presetKey); empty: default.
     int randomObjects = 0;  // > 0: start with N random objects instead of the default scene.
     int maxObjects = 200;   // Upper bound for random spawning.
+    int seed = 0;           // Seed for random scenes; 0 picks a new one on every start.
+
+    // Headless mode: physics only (no window, sound or rendering), prints statistics and exits.
+    bool headless = false;
+    double duration = 10.0;       // Simulated seconds.
+    double reportInterval = 1.0;  // Simulated seconds between statistics lines (0: end only).
+    std::string saveScene;        // Write the final world to this scene file.
 
     // Sandbox UI
     bool skipMenu = false;  // Start the simulation directly instead of the main menu.
@@ -67,6 +77,11 @@ bool setConfigValue(Config& config, std::string_view key, std::string_view value
 bool validateConfig(const Config& config, std::string& error);
 
 physics::PhysicsSettings physicsSettingsFrom(const Config& config);
+// The scene to start with: `scene` if set, else `preset`, else random objects or the default.
+// Assumes a validated config.
+scenario::SceneSource startSceneFrom(const Config& config);
+// The configured seed, or a fresh one from std::random_device when it is 0.
+std::uint32_t resolveSeed(int seed);
 
 void printUsage(std::ostream& out, const char* program);
 void printConfig(std::ostream& out, const Config& config);
