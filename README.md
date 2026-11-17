@@ -22,6 +22,16 @@ cmake --build build -j
 - Libraries installed somewhere unusual: `-DCMAKE_PREFIX_PATH=/path/to/prefix`.
 - The same with presets: `cmake --preset release && cmake --build --preset release`. There are also `debug` (warnings as errors, output in `build-debug/bin`) and `asan` (AddressSanitizer + UBSan, output in `build-asan/bin`) presets.
 
+### **Headless-only build (no SDL)**
+To run only the headless simulation (see [Headless mode](#headless-mode)), e.g. on a server or a Raspberry Pi over SSH, nothing but a C++17 compiler and CMake is needed. SDL is not searched for and Dear ImGui is not downloaded:
+```
+sudo apt-get install build-essential cmake
+cmake --preset headless                    # or: cmake -S . -B build-headless -DCSDL_BUILD_APP=OFF
+cmake --build --preset headless -j
+./bin/csdl_headless --preset orbits
+```
+`csdl_headless` takes the same options as `engine --headless` (`--headless` itself is implied). A normal build also creates it next to `engine`.
+
 ### **Windows (native)**
 Needs Visual Studio 2022 or newer with the *Desktop development with C++* workload, which already contains CMake and vcpkg. SDL2, SDL2_mixer and SDL2_ttf are installed by vcpkg from `vcpkg.json`, with the versions pinned. The first configure builds them, which takes a few minutes; later configures reuse vcpkg's cache.
 
@@ -117,7 +127,7 @@ Missing keys use defaults (mass defaults to the area).
 - `Window`, `SdlRenderer` (`IRenderer`), `Input`, `Audio`, `FrameClock`, `Menu`: platform layer, SDL resources are owned through RAII wrappers in `SdlRaii.hpp`.
 - `ImGuiLayer`, `SandboxPanel`: Dear ImGui integration and the sandbox window.
 - `Config`: runtime configuration (CLI + config file). `Game`: state machine and main loop. `Headless`: the `--headless` runner.
-- CMake builds the SDL-free parts (physics, `Sandbox`, `SceneIO`, `Scenario`, `Config`, `Logger`, `Headless`) as the `csdl_core` library, and the `engine` executable adds the SDL and ImGui parts on top. Sources are listed explicitly in `CMakeLists.txt`, so a new `.cpp` file has to be added to one of the two lists.
+- CMake builds the SDL-free parts (physics, `Sandbox`, `SceneIO`, `Scenario`, `Config`, `Logger`, `Headless`) as the `csdl_core` library. `csdl_headless` (`src/main_headless.cpp`) is only `csdl_core` plus a `main()`; the `engine` executable adds the SDL and ImGui parts on top and is skipped with `-DCSDL_BUILD_APP=OFF`. Sources are listed explicitly in `CMakeLists.txt`, so a new `.cpp` file has to be added to the right list.
 - `bench/`: standalone micro benchmarks (no SDL) comparing the old and new trail buffer, collision lookup and circle drawing. Build with `cmake -DCSDL_BUILD_BENCHMARKS=ON ..`, run `./bin/csdl_bench`.
 
 ### **Setting up the formatter**
