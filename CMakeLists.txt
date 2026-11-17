@@ -75,8 +75,9 @@ csdl_set_warnings(csdl_core)
 # Same seed -> same numbers on every machine: don't fuse a*b+c into one FMA instruction. GCC does
 # that by default where the CPU has FMA (ARM, e.g. a Raspberry Pi, but not baseline x86-64), and
 # the different rounding makes the chaotic simulation drift apart from an x86 run.
-# MSVC doesn't contract by default.
-target_compile_options(csdl_core PRIVATE
+# MSVC doesn't contract by default. PUBLIC because the inline math in the headers (Vector2D,
+# Shape) is also compiled in every target that uses the core, and the linker keeps any one copy.
+target_compile_options(csdl_core PUBLIC
     $<$<CXX_COMPILER_ID:GNU,Clang,AppleClang>:-ffp-contract=off>)
 
 # Headless runner without any SDL code (same options as `engine --headless`). Always built; with

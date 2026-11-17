@@ -51,7 +51,12 @@ inline double boundingRadius(const Shape& shape)
                                  },
                                  [](const RectShape& r)
                                  {
-                                     return std::hypot(r.width / 2.0, r.height / 2.0);
+                                     // Not std::hypot: its result differs between C runtimes,
+                                     // and this sets the collision grid (and so the order in
+                                     // which contacts are resolved). sqrt is exact everywhere.
+                                     const double hw = r.width / 2.0;
+                                     const double hh = r.height / 2.0;
+                                     return std::sqrt(hw * hw + hh * hh);
                                  }},
                       shape);
 }

@@ -1,5 +1,7 @@
 #include "Scenario.hpp"
 
+#include "Random.hpp"
+
 #include <algorithm>
 #include <cmath>
 #include <string>
@@ -33,22 +35,21 @@ void loadDefault(physics::PhysicsWorld& world)
 GameObject makeRandomObject(std::mt19937& rng, double worldWidth, double worldHeight)
 {
     static int counter = 0;
-    std::uniform_real_distribution<double> radius(10.0, 30.0);
-    std::uniform_real_distribution<double> side(10.0, 50.0);
-    std::uniform_real_distribution<double> speed(-100.0, 100.0);
-    std::uniform_real_distribution<double> hue(0.0, 360.0);
-    std::bernoulli_distribution isCircle(0.5);
 
-    // Every random number is drawn in its own statement. The evaluation order of function
-    // arguments is unspecified, so f(side(rng), side(rng)) gives a different scene for the same
-    // seed depending on the compiler (GCC on x86-64 vs ARM, GCC vs Clang). Braced lists such as
-    // Position{x(rng), y(rng)} are evaluated left to right and are safe.
+    // A seed must give the same scene everywhere, so:
+    // - Values come from portable:: (the std distributions differ between standard libraries).
+    // - Every random number is drawn in its own statement. The evaluation order of function
+    //   arguments is unspecified, so f(uniform(rng, ...), uniform(rng, ...)) depends on the
+    //   compiler (GCC on x86-64 vs ARM, GCC vs Clang). Braced lists are evaluated left to right.
     auto makeShape = [&]
     {
-        if (isCircle(rng))
-            return GameObject::circle("RandomCircle" + std::to_string(++counter), radius(rng));
-        const double width = side(rng);
-        const double height = side(rng);
+        if (portable::chance(rng, 0.5))
+        {
+            const double radius = portable::uniform(rng, 10.0, 30.0);
+            return GameObject::circle("RandomCircle" + std::to_string(++counter), radius);
+        }
+        const double width = portable::uniform(rng, 10.0, 50.0);
+        const double height = portable::uniform(rng, 10.0, 50.0);
         return GameObject::rect("RandomRect" + std::to_string(++counter), width, height);
     };
     GameObject obj = makeShape();
@@ -56,13 +57,13 @@ GameObject makeRandomObject(std::mt19937& rng, double worldWidth, double worldHe
     const auto half = obj.halfExtents();
     const double maxX = std::max(half.getX(), worldWidth - half.getX());
     const double maxY = std::max(half.getY(), worldHeight - half.getY());
-    std::uniform_real_distribution<double> x(half.getX(), maxX);
-    std::uniform_real_distribution<double> y(half.getY(), maxY);
 
-    obj.setPosition(Position{x(rng), y(rng)});
+    obj.setPosition(Position{portable::uniform(rng, half.getX(), maxX),
+                             portable::uniform(rng, half.getY(), maxY)});
     obj.setMass(object::area(obj.getShape()));
-    obj.setVelocity(Velocity{speed(rng), speed(rng)});
-    obj.setColor(object::colorFromHue(hue(rng)));
+    obj.setVelocity(
+        Velocity{portable::uniform(rng, -100.0, 100.0), portable::uniform(rng, -100.0, 100.0)});
+    obj.setColor(object::colorFromHue(portable::uniform(rng, 0.0, 360.0)));
     return obj;
 }
 
@@ -115,7 +116,10 @@ void loadCircularOrbit(physics::PhysicsWorld& world)
         const double r = maxRadius * (0.45 + 0.27 * i);
         // Circular speed for the softened force: a = G M r / (r^2 + eps^2)^(3/2), v = sqrt(a r).
         const double eps2 = s.softening * s.softening;
-        const double accel = s.gravitationalConstant * sunMass * r / std::pow(r * r + eps2, 1.5);
+        // d^3 as d2 * sqrt(d2), not pow(d2, 1.5): sqrt is exact everywhere, pow differs between
+        // C runtimes, and the scene must be the same on every platform.
+        const double d2 = r * r + eps2;
+        const double accel = s.gravitationalConstant * sunMass * r / (d2 * std::sqrt(d2));
         const double v = s.gravity ? std::sqrt(accel * r) : 0.0;
         // Alternate the starting side so the planets don't line up.
         const double sign = (i % 2 == 0) ? 1.0 : -1.0;
@@ -170,16 +174,15 @@ void loadContainer(physics::PhysicsWorld& world, std::mt19937& rng)
     world.add(wall("WallLeft", {cx - size / 2, cy}, t, size));
     world.add(wall("WallRight", {cx + size / 2, cy}, t, size));
 
-    std::uniform_real_distribution<double> pos(-size / 2 + 40.0, size / 2 - 40.0);
-    std::uniform_real_distribution<double> speed(-150.0, 150.0);
-    std::uniform_real_distribution<double> hue(0.0, 360.0);
+    const double range = size / 2 - 40.0;
     for (int i = 0; i < 12; ++i)
     {
-        // One draw per statement, so the scene doesn't depend on the compiler (see
-        // makeRandomObject).
-        const Position p{cx + pos(rng), cy + pos(rng)};
-        const Velocity v{speed(rng), speed(rng)};
-        const object::Color color = object::colorFromHue(hue(rng));
+        // Portable draws, one per statement (see makeRandomObject).
+        const Position p{cx + portable::uniform(rng, -range, range),
+                         cy + portable::uniform(rng, -range, range)};
+        const Velocity v{portable::uniform(rng, -150.0, 150.0),
+                         portable::uniform(rng, -150.0, 150.0)};
+        const object::Color color = object::colorFromHue(portable::uniform(rng, 0.0, 360.0));
         world.add(ball("Ball" + std::to_string(i + 1), 10.0, 5.0, p, v, color));
     }
 }
