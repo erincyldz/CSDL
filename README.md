@@ -20,6 +20,24 @@ cmake --build build -j
 - Debug build: `-DCMAKE_BUILD_TYPE=Debug`.
 - Compiler warnings are shown but don't stop the build. CI builds with `-DCSDL_WERROR=ON` (warnings are errors), so turn it on locally before opening a PR.
 - Libraries installed somewhere unusual: `-DCMAKE_PREFIX_PATH=/path/to/prefix`.
+- The same with presets: `cmake --preset release && cmake --build --preset release`. There are also `debug` (warnings as errors, output in `build-debug/bin`) and `asan` (AddressSanitizer + UBSan, output in `build-asan/bin`) presets.
+
+### **Windows (native)**
+Needs Visual Studio 2022 or newer with the *Desktop development with C++* workload, which already contains CMake and vcpkg. SDL2, SDL2_mixer and SDL2_ttf are installed by vcpkg from `vcpkg.json`, with the versions pinned. The first configure builds them, which takes a few minutes; later configures reuse vcpkg's cache.
+
+**Visual Studio, VS Code or CLion:** open the folder and pick the `windows` (or `windows-debug`) preset. The IDE sets up the compiler itself.
+
+**Command line:** from any terminal (PowerShell, cmd, Windows Terminal), no IDE needed:
+```
+git clone https://github.com/erincyldz/CSDL.git
+cd CSDL
+scripts\build-windows.cmd
+.\bin\engine.exe
+```
+The script finds Visual Studio (or Build Tools), loads its 64-bit compiler environment and runs the CMake preset. Use `-Config Debug` for a debug build (output in `build-windows-debug\bin`) and `-Run` to start the app after building. To call CMake yourself, open *x64 Native Tools Command Prompt for VS* from the Start menu and run `cmake --preset windows` and `cmake --build --preset windows`.
+The presets use Ninja, so the same setup works with any Visual Studio version (2022, 2026, Build Tools). The IDE and the command line can share one build folder. The executable, the DLLs and the `assets` folder end up in `bin`, as on Linux. CMake stops with a clear message when it is run from a 32-bit prompt or without `VCPKG_ROOT`.
+
+Keep the clone in a short path such as `C:\dev\CSDL`. Some dependencies fail to build when their paths go over the Windows 260-character limit.
 
 ### **Continuous integration**
 `.github/workflows/ci.yml` runs on every push and pull request to `main`: gcc (Release) and clang (Debug + ASan/UBSan) builds, a short headless smoke test of the real app (`SDL_VIDEODRIVER=dummy`), the benchmarks and a clang-format check. To run the workflow locally before pushing, use [act](https://github.com/nektos/act) (needs Docker): `act -j build`.

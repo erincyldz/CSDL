@@ -1,7 +1,22 @@
 cmake_minimum_required(VERSION 3.16)
 
+# The windows presets find vcpkg through VCPKG_ROOT, which the Visual Studio prompts and the IDE set.
+if(CMAKE_TOOLCHAIN_FILE STREQUAL "/scripts/buildsystems/vcpkg.cmake")
+    message(FATAL_ERROR "VCPKG_ROOT is not set. Build with scripts\\build-windows.cmd, use the "
+                        "\"x64 Native Tools\" prompt for Visual Studio or the IDE, or set "
+                        "VCPKG_ROOT yourself.")
+endif()
+
 # Set the project name and version
 project(engine VERSION 1.0 LANGUAGES CXX)
+
+# The Visual Studio "Developer" prompts start in 32-bit mode, which cannot link the 64-bit vcpkg
+# libraries. Stop early with a clear message instead of failing at link time.
+if(MSVC AND CMAKE_SIZEOF_VOID_P EQUAL 4)
+    message(FATAL_ERROR "The 32-bit MSVC compiler was found. Build with scripts\\build-windows.cmd "
+                        "(it cleans up this build folder), or delete the build folder and use the "
+                        "\"x64 Native Tools\" prompt for Visual Studio or the IDE.")
+endif()
 
 # Specify the C++ standard
 set(CMAKE_CXX_STANDARD 17)
@@ -14,7 +29,9 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
     set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS Debug Release RelWithDebInfo MinSizeRel)
 endif()
-message(STATUS "CSDL build type: ${CMAKE_BUILD_TYPE}")
+if(NOT CMAKE_CONFIGURATION_TYPES)
+    message(STATUS "CSDL build type: ${CMAKE_BUILD_TYPE}")
+endif()
 
 option(CSDL_WERROR "Treat compiler warnings as errors (enabled in CI)" OFF)
 
