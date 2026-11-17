@@ -49,6 +49,8 @@ The executable is created as `bin/engine` and the `assets` folder is copied next
 ./bin/engine                          # default scene, sandbox panel on the right
 ./bin/engine --random-objects=40      # 40 random circles/rectangles
 ./bin/engine --scene my_test.txt      # start from a saved scene (R reloads it)
+./bin/engine --preset orbits          # start from a built-in preset (see --help for the list)
+./bin/engine --random-objects=40 --seed=7   # the same random scene on every start
 ./bin/engine --no-gravity --time-scale=0.25
 ./bin/engine --skip-menu              # go straight to the simulation
 ./bin/engine --config csdl.example.conf
@@ -56,6 +58,23 @@ The executable is created as `bin/engine` and the `assets` folder is copied next
 ```
 
 Every option can be given on the command line (`--key=value`, `--key value`, `--flag`, `--no-flag`) or in a config file with one `key = value` per line (see `csdl.example.conf`). The log level is set with `--log-level debug|info|warning|error` (or the old `-d`, `-i`, `-w`, `-e` shortcuts).
+
+### **Headless mode**
+`--headless` runs only the physics: no window, no sound, no rendering, and SDL is never initialized, so it works over SSH, in containers and in CI without a display. It runs a fixed number of physics steps as fast as possible, prints statistics and exits.
+
+```
+./bin/engine --headless                                    # default scene, 10 s simulated
+./bin/engine --headless --preset container --no-gravity --duration 60
+./bin/engine --headless --random-objects 100 --seed 7 --report-interval 0.5
+./bin/engine --headless --scene my_test.txt --save-scene after.txt
+```
+
+- `--duration` is simulated time in seconds (default 10). With `--physics-hz` it sets the number of steps.
+- `--report-interval` prints a statistics line every N simulated seconds (default 1, `0` = only the final line). Each line shows the object and collision counts and the kinetic, potential and total energy, with the drift from the start.
+- `--save-scene` writes the final state to a scene file. The windowed app can load it with `--scene` to look at it.
+- The world is `--window-width` x `--window-height` (no sandbox panel takes space from it).
+- With the same `--seed`, scene and build, two runs print the same numbers; only the `wall time` line differs. Without `--seed`, the seed that was used is printed so a run can be repeated.
+- Exit codes: `0` success, `1` invalid options or a scene file that can't be loaded or saved (unlike the windowed app, there is no fallback to the default scene), `2` the simulation diverged (a position, velocity or the total energy became NaN or infinite).
 
 ### **Sandbox**
 The panel on the right (toggle with `F1`) is meant for testing the physics:
@@ -97,7 +116,8 @@ Missing keys use defaults (mass defaults to the area).
 - `Sandbox` (mouse tools), `SceneIO` (scene files), `Scenario` (presets): SDL-free, testable editor logic.
 - `Window`, `SdlRenderer` (`IRenderer`), `Input`, `Audio`, `FrameClock`, `Menu`: platform layer, SDL resources are owned through RAII wrappers in `SdlRaii.hpp`.
 - `ImGuiLayer`, `SandboxPanel`: Dear ImGui integration and the sandbox window.
-- `Config`: runtime configuration (CLI + config file). `Game`: state machine and main loop.
+- `Config`: runtime configuration (CLI + config file). `Game`: state machine and main loop. `Headless`: the `--headless` runner.
+- CMake builds the SDL-free parts (physics, `Sandbox`, `SceneIO`, `Scenario`, `Config`, `Logger`, `Headless`) as the `csdl_core` library, and the `engine` executable adds the SDL and ImGui parts on top. Sources are listed explicitly in `CMakeLists.txt`, so a new `.cpp` file has to be added to one of the two lists.
 - `bench/`: standalone micro benchmarks (no SDL) comparing the old and new trail buffer, collision lookup and circle drawing. Build with `cmake -DCSDL_BUILD_BENCHMARKS=ON ..`, run `./bin/csdl_bench`.
 
 ### **Setting up the formatter**

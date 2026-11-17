@@ -79,21 +79,48 @@ target_include_directories(imgui SYSTEM PUBLIC ${IMGUI_SOURCE_DIR} ${IMGUI_SOURC
 target_link_libraries(imgui PUBLIC SDL2::SDL2)
 
 # ---------------------------------------------------------------------------
-# Game executable
+# SDL-free core: physics, scenes, config and the headless runner. It must not include or link
+# SDL, so it can be tested and run on machines without a display. Sources are listed explicitly
+# (no GLOB), so a new file has to be added to the right target.
 # ---------------------------------------------------------------------------
-file(GLOB SOURCES src/*.cpp)
-add_executable(${PROJECT_NAME} ${SOURCES})
+add_library(csdl_core STATIC
+    src/Collision.cpp
+    src/Config.cpp
+    src/GameObject.cpp
+    src/Headless.cpp
+    src/Logger.cpp
+    src/PhysicsWorld.cpp
+    src/Platform.cpp
+    src/Sandbox.cpp
+    src/Scenario.cpp
+    src/SceneIO.cpp)
+target_include_directories(csdl_core PUBLIC include)
+target_link_libraries(csdl_core PUBLIC $<$<PLATFORM_ID:Linux>:m>)
+
+# ---------------------------------------------------------------------------
+# Game executable: the SDL platform layer, the ImGui sandbox and main()
+# ---------------------------------------------------------------------------
+add_executable(${PROJECT_NAME}
+    src/main.cpp
+    src/Audio.cpp
+    src/FrameClock.cpp
+    src/Game.cpp
+    src/ImGuiLayer.cpp
+    src/Input.cpp
+    src/Menu.cpp
+    src/SandboxPanel.cpp
+    src/SdlRenderer.cpp
+    src/Window.cpp)
 
 if(TARGET SDL2::SDL2main)
     target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2main)
 endif()
 target_link_libraries(${PROJECT_NAME} PRIVATE
+    csdl_core
     SDL2::SDL2
     SDL2_mixer::SDL2_mixer
     SDL2_ttf::SDL2_ttf
-    imgui
-    $<$<PLATFORM_ID:Linux>:m>)
-target_include_directories(${PROJECT_NAME} PRIVATE include)
+    imgui)
 
 # Copy assets next to the executable so it can be run from anywhere (found via SDL_GetBasePath).
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
@@ -110,6 +137,7 @@ function(csdl_set_warnings target)
         target_compile_options(${target} PRIVATE /W4 $<$<BOOL:${CSDL_WERROR}>:/WX>)
     endif()
 endfunction()
+csdl_set_warnings(csdl_core)
 csdl_set_warnings(${PROJECT_NAME})
 
 # ---------------------------------------------------------------------------

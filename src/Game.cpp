@@ -65,9 +65,11 @@ Game::Game(Config config)
       m_renderer(m_window, assetPath(m_assetDir, "fonts/SmartDuck.ttf")),
       m_imgui(m_window.handle(), m_window.renderer(), static_cast<float>(m_config.uiScale)),
       m_clock(1.0 / m_config.physicsHz), m_world(physicsSettingsFrom(m_config)),
-      m_panel(static_cast<float>(m_config.uiScale)), m_rng(std::random_device{}())
+      m_panel(static_cast<float>(m_config.uiScale)), m_seed(resolveSeed(m_config.seed)),
+      m_rng(m_seed)
 {
     m_logger.info("Asset directory: {}", m_assetDir);
+    m_logger.info("Random seed: {} (repeat a random scene with --seed={})", m_seed, m_seed);
     m_clock.setTimeScale(m_config.timeScale);
 
     m_mainMenu.addItem(MENU_PLAY, "Play", PLAY_COLOR);
@@ -81,13 +83,7 @@ Game::Game(Config config)
 
     m_world.setBounds(simulationWidth(), m_window.height());
 
-    if (!m_config.scene.empty())
-        m_sceneSource.file = m_config.scene;
-    else if (m_config.randomObjects > 0)
-    {
-        m_sceneSource.preset = scenario::Preset::Random;
-        m_sceneSource.randomCount = std::min(m_config.randomObjects, m_config.maxObjects);
-    }
+    m_sceneSource = startSceneFrom(m_config);
     resetScene();
     if (m_config.skipMenu)
         m_state = GameState::Playing;

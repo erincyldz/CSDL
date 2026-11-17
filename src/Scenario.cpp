@@ -192,6 +192,53 @@ const char* presetName(Preset preset)
     return "?";
 }
 
+const char* presetKey(Preset preset)
+{
+    switch (preset)
+    {
+        case Preset::Default:
+            return "default";
+        case Preset::Empty:
+            return "empty";
+        case Preset::Random:
+            return "random";
+        case Preset::CircularOrbit:
+            return "orbits";
+        case Preset::HeadOn:
+            return "head_on";
+        case Preset::NewtonsCradle:
+            return "cradle";
+        case Preset::Container:
+            return "container";
+    }
+    return "?";
+}
+
+std::optional<Preset> presetFromKey(std::string_view key)
+{
+    std::string normalized(key);
+    std::replace(normalized.begin(), normalized.end(), '-', '_');
+    for (int i = 0; i < PRESET_COUNT; ++i)
+    {
+        const auto preset = static_cast<Preset>(i);
+        if (normalized == presetKey(preset))
+            return preset;
+    }
+    return std::nullopt;
+}
+
+std::string presetKeyList()
+{
+    std::string list;
+    for (int i = 0; i < PRESET_COUNT; ++i)
+    {
+        if (i > 0)
+            list += ", ";
+        list += presetKey(static_cast<Preset>(i));
+    }
+    return list;
+}
+
 const char* presetDescription(Preset preset)
 {
     switch (preset)
