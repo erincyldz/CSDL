@@ -90,7 +90,7 @@ if(CSDL_BUILD_APP)
     # Dependencies. Each package provides an imported target that carries its own include
     # directories and link flags, so nothing here depends on where the libraries are installed
     # (apt, a source build in /usr/local, vcpkg, ...). Use -DCMAKE_PREFIX_PATH=... for other prefixes.
-    find_package(SDL2 REQUIRED)
+    find_package(SDL2 2.0.17 REQUIRED)  # imgui_impl_sdlrenderer2 needs SDL_RenderGeometry (2.0.17)
     find_package(SDL2_mixer REQUIRED)
     find_package(SDL2_ttf REQUIRED)
     message(STATUS "SDL2: ${SDL2_DIR}  SDL2_mixer: ${SDL2_mixer_DIR}  SDL2_ttf: ${SDL2_ttf_DIR}")
