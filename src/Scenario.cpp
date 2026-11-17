@@ -39,10 +39,19 @@ GameObject makeRandomObject(std::mt19937& rng, double worldWidth, double worldHe
     std::uniform_real_distribution<double> hue(0.0, 360.0);
     std::bernoulli_distribution isCircle(0.5);
 
-    GameObject obj =
-        isCircle(rng)
-            ? GameObject::circle("RandomCircle" + std::to_string(++counter), radius(rng))
-            : GameObject::rect("RandomRect" + std::to_string(++counter), side(rng), side(rng));
+    // Every random number is drawn in its own statement. The evaluation order of function
+    // arguments is unspecified, so f(side(rng), side(rng)) gives a different scene for the same
+    // seed depending on the compiler (GCC on x86-64 vs ARM, GCC vs Clang). Braced lists such as
+    // Position{x(rng), y(rng)} are evaluated left to right and are safe.
+    auto makeShape = [&]
+    {
+        if (isCircle(rng))
+            return GameObject::circle("RandomCircle" + std::to_string(++counter), radius(rng));
+        const double width = side(rng);
+        const double height = side(rng);
+        return GameObject::rect("RandomRect" + std::to_string(++counter), width, height);
+    };
+    GameObject obj = makeShape();
 
     const auto half = obj.halfExtents();
     const double maxX = std::max(half.getX(), worldWidth - half.getX());
@@ -165,8 +174,14 @@ void loadContainer(physics::PhysicsWorld& world, std::mt19937& rng)
     std::uniform_real_distribution<double> speed(-150.0, 150.0);
     std::uniform_real_distribution<double> hue(0.0, 360.0);
     for (int i = 0; i < 12; ++i)
-        world.add(ball("Ball" + std::to_string(i + 1), 10.0, 5.0, {cx + pos(rng), cy + pos(rng)},
-                       {speed(rng), speed(rng)}, object::colorFromHue(hue(rng))));
+    {
+        // One draw per statement, so the scene doesn't depend on the compiler (see
+        // makeRandomObject).
+        const Position p{cx + pos(rng), cy + pos(rng)};
+        const Velocity v{speed(rng), speed(rng)};
+        const object::Color color = object::colorFromHue(hue(rng));
+        world.add(ball("Ball" + std::to_string(i + 1), 10.0, 5.0, p, v, color));
+    }
 }
 }  // namespace
 

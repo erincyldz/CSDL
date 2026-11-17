@@ -72,6 +72,12 @@ add_library(csdl_core STATIC
 target_include_directories(csdl_core PUBLIC include)
 target_link_libraries(csdl_core PUBLIC $<$<PLATFORM_ID:Linux>:m>)
 csdl_set_warnings(csdl_core)
+# Same seed -> same numbers on every machine: don't fuse a*b+c into one FMA instruction. GCC does
+# that by default where the CPU has FMA (ARM, e.g. a Raspberry Pi, but not baseline x86-64), and
+# the different rounding makes the chaotic simulation drift apart from an x86 run.
+# MSVC doesn't contract by default.
+target_compile_options(csdl_core PRIVATE
+    $<$<CXX_COMPILER_ID:GNU,Clang,AppleClang>:-ffp-contract=off>)
 
 # Headless runner without any SDL code (same options as `engine --headless`). Always built; with
 # -DCSDL_BUILD_APP=OFF it is the only executable and no SDL packages are needed.
